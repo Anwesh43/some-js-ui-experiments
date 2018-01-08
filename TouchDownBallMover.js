@@ -99,3 +99,23 @@ class LineTracker {
         this.e = p
     }
 }
+class Animator {
+    constructor() {
+        this.animated = false
+    }
+    startAnimating(updatecb,startcb) {
+        if(!this.animated) {
+            this.animated = true
+            startcb()
+            this.interval = setInterval(()=>{
+                updatecb()
+            },50)
+        }
+    }
+    stop() {
+        if(this.animated) {
+            this.animated = false
+            clearInterval(this.interval)
+        }
+    }
+}
