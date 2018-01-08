@@ -39,7 +39,7 @@ class Mover {
                 this.point.moveToPoint(this.destX,this.destY,scale)
                 this.lineTracker.updateOnMove(this.point)
             },(scale)=>{
-                this.lineTracker.updateOnEnd(scale)
+                this.lineTracker.updateOnEnd(1-scale)
             })
         }
     }
@@ -66,6 +66,7 @@ class State {
         if(Math.abs(this.scale - this.prevScale) > 1) {
             this.scale = this.prevScale+this.dir
             this.prevScale = this.scale
+            this.dir*=-1
             if(this.scale == 0) {
                 stopcb()
                 this.dir = 0
@@ -80,8 +81,8 @@ class State {
 }
 class LineTracker {
     constructor(point) {
-        this.s = new Point(x,y)
-        this.e = new Point(x,y)
+        this.s = new Point(point.x,point.y)
+        this.e = new Point(point.x,point.y)
     }
     draw(context) {
         context.lineCap = 'round'
@@ -125,6 +126,7 @@ class Stage {
         this.canvas.width = w
         this.canvas.height = h
         this.context = this.canvas.getContext('2d')
+        document.body.appendChild(this.canvas)
         this.mover = new Mover()
         this.animator = new Animator()
     }
@@ -147,4 +149,9 @@ class Stage {
             })
         }
     }
+}
+function initMover() {
+    const stage = new Stage()
+    stage.render()
+    stage.handleTap()
 }
