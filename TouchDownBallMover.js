@@ -43,8 +43,8 @@ class Mover {
             })
         }
     }
-    startUpdating(startcb,x,y) {
-        this.state.startUpdating(startcb)
+    startUpdating(x,y) {
+        this.state.startUpdating()
         this.destX = x
         this.destY = y
     }
@@ -72,7 +72,7 @@ class State {
             }
         }
     }
-    startUpdating(startcb) {
+    startUpdating() {
         if(this.dir == 0) {
             this.dir = 1-2*this.scale
         }
@@ -116,6 +116,35 @@ class Animator {
         if(this.animated) {
             this.animated = false
             clearInterval(this.interval)
+        }
+    }
+}
+class Stage {
+    constructor() {
+        this.canvas = document.createElement('canvas')
+        this.canvas.width = w
+        this.canvas.height = h
+        this.context = this.canvas.getContext('2d')
+        this.mover = new Mover()
+        this.animator = new Animator()
+    }
+    render() {
+        this.context.fillStyle = '#212121'
+        this.context.fillRect(0,0,w,h)
+        this.mover.draw(this.context)
+        this.mover.update(()=>{
+            this.animator.stop()
+        })
+    }
+    handleTap() {
+        this.canvas.onclick = (event) => {
+            const x = event.offsetX,y = event.offsetY
+
+            this.animator.startAnimating(()=>{
+                this.render()
+            },()=>{
+                  this.mover.startUpdating(x,y)
+            })
         }
     }
 }
