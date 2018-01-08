@@ -20,6 +20,7 @@ class Point {
 class Mover {
     constructor() {
         this.point = new Point(w/2,h/2)
+        this.state = new State()
     }
     draw(context) {
         context.save()
@@ -31,10 +32,15 @@ class Mover {
         context.restore()
     }
     update(stopcb) {
-
+        if(this.destX && this.destY) {
+            this.state.update(stopcb)
+            this.point.moveToPoint(this.destX,this.destY,this.state.scale)
+        }
     }
-    startUpdating(startcb) {
-
+    startUpdating(startcb,x,y) {
+        this.state.startUpdating(startcb)
+        this.destX = x
+        this.destY = y
     }
 }
 class State {
@@ -43,8 +49,9 @@ class State {
         this.prevScale = 0
         this.dir = 0
     }
-    update(stopcb) {
+    update(stopcb,updatecb) {
         this.scale += this.dir*0.1
+        updatecb(this.scale)
         if(Math.abs(this.scale - this.prevScale) > 1) {
             this.dir = 0
             this.scale = this.prevScale+this.dir
