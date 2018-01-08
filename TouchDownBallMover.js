@@ -36,7 +36,7 @@ class Mover {
             this.state.update(stopcb,(scale)=>{
                 this.point.moveToPoint(this.destX,this.destY,scale)
             },(scale)=>{
-                
+
             })
         }
     }
@@ -73,5 +73,26 @@ class State {
         if(this.dir == 0) {
             this.dir = 1-2*this.scale
         }
+    }
+}
+class LineTracker {
+    constructor(point) {
+        this.s = new Point(x,y)
+        this.e = new Point(x,y)
+    }
+    draw(context) {
+        context.lineCap = 'round'
+        context.strokeStyle = 'yellowgreen'
+        context.lineWidth = size/5
+        context.beginPath()
+        context.moveTo(this.s.x,this.s.y)
+        context.lineTo(this.e.x,this.e.y)
+        context.stroke()
+    }
+    updateOnEnd(scale) {
+        this.s.moveToPoint(this.e.x,this.e.y,scale)
+    }
+    updateOnMove(p) {
+        this.e = p
     }
 }
