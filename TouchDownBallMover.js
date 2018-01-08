@@ -33,8 +33,11 @@ class Mover {
     }
     update(stopcb) {
         if(this.destX && this.destY) {
-            this.state.update(stopcb)
-            this.point.moveToPoint(this.destX,this.destY,this.state.scale)
+            this.state.update(stopcb,(scale)=>{
+                this.point.moveToPoint(this.destX,this.destY,scale)
+            },(scale)=>{
+                
+            })
         }
     }
     startUpdating(startcb,x,y) {
@@ -49,14 +52,21 @@ class State {
         this.prevScale = 0
         this.dir = 0
     }
-    update(stopcb,updatecb) {
+    update(stopcb,updatecb_pos,updatecb_neg) {
         this.scale += this.dir*0.1
-        updatecb(this.scale)
+        if(this.dir == 1) {
+            updatecb_pos(this.scale)
+        }
+        else {
+            updatecb_neg(this.scale)
+        }
         if(Math.abs(this.scale - this.prevScale) > 1) {
-            this.dir = 0
             this.scale = this.prevScale+this.dir
             this.prevScale = this.scale
-            stopcb()
+            if(this.scale == 0) {
+                stopcb()
+                this.dir = 0
+            }
         }
     }
     startUpdating(startcb) {
