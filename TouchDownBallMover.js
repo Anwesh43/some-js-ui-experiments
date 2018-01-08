@@ -21,6 +21,7 @@ class Mover {
     constructor() {
         this.point = new Point(w/2,h/2)
         this.state = new State()
+        this.lineTracker = new LineTracker(this.point)
     }
     draw(context) {
         context.save()
@@ -30,13 +31,15 @@ class Mover {
         context.arc(0,0,size/2,0,2*Math.PI)
         context.fill()
         context.restore()
+        this.lineTracker.draw(context)
     }
     update(stopcb) {
         if(this.destX && this.destY) {
             this.state.update(stopcb,(scale)=>{
                 this.point.moveToPoint(this.destX,this.destY,scale)
+                this.lineTracker.updateOnMove(this.point)
             },(scale)=>{
-
+                this.lineTracker.updateOnEnd(scale)
             })
         }
     }
