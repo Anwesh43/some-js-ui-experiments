@@ -37,9 +37,28 @@ class TouchRotatorLine {
 class TouchRotatorLineStage extends CanvasStage{
     constructor() {
         super()
+        this.animator = new Animator()
+        this.rotator = new TouchRotatorLine(this.size.w/2,this.size.h/2,Math.min(this.size.w,this.size.h)/5)
     }
     render() {
         super.render()
+        this.rotator.draw(context)
+        this.rotator.update(()=>{
+            this.animator.stop()
+        })
+    }
+    handleTap() {
+        this.isdown = false
+        this.canvas.onmousedown = (event) => {
+            if(!this.isdown) {
+                this.isdown = false
+            }
+        }
+        this.canvas.onmousemove = (event) => {
+            if(this.isdown) {
+                this.isdown = true
+            }
+        }
     }
 }
 class State {
