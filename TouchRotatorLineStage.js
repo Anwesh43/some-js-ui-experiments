@@ -4,6 +4,7 @@ class TouchRotatorLine {
         this.y = y
         this.w = w
         this.deg = 0
+        this.state = new State()
     }
     draw(context) {
         context.save()
@@ -19,10 +20,18 @@ class TouchRotatorLine {
         context.restore()
     }
     startUpdating(deg,startcb) {
-
+        state.startUpdating(()=>{
+            this.destDeg = deg
+            startcb()
+        })
     }
     update(stopcb) {
-
+        state.update(()=>{
+            stopcb()
+        })
+        if(this.destDeg) {
+            this.deg = this.destDeg*this.state.scale
+        }
     }
 }
 class TouchRotatorLineStage extends CanvasStage{
@@ -51,7 +60,7 @@ class State {
     startUpdating(startcb) {
           if(this.dir == 0) {
               this.dir = 1-2*this.scale
-              startcb() 
+              startcb()
           }
     }
 }
