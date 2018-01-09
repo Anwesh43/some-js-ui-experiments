@@ -49,14 +49,15 @@ class TouchRotatorLineStage extends CanvasStage{
     }
     handleTap() {
         this.isdown = false
+        this.count = 0
         this.canvas.onmousedown = (event) => {
             if(!this.isdown) {
-                this.isdown = false
+                this.isdown = true
             }
         }
         this.canvas.onmousemove = (event) => {
             if(this.isdown) {
-                this.isdown = true
+                this.isdown = false
             }
         }
     }
@@ -103,6 +104,25 @@ class Animator {
         if(this.animated) {
               this.animated = true
               clearInterval(this.interval)
+        }
+    }
+}
+class Looper {
+    constructor() {
+        this.count = 0
+    }
+    start() {
+        if(!this.interval) {
+            this.interval = setInterval(()=>{
+                this.count ++
+            },50)
+        }
+    }
+    stop(cb) {
+        if(this.interval) {
+            cb(this.count)
+            clearInterval(this.interval)
+            this.interval = undefined
         }
     }
 }
