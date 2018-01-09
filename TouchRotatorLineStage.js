@@ -4,14 +4,14 @@ class TouchRotatorLine {
         this.y = y
         this.w = w
         this.deg = 0
-        this.state = new State()
+        this.state = new RotatorLineState()
     }
     draw(context) {
         context.save()
         context.translate(this.x,this.y)
-        contexr.rotate(this.deg*Math.PI/180)
+        context.rotate(this.deg*Math.PI/180)
         context.strokeStyle = 'yellowgreen'
-        context.lineWidth = this.w/30
+        context.lineWidth = this.w/10
         context.lineCap = 'round'
         context.beginPath()
         context.moveTo(0,0)
@@ -20,13 +20,13 @@ class TouchRotatorLine {
         context.restore()
     }
     startUpdating(deg,startcb) {
-        state.startUpdating(()=>{
+        this.state.startUpdating(()=>{
             this.destDeg = deg
             startcb()
         })
     }
     update(stopcb) {
-        state.update(()=>{
+        this.state.update(()=>{
             stopcb()
         })
         if(this.destDeg) {
@@ -37,16 +37,18 @@ class TouchRotatorLine {
 class TouchRotatorLineStage extends CanvasStage{
     constructor() {
         super()
-        this.animator = new Animator()
+        this.animator = new RotatorLineAnimator()
         this.rotator = new TouchRotatorLine(this.size.w/2,this.size.h/2,Math.min(this.size.w,this.size.h)/5)
         this.looper = new Looper()
     }
     render() {
         super.render()
-        this.rotator.draw(context)
-        this.rotator.update(()=>{
-            this.animator.stop()
-        })
+        if(this.rotator) {
+            this.rotator.draw(this.context)
+            this.rotator.update(()=>{
+                this.animator.stop()
+            })
+        }
     }
     handleTap() {
         this.isdown = false
@@ -62,7 +64,7 @@ class TouchRotatorLineStage extends CanvasStage{
                 this.isdown = false
                 this.looper.stop((deg)=>{
                     this.rotator.startUpdating(deg,()=>{
-                        this.animator.startUpdating(()=>{
+                        this.animator.startAnimation(()=>{
                             this.render()
                         })
                     })
@@ -71,7 +73,7 @@ class TouchRotatorLineStage extends CanvasStage{
         }
     }
 }
-class State {
+class RotatorLineState {
     constructor() {
         this.scale = 0
         this.dir = 0
@@ -81,9 +83,12 @@ class State {
         this.scale += 0.1*this.dir
         if(Math.abs(this.scale - this.prevScale) > 1) {
             this.scale = this.prevScale + this.dir
-            this.dir = 0
+            this.dir *= -1
             this.prevScale = this.scale
-            stopcb()
+            if(this.prevScale == 0) {
+                this.dir = 0
+                stopcb()
+            }
         }
     }
     startUpdating(startcb) {
@@ -96,8 +101,9 @@ class State {
 const initTouchRotatorStage = () => {
     const stage = new TouchRotatorLineStage()
     stage.render()
+    stage.handleTap()
 }
-class Animator {
+class RotatorLineAnimator {
     constructor() {
         this.animated = false
     }
@@ -111,7 +117,7 @@ class Animator {
     }
     stop() {
         if(this.animated) {
-              this.animated = true
+              this.animated = false
               clearInterval(this.interval)
         }
     }
@@ -122,9 +128,11 @@ class Looper {
     }
     start() {
         if(!this.interval) {
+            console.log(this.count)
             this.interval = setInterval(()=>{
+                console.log(this.count)
                 if(this.count < 360 ) {
-                    this.count++
+                    this.count+=5
                 }
             },50)
         }
