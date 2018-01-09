@@ -68,3 +68,22 @@ const initTouchRotatorStage = () => {
     const stage = new TouchRotatorLineStage()
     stage.render()
 }
+class Animator {
+    constructor() {
+        this.animated = false
+    }
+    startAnimation(updatecb) {
+        if(!this.animated) {
+            this.animated = true
+            this.interval = setInterval(()=>{
+                updatecb()
+            },50)
+        }
+    }
+    stop() {
+        if(this.animated) {
+              this.animated = true
+              clearInterval(this.interval)
+        }
+    }
+}
