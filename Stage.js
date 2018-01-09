@@ -1,9 +1,9 @@
-class Stage {
+class CanvasStage {
     constructor() {
         this.dimensionController = new DimensionController()
         this.createCanvas()
         this.onResize(this.dimensionController.w,this.dimensionController.h)
-        this.dimensionController.startResizing(this.onResize)
+        this.dimensionController.startResizing(this.onResize.bind(this))
 
     }
     createCanvas() {
@@ -17,7 +17,8 @@ class Stage {
         this.canvas.width = w
         this.canvas.height = h
         this.context = this.canvas.getContext('2d')
-        this.size = new Size(canvas.width,canvas.height)
+        this.size = new Size(this.canvas.width,this.canvas.height)
+        this.render()
     }
     getSize() {
         return this.size
