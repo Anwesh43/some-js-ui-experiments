@@ -7,7 +7,7 @@ class DimensionController {
         window.onresize = () => {
             this.w = window.innerWidth
             this.h = window.innerHeight
-            update()
+            update(this.w,this.h)
         }
     }
 }
