@@ -39,6 +39,7 @@ class TouchRotatorLineStage extends CanvasStage{
         super()
         this.animator = new Animator()
         this.rotator = new TouchRotatorLine(this.size.w/2,this.size.h/2,Math.min(this.size.w,this.size.h)/5)
+        this.looper = new Looper()
     }
     render() {
         super.render()
@@ -53,11 +54,19 @@ class TouchRotatorLineStage extends CanvasStage{
         this.canvas.onmousedown = (event) => {
             if(!this.isdown) {
                 this.isdown = true
+                this.looper.start()
             }
         }
-        this.canvas.onmousemove = (event) => {
+        this.canvas.onmouseup = (event) => {
             if(this.isdown) {
                 this.isdown = false
+                this.looper.stop((deg)=>{
+                    this.rotator.startUpdating(deg,()=>{
+                        this.animator.startUpdating(()=>{
+                            this.render()
+                        })
+                    })
+                })
             }
         }
     }
@@ -114,7 +123,9 @@ class Looper {
     start() {
         if(!this.interval) {
             this.interval = setInterval(()=>{
-                this.count ++
+                if(this.count < 360 ) {
+                    this.count++
+                }
             },50)
         }
     }
@@ -123,6 +134,7 @@ class Looper {
             cb(this.count)
             clearInterval(this.interval)
             this.interval = undefined
+            this.count = 0
         }
     }
 }
