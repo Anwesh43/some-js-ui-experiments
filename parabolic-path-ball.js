@@ -92,3 +92,21 @@ class Point {
         return (this.x == x && this.y == y)
     }
 }
+class ParabolicPathAnimator {
+    constructor() {
+        this.animated = false
+    }
+    start(updatecb) {
+        if(!this.animated) {
+            this.animated = true
+            const interval = setInterval(()=>{
+                updatecb()
+            },50)
+        }
+    }
+    stop() {
+        if(this.animated) {
+            this.animated = false
+        }
+    }
+}
