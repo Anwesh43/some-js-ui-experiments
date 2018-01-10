@@ -33,14 +33,30 @@ class ParabolicPath {
         }
         context.restore()
     }
+    checkAndReturnPointPresent(x,y) {
+        for(var i=0;i<points.length;i++) {
+            if(points[i].equals(x,y)) {
+                return i
+            }
+        }
+        return -1
+    }
     update(stopcb) {
-        this.state.update(()=>{
-
+        this.state.update((x,y)=>{
+            this.x = x
+            this.y = y
+            const index = checkAndReturnPointPresent(x,y)
+            if(index == -1) {
+                this.points.push(new Point(x,y))
+            }
+            else {
+                this.points.splice(index,1)
+            }
         },stopcb)
 
     }
     startUpdating(startcb) {
-        this.state.update(stopcb)
+        this.state.startUpdating(startcb)
     }
 }
 class ParabolicState {
