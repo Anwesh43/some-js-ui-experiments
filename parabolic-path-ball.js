@@ -120,3 +120,8 @@ class ParabolicPathAnimator {
         }
     }
 }
+initParabolicPathStage() {
+    const stage = new ParabolicPathStage()
+    stage.render()
+    stage.handleTap()
+}
