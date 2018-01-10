@@ -7,7 +7,21 @@ class ParabolicPathStage extends CanvasStage{
     }
     handleTap() {
         this.canvas.onmousedown = (event) => {
-            
+
         }
+    }
+}
+class ParabolicPath {
+    constructor(x,y) {
+        this.points = []
+    }
+    draw(context) {
+
+    }
+    update(stopcb) {
+
+    }
+    startUpdating(startcb) {
+      
     }
 }
