@@ -8,7 +8,7 @@ class ParabolicPathStage extends CanvasStage{
     render() {
         super.render()
         if(this.parabolicPath) {
-            this.parabolicPath.draw(this.context,Math.min(this.size.w,this.size.h)/20)
+            this.parabolicPath.draw(this.context,Math.min(this.size.w,this.size.h)/20,this.size.h/2)
         }
     }
     onResize(w,h) {
@@ -28,7 +28,7 @@ class ParabolicPathStage extends CanvasStage{
                     this.render()
                     this.parabolicPath.update(()=>{
                         this.animator.stop()
-                    },this.size.h/2)
+                    })
                 })
             })
         }
@@ -43,7 +43,7 @@ class ParabolicPath {
         this.y = 0
         this.state = new ParabolicState()
     }
-    draw(context,r) {
+    draw(context,r,h) {
         context.save()
         context.translate(this.px,this.py)
         context.fillStyle = '#e74c3c'
@@ -51,8 +51,21 @@ class ParabolicPath {
             context.save()
             context.scale(1-2*i,1)
             context.beginPath()
-            context.arc(this.x,this.y,r,0,2*Math.PI)
+            context.arc(this.x,(this.y*(h/(n*n*k*k)))*-1,r,0,2*Math.PI)
             context.fill()
+            context.lineWidth = r/10
+            context.lineCap = 'round'
+            context.strokeStyle = context.fillStyle
+            context.beginPath()
+            this.points.forEach((point,index)=>{
+                if(index == 0) {
+                    context.moveTo(point.x,point.mapY(-h,n*n*k*k))
+                }
+                else {
+                    context.lineTo(point.x,point.mapY(-h,n*n*k*k))
+                }
+            })
+            context.stroke()
             context.restore()
         }
         context.restore()
@@ -65,10 +78,10 @@ class ParabolicPath {
         }
         return -1
     }
-    update(stopcb,h) {
+    update(stopcb) {
         this.state.update((x,y)=>{
             this.x = x
-            this.y = (y*(h/(n*n*k*k)))*-1
+            this.y = y
             const index = this.checkAndReturnPointPresent(x,y)
             if(index == -1) {
                 this.points.push(new ParabolicPoint(x,y))
@@ -119,7 +132,10 @@ class ParabolicPoint {
         this.y = y
     }
     equals(x,y) {
-        return (this.x == x && this.y == y)
+        return (Math.floor(this.x) == Math.floor(x) && Math.floor(this.y) == Math.floor(y))
+    }
+    mapY(h,maxY) {
+        return this.y*(h/maxY)
     }
 }
 class ParabolicPathAnimator {
