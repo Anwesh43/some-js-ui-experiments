@@ -1,3 +1,4 @@
+const n = 10,k = 10
 class ParabolicPathStage extends CanvasStage{
     constructor() {
         super()
@@ -6,16 +7,28 @@ class ParabolicPathStage extends CanvasStage{
     }
     render() {
         super.render()
-        this.parabolicPath.draw(context,Math.min(this.size.w,this.size.h)/20)
+        if(this.parabolicPath) {
+            this.parabolicPath.draw(this.context,Math.min(this.size.w,this.size.h)/20)
+        }
+    }
+    onResize(w,h) {
+        super.onResize(w,h)
+        this.parabolicPath = new ParabolicPath(w/2,h/2)
+        if(this.animator) {
+            this.animator.stop()
+        }
+        this.animator = new ParabolicPathAnimator()
+        this.render()
     }
     handleTap() {
         this.canvas.onmousedown = (event) => {
+            console.log("start")
             this.parabolicPath.startUpdating(()=>{
                 this.animator.start(()=>{
                     this.render()
                     this.parabolicPath.update(()=>{
                         this.animator.stop()
-                    })
+                    },this.size.h/2)
                 })
             })
         }
@@ -28,11 +41,12 @@ class ParabolicPath {
         this.py = y
         this.x = 0
         this.y = 0
-        this.state = new State()
+        this.state = new ParabolicState()
     }
     draw(context,r) {
         context.save()
-        context.translate(this.x,this.y)
+        context.translate(this.px,this.py)
+        context.fillStyle = '#e74c3c'
         for(var i=0;i<2;i++) {
             context.save()
             context.scale(1-2*i,1)
@@ -44,28 +58,30 @@ class ParabolicPath {
         context.restore()
     }
     checkAndReturnPointPresent(x,y) {
-        for(var i=0;i<points.length;i++) {
-            if(points[i].equals(x,y)) {
+        for(var i=0;i<this.points.length;i++) {
+            if(this.points[i].equals(x,y)) {
                 return i
             }
         }
         return -1
     }
-    update(stopcb) {
+    update(stopcb,h) {
         this.state.update((x,y)=>{
             this.x = x
-            this.y = y
-            const index = checkAndReturnPointPresent(x,y)
+            this.y = (y*(h/(n*n*k*k)))*-1
+            const index = this.checkAndReturnPointPresent(x,y)
             if(index == -1) {
-                this.points.push(new Point(x,y))
+                this.points.push(new ParabolicPoint(x,y))
             }
             else {
                 this.points.splice(index,1)
             }
+            console.log("moving")
         },stopcb)
 
     }
     startUpdating(startcb) {
+        console.log("here")
         this.state.startUpdating(startcb)
     }
 }
@@ -76,24 +92,28 @@ class ParabolicState {
         this.dir = 0
     }
     update(updatecb,stopcb) {
-        this.x+=dir
-        this.y = this.x*this.x
-        if(this.x >= 10) {
+        this.x+=this.dir*n
+        this.y =  (this.x*this.x)
+
+        if(this.x >= n*k) {
             this.dir = -1
+            console.log(this.y)
         }
-        if(this.x < = 0) {
+        if(this.x <= 0) {
             this.dir = 0
             stopcb()
         }
         updatecb(this.x,this.y)
     }
-    startUpdating() {
+    startUpdating(startcb) {
+        console.log("startcb")
         if(this.dir == 0) {
             this.dir = 1
+            startcb()
         }
     }
 }
-class Point {
+class ParabolicPoint {
     constructor(x,y) {
         this.x = x
         this.y = y
@@ -107,9 +127,10 @@ class ParabolicPathAnimator {
         this.animated = false
     }
     start(updatecb) {
+
         if(!this.animated) {
             this.animated = true
-            const interval = setInterval(()=>{
+            this.interval = setInterval(()=>{
                 updatecb()
             },50)
         }
@@ -117,10 +138,12 @@ class ParabolicPathAnimator {
     stop() {
         if(this.animated) {
             this.animated = false
+            clearInterval(this.interval)
+            console.log("cloed the interval")
         }
     }
 }
-initParabolicPathStage() {
+function initParabolicPathStage() {
     const stage = new ParabolicPathStage()
     stage.render()
     stage.handleTap()
