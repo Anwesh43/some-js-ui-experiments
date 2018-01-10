@@ -22,6 +22,29 @@ class ParabolicPath {
 
     }
     startUpdating(startcb) {
-      
+
+    }
+}
+class ParabolicState {
+    constructor() {
+        this.x = 0
+        this.y = 0
+        this.dir = 0
+    }
+    update(updatecb) {
+        this.x+=dir
+        this.y = this.x*this.x
+        if(this.x >= 10) {
+            this.dir = -1
+        }
+        if(this.x < = 0) {
+            this.dir = 0
+        }
+        updatecb(this.x,this.y)
+    }
+    startUpdating() {
+        if(this.dir == 0) {
+            this.dir = 1
+        }
     }
 }
