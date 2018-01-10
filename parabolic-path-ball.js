@@ -1,13 +1,23 @@
 class ParabolicPathStage extends CanvasStage{
     constructor() {
         super()
+        this.animator = new ParabolicPathAnimator()
+        this.parabolicPath = new ParabolicPath(this.size.w/2,this.size.h/2)
     }
     render() {
         super.render()
+        this.parabolicPath.draw(context,Math.min(this.size.w,this.size.h)/20)
     }
     handleTap() {
         this.canvas.onmousedown = (event) => {
-
+            this.parabolicPath.startUpdating(()=>{
+                this.animator.start(()=>{
+                    this.render()
+                    this.parabolicPath.update(()=>{
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
