@@ -67,15 +67,34 @@ class MovingPointContainer {
 class MovingLineAnimator {
     constructor() {
         this.animated = false
+        this.state = new MovingLineState()
     }
     start(updatcb) {
-        if(this.animated) {
+        if(!this.animated) {
+            this.state.startUpdating()
+            this.animated = true
             this.interval = setInterval(()=>{
-                updatcb()
+                this.state.update()
+                updatcb(this.state.scale)
             },50)
         }
     }
     reset() {
-
+        this.state.reset()
+    }
+}
+class MovingLineState {
+    constructor() {
+        this.scale = 0
+        this.dir = 0
+    }
+    startUpdating() {
+        this.dir = 1
+    }
+    update() {
+        this.scale += this.dir*0.1
+    }
+    reset() {
+        this.scale = 0
     }
 }
