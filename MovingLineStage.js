@@ -64,3 +64,18 @@ class MovingPointContainer {
         }
     }
 }
+class MovingLineAnimator {
+    constructor() {
+        this.animated = false
+    }
+    start(updatcb) {
+        if(this.animated) {
+            this.interval = setInterval(()=>{
+                updatcb()
+            },50)
+        }
+    }
+    reset() {
+
+    }
+}
