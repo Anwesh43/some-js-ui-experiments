@@ -111,3 +111,8 @@ class MovingLineState {
         this.scale = 0
     }
 }
+const initMovingLineStage = () => {
+    const stage = new MovingLineStage()
+    stage.renderLine(0)
+    stage.handleTap()
+}
