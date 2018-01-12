@@ -1,9 +1,22 @@
  class MovingLineStage extends CanvasStage {
     constructor() {
         super()
+        this.animator = new Animator()
+        this.container = new MovingPointContainer(this.size)
     }
     render() {
         super.render()
+    }
+    renderLine(scale) {
+        this.render()
+        this.container.draw(this.context,scale)
+    }
+    handleTap() {
+        this.canvas.onclick = (event) => {
+            this.animator.start((scale) => {
+                this.renderLine(scale)
+            })
+        }
     }
  }
 class MovingPoint {
