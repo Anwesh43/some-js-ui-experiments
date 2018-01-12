@@ -1,7 +1,7 @@
  class MovingLineStage extends CanvasStage {
     constructor() {
         super()
-        this.animator = new Animator()
+        this.animator = new MovingLineAnimator()
         this.container = new MovingPointContainer(this.size)
     }
     render() {
@@ -12,9 +12,13 @@
         this.container.draw(this.context,scale)
     }
     handleTap() {
-        this.canvas.onclick = (event) => {
-            this.animator.start((scale) => {
-                this.renderLine(scale)
+        this.canvas.onmousedown = (event) => {
+            this.container.addPoint(event.offsetX,event.offsetY,()=>{
+              this.animator.start((scale) => {
+                  this.renderLine(scale)
+              })
+            },()=>{
+                this.animator.reset()
             })
         }
     }
@@ -36,9 +40,10 @@ class MovingPoint {
         return new MovingPoint(this.x,this.y,x,y)
     }
     drawFromPivot(context) {
-        context.lineWidth = 10
+        context.lineWidth = 5
+        context.lineCap = 'round'
         context.beginPath()
-        context.moveTo(this.ox,this.y)
+        context.moveTo(this.ox,this.oy)
         context.lineTo(this.x,this.y)
         context.stroke()
         context.beginPath()
@@ -50,8 +55,9 @@ class MovingPointContainer {
     constructor(size) {
         this.points = []
         this.start = size
+        console.log(this.start)
     }
-    draw(context) {
+    draw(context,scale) {
         context.strokeStyle = 'yellowgreen'
         context.fillStyle = 'yellowgreen'
         this.points.forEach((point)=>{
@@ -62,6 +68,9 @@ class MovingPointContainer {
             context.arc(20,this.start.y,20,0,2*Math.PI)
             context.fill()
         }
+        else {
+            this.points[this.points.length - 1].move(scale)
+        }
     }
     addPoint(x,y,startcb,resetcb) {
         if(this.points.length > 0) {
@@ -71,10 +80,11 @@ class MovingPointContainer {
             resetcb()
         }
         else {
-            const newPoint = new MovingPoint(20,this.start.y/2,x,y)
+            const newPoint = new MovingPoint(20,this.start.h/2,x,y)
             this.points.push(newPoint)
             startcb()
         }
+        console.log(this.points)
     }
 }
 class MovingLineAnimator {
@@ -87,6 +97,7 @@ class MovingLineAnimator {
             this.state.startUpdating()
             this.animated = true
             this.interval = setInterval(()=>{
+                console.log(this.state.scale)
                 this.state.update()
                 updatcb(this.state.scale)
             },50)
