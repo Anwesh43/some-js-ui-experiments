@@ -3,6 +3,22 @@ class TranslateShifter extends CanvasStage {
         super()
         this.animator = new TranslateShifterAnimator()
         this.shifter = new TranslateShifter()
+        this.handler = new MouseHandler()
+        this.initMouseHandler()
+    }
+    initMouseHandler() {
+        this.handler.handleMouseEvents(()=>this.animator.shouldStart(),
+        (x,y)=>{
+            this.shifter.addPoint()
+            this.render()
+        },
+        ()=>{
+            this.animator.start(()=>{
+                this.shifter.update(()=>{
+                    this.animator.stop()
+                })
+            })
+        })
     }
     render(){
        super.render()
@@ -14,6 +30,15 @@ class TranslateShifter {
         this.orig_points = []
         this.curr_points = []
         this.j = 0
+        this.mode = 1
+    }
+    update(stopcb) {
+        if(this.mode == 0) {
+            this.updatePoints()
+        }
+        else {
+            this.removePoints(stopcb)
+        }
     }
     setOrig(x,y) {
         this.x = x
@@ -49,6 +74,7 @@ class TranslateShifter {
                 this.y += prevPoints[0].y
                 if(this.x < 0 || this.y < 0 || this.x > window.innerWidth || this.y > window.innerHeight) {
                     stopcb()
+                    this.mode = 0
                 }
             }
         }
@@ -57,6 +83,9 @@ class TranslateShifter {
         if(this.curr_points.length < this.orig_points.length) {
             this.curr_points.push(this.orig_points[this.j])
             this.j++
+            if(this.j == this.orig_points.length) {
+                this.mode = 1
+            }
         }
     }
 }
