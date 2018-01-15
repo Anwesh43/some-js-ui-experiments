@@ -45,8 +45,8 @@ class TranslateShifter {
             const prevPoints = this.curr_points.splice(0,1)
             this.j--
             if(this.j == 0 && prevPoints.length == 1) {
-                this.x = prevPoints[0].x
-                this.y = prevPoints[0].y
+                this.x += prevPoints[0].x
+                this.y += prevPoints[0].y
                 if(this.x < 0 || this.y < 0 || this.x > window.innerWidth || this.y > window.innerHeight) {
                     stopcb()
                 }
@@ -81,10 +81,37 @@ class TranslateShifterAnimator {
             },50)
         }
     }
+    shouldStart() {
+        return !this.animated
+    }
     stop() {
         if(this.animated) {
             this.animated = true
             clearInterval(this.interval)
+        }
+    }
+}
+class MouseHandler {
+    constructor(stage) {
+        this.stage = stage
+        this.down = false
+    }
+    handleMouseEvents(shouldHandle,handlePoint,start) {
+        this.canvas.onmousedown = (event) => {
+            if(!this.down && shouldHandle()) {
+                this.down = true
+            }
+        }
+        this.canvas.onmousemove = (event) => {
+            if(this.down) {
+                handlePoint(event.offsetX,event.offsetY)
+            }
+        }
+        this.canvas.onmouseup = (event) => {
+            if(this.down) {
+                this.down = true
+                start()
+            }
         }
     }
 }
