@@ -63,3 +63,22 @@ class TranslateShifterPoint {
         return new TranslateShifterPoint(x,y)
     }
 }
+class TranslateShifterAnimator {
+    constructor() {
+        this.animated = false
+    }
+    startUpdating(updatecb) {
+        if(!this.animated) {
+            this.animated = true
+            this.interval = setInterval(()=>{
+                updatecb()
+            },50)
+        }
+    }
+    stop() {
+        if(this.animated) {
+            this.animated = true
+            clearInterval(this.interval)
+        }
+    }
+}
