@@ -1,9 +1,12 @@
 class TranslateShifter extends CanvasStage {
     constructor() {
         super()
+        this.animator = new TranslateShifterAnimator()
+        this.shifter = new TranslateShifter()
     }
     render(){
        super.render()
+       this.shifter.draw(this.context)
     }
 }
 class TranslateShifter {
@@ -44,6 +47,9 @@ class TranslateShifter {
             if(this.j == 0 && prevPoints.length == 1) {
                 this.x = prevPoints[0].x
                 this.y = prevPoints[0].y
+                if(this.x < 0 || this.y < 0 || this.x > window.innerWidth || this.y > window.innerHeight) {
+                    stopcb()
+                }
             }
         }
     }
