@@ -19,16 +19,32 @@ class TranslateShifter {
     draw(context) {
         context.save()
         context.translate(this.x,this.y)
+        this.curr_points.forEach((point,index)=>{
+            if(index == 0) {
+                context.moveTo(point.x,point.y)
+            }
+            else {
+                context.lineTo(point.x,point.y)
+            }
+        })
+        context.stroke()
         context.restore()
     }
     addPoint(x,y) {
-        const curr_x = x - this.x,curr_y = y - this.y
+        const curr_x = (x - this.x), curr_y = y - this.y
+        const point = TranslateShifter.createNewPoint(urr)
+        this.orig_points.push(point)
+        this.curr_points.push(point)
         this.j++
     }
-    removePoints() {
+    removePoints(stopcb) {
         if(this.curr_points.length > 0 && this.j > 0) {
-            this.curr_points.splice(0,1)
+            const prevPoints = this.curr_points.splice(0,1)
             this.j--
+            if(this.j == 0 && prevPoints.length == 1) {
+                this.x = prevPoints[0].x
+                this.y = prevPoints[0].y
+            }
         }
     }
     updatePoints() {
