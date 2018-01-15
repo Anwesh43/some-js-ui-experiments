@@ -38,3 +38,12 @@ class TranslateShifter {
         }
     }
 }
+class TranslateShifterPoint {
+    constructor(x,y) {
+        this.x = x
+        this.y = y
+    }
+    static createNewPoint(x,y) {
+        return new TranslateShifterPoint(x,y)
+    }
+}
