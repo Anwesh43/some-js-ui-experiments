@@ -124,6 +124,7 @@ class LinkedPathMover {
 const initLinkedPathStage = () => {
     const stage = new LinkedPathStage()
     stage.render()
+    stage.handleTap()
 }
 class LinkedPathAnimator {
     constructor() {
