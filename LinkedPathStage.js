@@ -1,9 +1,11 @@
 class LinkedPathStage extends Stage {
     constructor() {
         super()
+        this.linkedPath = new LinkedPath(200,200,300,300)
     }
     render() {
         super.render();
+        this.linkedPath.drawThePath(this.context)
     }
 }
 class NodePoint {
@@ -19,6 +21,9 @@ class NodePoint {
     addNextPoint(point) {
         this.next = point
     }
+    equals(point) {
+        return point.x == this.x && point.y == this.y
+    }
 }
 class LinkedPath {
     constructor(x,y,w,h) {
@@ -33,6 +38,7 @@ class LinkedPath {
         const y_neg_node = this.iterateTill(y+h,y,-1,x_neg_node,x,1)
         y_neg_node.addNextPoint(root)
         root.addPrevPoint(y_neg_node)
+        console.log(this.mainPoint)
     }
     iterateTill(start,end,dir,root,fixed,mode) {
         var node = root
@@ -55,14 +61,14 @@ class LinkedPath {
     drawThePath(context) {
         context.strokeStyle = '#7f8c8d'
         context.beginPath()
-        context.moveTo(this.movePoint.x,this.movePoint.y)
+        context.moveTo(this.mainPoint.x,this.mainPoint.y)
         this.iterateThroughPoints(context)
     }
     iterateThroughPoints(context) {
-        var node = this.movePoint
+        var node = this.mainPoint
         while (true) {
             var curr = node.next
-            if(curr == this.movePoint) {
+            if(curr.equals(this.mainPoint)) {
                 context.stroke()
                 break
             }
@@ -70,4 +76,8 @@ class LinkedPath {
             node = curr
         }
     }
+}
+const initLinkedPathStage = () => {
+    const stage = new LinkedPathStage()
+    stage.render()
 }
