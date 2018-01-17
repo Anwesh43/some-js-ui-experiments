@@ -1,4 +1,4 @@
-class LinkedPathStage extends Stage {
+class LinkedPathStage extends CanvasStage {
     constructor() {
         super()
         this.linkedPath = new LinkedPath(200,200,300,300)
@@ -10,11 +10,15 @@ class LinkedPathStage extends Stage {
     }
     render() {
         super.render();
-        this.linkedPath.drawThePath(this.context)
-        this.mover.draw(context)
+        if(this.linkedPath) {
+            this.linkedPath.drawThePath(this.context)
+        }
+        if(this.mover) {
+            this.mover.draw(this.context)
+        }
     }
     handleTap() {
-        this.stage.onmousedown = (event) => {
+        this.canvas.onmousedown = (event) => {
             this.mover.toggleDir()
         }
     }
@@ -77,6 +81,7 @@ class LinkedPath {
     drawThePath(context) {
         context.strokeStyle = '#7f8c8d'
         context.lineWidth = 10
+        context.lineCap = 'round'
         context.beginPath()
         context.moveTo(this.mainPoint.x,this.mainPoint.y)
         this.iterateThroughPoints(context)
@@ -106,13 +111,15 @@ class LinkedPath {
 }
 class LinkedPathMover {
     constructor(path) {
-        this.path = new Path()
+        this.path = path
         this.dir = 1
     }
     draw(context) {
         const point = this.path.getPoint(this.dir)
+        context.fillStyle = '#9b59b6'
         context.save()
-        context.translate(this.x,this.y)
+        context.translate(point.x,point.y)
+        context.beginPath()
         context.arc(0,0,10,0,2*Math.PI)
         context.fill()
         context.restore()
