@@ -2,10 +2,21 @@ class LinkedPathStage extends Stage {
     constructor() {
         super()
         this.linkedPath = new LinkedPath(200,200,300,300)
+        this.mover = new LinkedPathMover(this.linkedPath)
+        this.animator = new LinkedPathAnimator()
+        this.animator.start(()=>{
+            this.render()
+        })
     }
     render() {
         super.render();
         this.linkedPath.drawThePath(this.context)
+        this.mover.draw(context)
+    }
+    handleTap() {
+        this.stage.onmousedown = (event) => {
+            this.mover.toggleDir()
+        }
     }
 }
 class NodePoint {
