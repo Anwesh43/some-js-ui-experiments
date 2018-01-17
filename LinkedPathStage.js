@@ -14,6 +14,10 @@ class NodePoint {
         this.y = y
         this.prev = null
         this.next = null
+        this.occupied = false
+    }
+    setOccupied() {
+        this.occupied = true
     }
     addPrevPoint(point) {
         this.prev = point
@@ -29,6 +33,7 @@ class LinkedPath {
     constructor(x,y,w,h) {
         this.mainPoint = new NodePoint(x,y)
         this.initPath(x,y,w,h)
+        this.currPoint = this.mainPoint
     }
     initPath(x,y,w,h) {
         var root = this.mainPoint
@@ -60,9 +65,20 @@ class LinkedPath {
     }
     drawThePath(context) {
         context.strokeStyle = '#7f8c8d'
+        context.lineWidth = 10
         context.beginPath()
         context.moveTo(this.mainPoint.x,this.mainPoint.y)
         this.iterateThroughPoints(context)
+    }
+    getPoint(dir) {
+        const point =  {x:this.currPoint.x,y:this.currPoint.y}
+        if(dir == 1) {
+            this.currPoint = this.currPoint.next
+        }
+        else {
+            this.currPoint = this.currPoint.prev
+        }
+        return point
     }
     iterateThroughPoints(context) {
         var node = this.mainPoint
@@ -75,6 +91,23 @@ class LinkedPath {
             context.lineTo(curr.x,curr.y)
             node = curr
         }
+    }
+}
+class LinkedPathMover {
+    constructor(path) {
+        this.path = new Path()
+        this.dir = 1
+    }
+    draw(context) {
+        const point = this.path.getPoint(this.dir)
+        context.save()
+        context.translate(this.x,this.y)
+        context.arc(0,0,10,0,2*Math.PI)
+        context.fill()
+        context.restore()
+    }
+    toggleDir() {
+        this.dir *= -1
     }
 }
 const initLinkedPathStage = () => {
