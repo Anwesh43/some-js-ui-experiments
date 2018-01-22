@@ -7,25 +7,34 @@ class CircleDownStage extends CanvasStage {
     render() {
         super.render()
         if(this.container) {
-            this.container.draw(context)
+            this.container.draw(this.context)
         }
     }
     handleTap() {
-        this.stage.onmousemove = (event) => {
+        this.canvas.onmousemove = (event) => {
             const x = event.offsetX, y = event.offsetY
+            this.render()
             this.container.move(x,y)
         }
-        this.stage.onmousedown = (event) => {
-            const x = event.offsetX, y = event.offsetY
-            this.container.startUpdating(x,y)
+        this.canvas.onmousedown = (event) => {
+            this.container.startUpdating(()=>{
+                this.animator.start(()=>{
+                    this.render()
+                    this.container.update(()=>{
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
 class CircleDown {
-    constructor(x,y) {
+    constructor(x,y,movable) {
         this.x = x
         this.y = y
+        this.movable = movable
         this.state = new CircleDownState()
+        console.log()
     }
     move(x,y) {
         this.x = x
@@ -36,20 +45,24 @@ class CircleDown {
         context.translate(this.x,this.y)
         context.lineWidth = r/10
         context.lineCap = 'round'
-        for(var i=0;i<4;i++) {
+        var scale = 1-this.state.scale
+        if(this.movable) {
+            scale = 1
+        }
+        for(var i=0;i<=4;i++) {
             context.save()
             context.rotate(i*Math.PI/2)
             context.beginPath()
-            for(var j=0;j<90;j++) {
-                const x = r*Math.cos(i*Math.PI/180), y = r*Math.sin(i*Math.PI/180)
+            for(var j=0;j<90*scale;j++) {
+                const x = r*Math.cos(j*Math.PI/180), y = r*Math.sin(j*Math.PI/180)
                 if(i == 0) {
                     context.moveTo(x,y)
                 }
                 else {
                     context.lineTo(x,y)
                 }
-                context.stroke()
             }
+            context.stroke()
             context.restore()
         }
         context.restore()
@@ -105,12 +118,14 @@ class CircleDownAnimator {
 class CircleDownContainer {
     constructor(size) {
         this.circleDowns = []
-        this.curr = new CircleDown(size,size)
+        this.curr = new CircleDown(size,size,true)
+        this.size = size
     }
     draw(context) {
-        this.curr.draw(context)
+        context.strokeStyle = '#F7630C'
+        this.curr.draw(context,this.size)
         this.circleDowns.forEach((circleDown)=>{
-            circleDown.draw(context)
+            circleDown.draw(context,this.size)
         })
     }
     update(stopcb) {
@@ -124,7 +139,7 @@ class CircleDownContainer {
         })
     }
     startUpdating(start_callback) {
-        const circleDown = new CircleDown(curr.x,curr.y)
+        const circleDown = new CircleDown(this.curr.x,this.curr.y)
         circleDown.startUpdating(()=>{
             if(this.circleDowns.length == 0) {
                 start_callback()
