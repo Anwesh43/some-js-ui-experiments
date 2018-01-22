@@ -6,7 +6,9 @@ class CircleDownStage extends CanvasStage {
     }
     render() {
         super.render()
-        this.container.draw(context)
+        if(this.container) {
+            this.container.draw(context)
+        }
     }
     handleTap() {
         this.stage.onmousemove = (event) => {
@@ -133,4 +135,9 @@ class CircleDownContainer {
     move(x,y) {
         this.curr.move(x,y)
     }
+}
+const initCircleDownStage = ()=> {
+    const stage = new CircleDownStage()
+    stage.render()
+    stage.handleTap()
 }
