@@ -10,6 +10,7 @@ class CircleDown {
     constructor(x,y) {
         this.x = x
         this.y = y
+        this.state = new CircleDownState()
     }
     move(x,y) {
         this.x = x
@@ -39,10 +40,10 @@ class CircleDown {
         context.restore()
     }
     update(stopcb) {
-
+        this.state.update(stopcb)
     }
     startUpdating(startcb) {
-
+        this.state.startUpdating(startcb)
     }
 }
 class CircleDownState {
