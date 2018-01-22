@@ -1,9 +1,22 @@
 class CircleDownStage extends CanvasStage {
     constructor() {
         super()
+        this.animator = new CircleDownAnimator()
+        this.container = new CircleDownContainer(Math.min(this.size.w,this.size.h)/6)
     }
     render() {
         super.render()
+        this.container.draw(context)
+    }
+    handleTap() {
+        this.stage.onmousemove = (event) => {
+            const x = event.offsetX, y = event.offsetY
+            this.container.move(x,y)
+        }
+        this.stage.onmousedown = (event) => {
+            const x = event.offsetX, y = event.offsetY
+            this.container.startUpdating(x,y)
+        }
     }
 }
 class CircleDown {
