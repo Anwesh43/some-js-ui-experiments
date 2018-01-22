@@ -87,3 +87,37 @@ class CircleDownAnimator {
         }
     }
 }
+class CircleDownContainer {
+    constructor(size) {
+        this.circleDowns = []
+        this.curr = new CircleDown(size,size)
+    }
+    draw(context) {
+        this.curr.draw(context)
+        this.circleDowns.forEach((circleDown)=>{
+            circleDown.draw(context)
+        })
+    }
+    update(stopcb) {
+        this.circleDowns.forEach((circleDown)=>{
+            circleDown.update(()=>{
+                this.circleDowns.splice(0,1)
+                if(this.circleDowns.length == 0) {
+                    stopcb()
+                }
+            })
+        })
+    }
+    startUpdating(start_callback) {
+        const circleDown = new CircleDown(curr.x,curr.y)
+        circleDown.startUpdating(()=>{
+            if(this.circleDowns.length == 0) {
+                start_callback()
+            }
+            this.circleDowns.push(circleDown)
+        })
+    }
+    move(x,y) {
+        this.curr.move(x,y)
+    }
+}
