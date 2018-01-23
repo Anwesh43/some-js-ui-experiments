@@ -10,8 +10,16 @@ class NotificationStage extends CanvasStage {
             this.notifContainer.draw(this.context)
         }
     }
+    handleTap() {
+        this.canvas.onmousedown = (event) => {
+            const x = event.offsetX,y = event.offsetY
+            this.notifContainer.handleTap(x,y,()=>{
+                this.render()
+            })
+        }
+    }
     startAddingText() {
-        const texts = ["Hello world im looking for something new.","Henrikh MKH is a gunner. Yeah bye bye Sanchez.","Lets go br br br. I am ecstatic.","The best way to understand what the Disruptor is, is to compare it to something well understood and quite similar in purpose. In the case of the Disruptor this would be Java's BlockingQueue."]
+        const texts = ["Hello world im looking for something new.","Henrikh MKH is a gunner. Yeah bye bye Sanchez.","Lets go br br br. I am ecstatic.","The best way to understand what the Disruptor is, is to compare it to something well understood and quite similar in purpose. In the case of the Disruptor this would be Java's BlockingQueue.","WWE Raw, also known as Monday Night Raw or simply Raw, is a professional wrestling television program that currently airs live on Monday evenings at 8 pm EST on the USA Network in the United States","The Attitude Era was the best , but hatsoff to RAW , it is carrying on since 1993 and one of the longs running TV shows ever"]
         const interval = setInterval(()=>{
             this.notifContainer.addText(texts[0],()=>{
                 this.animator.start(()=>{
@@ -81,11 +89,17 @@ class NotificationText {
         })
         context.restore()
     }
+    updateY(h) {
+        this.y -= h
+    }
     update(stopcb) {
         this.state.update(stopcb)
     }
     startUpdating(startcb) {
         this.state.startUpdating(startcb)
+    }
+    handleTap(x,y) {
+        return x>=this.x && x<=this.x+this.w && y>=this.y && y<=this.y+this.h
     }
 }
 class TextPart {
@@ -160,8 +174,17 @@ class NotifUIContainer {
     startUpdating(notifui,startcb) {
         notifui.startUpdating(startcb)
     }
-    handleTap(x,y) {
-
+    handleTap(x,y,render) {
+        this.notifUIS.forEach((notifUI,index) => {
+            if(notifUI.handleTap(x,y)) {
+                this.notifUIS.splice(index,1)
+                for(var i=index;i<this.notifUIS.length;i++) {
+                    const curr = this.notifUIS[i]
+                    curr.updateY(notifUI.h)
+                }
+                render()
+            }
+        })
     }
 }
 class NotifAnimator {
@@ -187,4 +210,5 @@ const initNotificationStage = () => {
     const notifStage = new NotificationStage()
     notifStage.render()
     notifStage.startAddingText()
+    notifStage.handleTap()
 }
