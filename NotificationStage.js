@@ -13,6 +13,7 @@ class NotificationText {
         this.w = w
         this.text = text
         this.textParts = []
+        this.state = new NotifUIState()
     }
     draw(context) {
         const x = this.x,w = this.w
@@ -33,10 +34,11 @@ class NotificationText {
             y += 40
             this.h = y
         }
+        const scale = this.state.scale
         context.save()
         context.translate(x,this.y)
         context.beginPath()
-        context.rect(w/2-w/2,0,w/2+w/2,this.h)
+        context.rect(w/2-(w/2)*scale,0,w/2+(w/2)*scale,this.h)
         context.clip()
         context.save()
         context.globalAlpha = 0.7
@@ -49,10 +51,10 @@ class NotificationText {
         context.restore()
     }
     update(stopcb) {
-
+        this.state.update(stopcb)
     }
     startUpdating(startcb) {
-
+        this.state.startUpdating(startUpdating)
     }
 }
 class TextPart {
