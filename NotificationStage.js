@@ -77,10 +77,10 @@ class NotificationText {
         context.save()
         context.translate(x,this.y)
         context.beginPath()
-        context.rect(w/2-(w/2)*scale,this.h/2 - (this.h/2)*scale,w/2+(w/2)*scale,this.h/2 + (this.h/2)*scale)
+        context.rect(w/2-(w/2)*scale,0,w*scale,this.h)
         context.clip()
         context.save()
-        context.globalAlpha = 0.7
+        context.globalAlpha = 0.4
         context.fillStyle = '#2ecc71'
         context.fillRect(0,0,w,this.h)
         context.restore()
