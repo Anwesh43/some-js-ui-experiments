@@ -171,3 +171,8 @@ class NotifAnimator {
         }
     }
 }
+const initNotificationStage = () => {
+    const notifStage = new NotificationStage()
+    notifStage.render()
+    notifStage.startAddingText()
+}
