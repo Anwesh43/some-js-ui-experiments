@@ -82,10 +82,52 @@ class NotifUIState {
             stopcb(this.prevScale)
         }
     }
+    updateY() {
+        
+    }
     startUpdating(startcb) {
         if(this.dir == 0) {
             this.dir = 1-2*this.state.scale
             startcb()
         }
+    }
+}
+class NotifUIContainer {
+    constructor(x,y,w) {
+        this.notifUIS = []
+        this.x = x
+        this.y = y
+        this.w = w
+        this.updating = []
+    }
+    addText(text,startcb) {
+        var y = this.y
+        const n = this.notifUIS.length
+        if(n > 0) {
+            y = this.y+this.notifUIS[n-1].y + this.notifUIS[n-1].h
+        }
+        const notifUI = new NotificationText(this.x,this.y,this.w,text)
+        this.notifUIS.push(notifUI)
+        this.updating.push(notifUI)
+        this.startUpdating(notifUI,startcb)
+    }
+    draw(context) {
+        this.notifUIS.forEach((notifUI)=>{
+            notifUI.draw(context)
+        })
+    }
+    update(stopcb) {
+        this.updating.forEach((notifui,index)=>{
+            notifui.update((scale)=>{
+                this.updatin.splice(index,1)
+                stopcb()
+            })
+        })
+    }
+    startUpdating(notifui,startcb) {
+        notifui.startUpdating(startcb)
+    }
+    handleTap(x,y) {
+
     }
 }
