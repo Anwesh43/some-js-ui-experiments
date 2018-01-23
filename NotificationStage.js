@@ -7,14 +7,15 @@ class NotificationStage extends CanvasStage {
     render() {
         super.render()
         if(this.notifContainer) {
-            this.notifContainer.draw(context)
+            this.notifContainer.draw(this.context)
         }
     }
     startAddingText() {
-        const texts = ["Hello world im looking for something new.","Henrikh MKH is a gunner. Yeah bye bye Sanchez.","Lets go br br br. I am ecstatic."]
+        const texts = ["Hello world im looking for something new.","Henrikh MKH is a gunner. Yeah bye bye Sanchez.","Lets go br br br. I am ecstatic.","The best way to understand what the Disruptor is, is to compare it to something well understood and quite similar in purpose. In the case of the Disruptor this would be Java's BlockingQueue."]
         const interval = setInterval(()=>{
             this.notifContainer.addText(texts[0],()=>{
                 this.animator.start(()=>{
+                    this.render()
                     this.notifContainer.update(()=>{
                         this.animator.stop()
                     })
@@ -24,7 +25,7 @@ class NotificationStage extends CanvasStage {
             if(texts.length == 0) {
                 clearInterval(interval)
             }
-        },3000)
+        },2000)
     }
 }
 class NotificationText {
@@ -38,28 +39,37 @@ class NotificationText {
     }
     draw(context) {
         const x = this.x,w = this.w
-        context.font = context.font.replace(/\d/g,20)
+        context.font = context.font.replace(/\d{2}/g,20)
         if(this.textParts.length == 0) {
             var msg = ""
             var words = this.text.split(" ")
-            var y = 20
+            console.log(words)
+            var y = 40
             for(var i=0;i<words.length;i++) {
-                if(context.measureText(msg+words[i]).width > 0.9*w) {
+                if(context.measureText(msg+" "+words[i]).width > 0.9*w) {
                     this.textParts.push(new TextPart(msg,y))
                     y += 40
+                    msg = words[i]
                 }
                 else {
-                    msg = msg+words[i]
+                    if(i == 0) {
+                        msg = words[i]
+                    }
+                    else {
+                        msg += " "+words[i]
+                    }
                 }
             }
+            this.textParts.push(new TextPart(msg,y))
             y += 40
             this.h = y
+            console.log(this.h)
         }
         const scale = this.state.scale
         context.save()
         context.translate(x,this.y)
         context.beginPath()
-        context.rect(w/2-(w/2)*scale,0,w/2+(w/2)*scale,this.h)
+        context.rect(w/2-(w/2)*scale,this.h/2 - (this.h/2)*scale,w/2+(w/2)*scale,this.h/2 + (this.h/2)*scale)
         context.clip()
         context.save()
         context.globalAlpha = 0.7
@@ -75,7 +85,7 @@ class NotificationText {
         this.state.update(stopcb)
     }
     startUpdating(startcb) {
-        this.state.startUpdating(startUpdating)
+        this.state.startUpdating(startcb)
     }
 }
 class TextPart {
@@ -108,7 +118,7 @@ class NotifUIState {
     }
     startUpdating(startcb) {
         if(this.dir == 0) {
-            this.dir = 1-2*this.state.scale
+            this.dir = 1-2*this.scale
             startcb()
         }
     }
@@ -127,7 +137,7 @@ class NotifUIContainer {
         if(n > 0) {
             y = this.y+this.notifUIS[n-1].y + this.notifUIS[n-1].h
         }
-        const notifUI = new NotificationText(this.x,this.y,this.w,text)
+        const notifUI = new NotificationText(this.x,y,this.w,text)
         this.notifUIS.push(notifUI)
         this.updating.push(notifUI)
         this.startUpdating(notifUI,startcb)
@@ -140,8 +150,10 @@ class NotifUIContainer {
     update(stopcb) {
         this.updating.forEach((notifui,index)=>{
             notifui.update((scale)=>{
-                this.updatin.splice(index,1)
+                this.updating.splice(index,1)
                 stopcb()
+                console.log("stopped")
+                console.log(notifui)
             })
         })
     }
@@ -159,7 +171,7 @@ class NotifAnimator {
     start(updatecb) {
         if(!this.animated) {
             this.animated = true
-            this.interval = setInteral(()=>{
+            this.interval = setInterval(()=>{
                 updatecb()
             },50)
         }
