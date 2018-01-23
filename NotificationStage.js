@@ -1,9 +1,30 @@
 class NotificationStage extends CanvasStage {
     constructor() {
         super()
+        this.notifContainer = new NotifUIContainer(2*this.size.w/3,this.size.h/30,this.size.w/3)
+        this.animator = new NotifAnimator()
     }
     render() {
         super.render()
+        if(this.notifContainer) {
+            this.notifContainer.draw(context)
+        }
+    }
+    startAddingText() {
+        const texts = ["Hello world im looking for something new.","Henrikh MKH is a gunner. Yeah bye bye Sanchez.","Lets go br br br. I am ecstatic."]
+        const interval = setInterval(()=>{
+            this.notifContainer.addText(texts[0],()=>{
+                this.animator.start(()=>{
+                    this.notifContainer.update(()=>{
+                        this.animator.stop()
+                    })
+                })
+            })
+            texts.splice(0,1)
+            if(texts.length == 0) {
+                clearInterval(interval)
+            }
+        },3000)
     }
 }
 class NotificationText {
