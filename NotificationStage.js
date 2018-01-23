@@ -83,7 +83,7 @@ class NotifUIState {
         }
     }
     updateY() {
-        
+
     }
     startUpdating(startcb) {
         if(this.dir == 0) {
@@ -129,5 +129,24 @@ class NotifUIContainer {
     }
     handleTap(x,y) {
 
+    }
+}
+class NotifAnimator {
+    constructor() {
+        this.animated = false
+    }
+    start(updatecb) {
+        if(!this.animated) {
+            this.animated = true
+            this.interval = setInteral(()=>{
+                updatecb()
+            },50)
+        }
+    }
+    stop() {
+        if(this.animated) {
+            this.animated = false
+            clearInterval(this.interval)
+        }
     }
 }
