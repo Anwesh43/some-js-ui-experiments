@@ -112,6 +112,26 @@ class CircleArrowDropContainer {
         if(present) {
             return createRandomCircle()
         }
-        return new Circle(x,y,Math.min(this.w,this.h)/8)
+        this.n++
+        return new Circle(x,y,Math.min(this.w,this.h)/8,this.n)
+    }
+    createCircle() {
+        const circle = this.createRandomCircle()
+        this.circles.push(circle)
+    }
+}
+class CircleArrowDropCreator {
+    constructor(container) {
+        this.container = container
+        this.t = 0
+    }
+    start() {
+        var worker = new Worker("IntervalWorker.js")
+        worker.onmessage = (message) => {
+            console.log(message)
+            if(message.data == "create") {
+                this.container.createRandomCircle()
+            }
+        }
     }
 }
