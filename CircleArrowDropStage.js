@@ -173,3 +173,9 @@ class CircleArrowDropAnimator {
         }
     }
 }
+const initCircleArrowDownStage = () => {
+    const stage = new CircleArrowDownStage()
+    stage.render()
+    stage.handleTap()
+    stage.startCreating()
+}
