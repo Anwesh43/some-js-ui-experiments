@@ -6,17 +6,25 @@ class CircleArrowDropStage extends CanvasStage{
         this.creator = new CircleArrowDropCreator(this.container)
     }
     startCreating() {
-        this.creator.start()
+        if(this.creator) {
+            this.creator.start(()=>{
+                this.render()
+                console.log("rendered")
+            })
+        }
     }
     render() {
         super.render()
-        this.container.draw(this.context)
+        if(this.container) {
+            this.container.draw(this.context)
+        }
     }
     handleTap() {
         this.canvas.onmousedown = (event) => {
             const x = event.offsetX, y = event.offsetY
             this.container.startUpdating(x,y,() => {
                 this.animator.start(()=>{
+                    this.render()
                     this.container.update(()=>{
                         this.animator.stop()
                     })
@@ -44,12 +52,12 @@ class CircleArrowDrop {
         context.fill()
         context.clip()
         context.fillStyle = '#4527A0'
-        context.fillRect(-r,-r,2*r,0.1*r+h)
+        context.fillRect(-r,-r,2*r,0.6*r+h)
         context.save()
         context.beginPath()
-        context.moveTo(-0.1*r,-0.1*r+h)
-        context.lineTo(0.1*r,-0.1*r+h)
-        context.lineTo(0,0.1*r+h)
+        context.moveTo(-0.21*r,-0.42*r+h)
+        context.lineTo(0.21*r,-0.42*r+h)
+        context.lineTo(0,h)
         context.fill()
         context.restore()
         context.restore()
@@ -105,7 +113,10 @@ class CircleArrowDropContainer {
             circle.update(()=>{
                 this.updatingCircles.splice(index,1)
                 this.circles = this.circles.filter((curr)=>curr.i != circle.i)
-                stopcb()
+                if(this.updatingCircles.length == 0) {
+                    stopcb()
+                }
+                this.render()
             })
         })
     }
@@ -119,7 +130,7 @@ class CircleArrowDropContainer {
         }
     }
     createRandomCircle() {
-        const x = Math.floor(Math.random()*w) , const y = Math.floor(Math.random()*h)
+        const x = Math.floor(Math.random()*w) , y = Math.floor(Math.random()*h)
         var present = false
         for(var i=0;i<this.circles.length;i++) {
             const circle = this.circles[i]
@@ -132,10 +143,11 @@ class CircleArrowDropContainer {
             return createRandomCircle()
         }
         this.n++
-        return new Circle(x,y,Math.min(this.w,this.h)/8,this.n)
+        return new CircleArrowDrop(x,y,Math.min(this.w,this.h)/8,this.n)
     }
     createCircle() {
         const circle = this.createRandomCircle()
+        console.log(circle)
         this.circles.push(circle)
     }
 }
@@ -144,12 +156,15 @@ class CircleArrowDropCreator {
         this.container = container
         this.t = 0
     }
-    start() {
+    start(updatecb) {
         var worker = new Worker("IntervalWorker.js")
         worker.onmessage = (message) => {
             console.log(message)
             if(message.data == "create") {
-                this.container.createRandomCircle()
+                this.container.createCircle()
+                if(updatecb) {
+                    updatecb()
+                }
             }
         }
     }
@@ -173,8 +188,8 @@ class CircleArrowDropAnimator {
         }
     }
 }
-const initCircleArrowDownStage = () => {
-    const stage = new CircleArrowDownStage()
+const initCircleArrowDropStage = () => {
+    const stage = new CircleArrowDropStage()
     stage.render()
     stage.handleTap()
     stage.startCreating()
