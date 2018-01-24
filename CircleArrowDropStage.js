@@ -7,10 +7,11 @@ class CircleArrowDropStage extends CanvasStage{
     }
 }
 class CircleArrowDrop {
-    constructor(x,y,r) {
+    constructor(x,y,r,i) {
         this.x = x
         this.y = y
         this.r = r
+        this.i = i
         this.state = new CircleArrowDropState()
     }
     draw(context) {
@@ -40,6 +41,9 @@ class CircleArrowDrop {
     startUpdating(startcb) {
         this.state.startUpdating(startcb)
     }
+    handleTap(x,y) {
+        return x >= this.x - this.r && x <= this.x + this.r && y>=this.y - this.r && y <= this.y + this.r
+    }
 }
 class CircleArrowDropState {
     constructor() {
@@ -62,5 +66,52 @@ class CircleArrowDropState {
             this.dir = 1
             startcb()
         }
+    }
+}
+class CircleArrowDropContainer {
+    constructor(w,h) {
+        this.w = w
+        this.h = h
+        this.circles = []
+        this.updatingCircles = []
+        this.n = 0
+    }
+    draw(context) {
+        this.circles.forEach((circle)=>{
+            circle.draw(context)
+        })
+    }
+    update(stopcb) {
+        this.updatingCircles.forEach((circle,index) => {
+            circle.update(()=>{
+                this.updatingCircles.splice(index,1)
+                this.circles = this.circles.filter((curr)=>curr.i != circle.i)
+                stopcb()
+            })
+        })
+    }
+    startUpdating(x,y,startcb) {
+        for(var i=0;i<this.circles.length;i++) {
+            const circle = this.circles[i]
+            if(circle.handleTap(x,y)) {
+                this.updatingCircles.push(circle)
+                circle.startUpdating(startcb)
+            }
+        }
+    }
+    createRandomCircle() {
+        const x = Math.random()*w , const y = Math.random()*h
+        var present = false
+        for(var i=0;i<this.circles.length;i++) {
+            const circle = this.circles[i]
+            if(circle.x == x && circle.y == y) {
+                present = true
+                break
+            }
+        }
+        if(present) {
+            return createRandomCircle()
+        }
+        return new Circle(x,y,Math.min(this.w,this.h)/8)
     }
 }
