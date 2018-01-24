@@ -1,9 +1,28 @@
 class CircleArrowDropStage extends CanvasStage{
     constructor() {
         super()
+        this.animator = new CircleArrowDropAnimator()
+        this.container = new CircleArrowDropContainer(this.size.w,this.size.h)
+        this.creator = new CircleArrowDropCreator(this.container)
+    }
+    startCreating() {
+        this.creator.start()
     }
     render() {
         super.render()
+        this.container.draw(this.context)
+    }
+    handleTap() {
+        this.canvas.onmousedown = (event) => {
+            const x = event.offsetX, y = event.offsetY
+            this.container.startUpdating(x,y,() => {
+                this.animator.start(()=>{
+                    this.container.update(()=>{
+                        this.animator.stop()
+                    })
+                })
+            })
+        }
     }
 }
 class CircleArrowDrop {
@@ -135,7 +154,7 @@ class CircleArrowDropCreator {
         }
     }
 }
-class Animator {
+class CircleArrowDropAnimator {
     constructor() {
         this.animated = false
     }
