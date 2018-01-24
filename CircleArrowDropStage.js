@@ -100,7 +100,7 @@ class CircleArrowDropContainer {
         }
     }
     createRandomCircle() {
-        const x = Math.random()*w , const y = Math.random()*h
+        const x = Math.floor(Math.random()*w) , const y = Math.floor(Math.random()*h)
         var present = false
         for(var i=0;i<this.circles.length;i++) {
             const circle = this.circles[i]
@@ -132,6 +132,25 @@ class CircleArrowDropCreator {
             if(message.data == "create") {
                 this.container.createRandomCircle()
             }
+        }
+    }
+}
+class Animator {
+    constructor() {
+        this.animated = false
+    }
+    start(updatecb) {
+        if(!this.animated) {
+            this.animated = true
+            this.interval = setInterval(()=>{
+                updatecb()
+            },50)
+        }
+    }
+    stop() {
+        if(this.animated) {
+            this.animated = false
+            clearInterval(this.interval)
         }
     }
 }
