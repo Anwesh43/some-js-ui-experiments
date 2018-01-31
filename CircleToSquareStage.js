@@ -11,6 +11,7 @@ class CircleToSquare {
         this.x = x
         this.y = y
         this.size = size
+        this.state = new CircleToSquareState()
     }
     draw(context) {
         context.strokeStyle = '#2980b9'
@@ -34,10 +35,10 @@ class CircleToSquare {
         }
     }
     update(stopcb) {
-
+        this.state.update(stopcb)
     }
     startUpdating(startcb) {
-
+        this.state.startUpdating(startcb)
     }
 }
 class CircleToSquareState {
