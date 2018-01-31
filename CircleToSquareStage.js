@@ -1,16 +1,22 @@
 class CircleToSquareStage extends CanvasStage {
     constructor() {
         super()
-        this.circleToSquare = new CircleToSquare()
+        this.circleToSquare = new CircleToSquare(this.size.w/2,this.size.h/2,Math.min(this.size.w,this.size.h)/2)
         this.animator = new CircleToSquareAnimator()
     }
     render() {
         super.render()
+        if(this.circleToSquare) {
+            this.circleToSquare.draw(this.context)
+        }
     }
     handleTap() {
         this.canvas.onmousedown = (event) => {
             this.circleToSquare.startUpdating(() => {
+                console.log("start")
                 this.animator.start(() => {
+                    console.log("updating")
+                    this.render()
                     this.circleToSquare.update(() => {
                         this.animator.stop()
                     })
@@ -30,14 +36,14 @@ class CircleToSquare {
         context.strokeStyle = '#2980b9'
         context.lineWidth = this.size/20
         context.lineCap = 'round'
-        const r = this.size/2, ax = r/Math.sqrt(2), by = r - r/Math.sqrt(2)
+        const r = this.size/2, ax = r/Math.sqrt(2), offsetY = (r/Math.sqrt(2))*this.state.scale, by = (r)*(1-this.state.scale)
         for(var i=0;i<4;i++) {
             context.save()
             context.translate(this.x,this.y)
             context.rotate(i*Math.PI/2)
             context.beginPath()
-            for(var j=0;j<=180;j++) {
-                const x = ax*Math.cos(j*Math.PI/180), y = by*Math.sin(j*Math.PI/180)
+            for(var j=45;j<=135;j++) {
+                const x = r*Math.cos(j*Math.PI/180), y =  offsetY + by*Math.sin(j*Math.PI/180)
                 if(j == 0) {
                     context.moveTo(x,y)
                 } else {
@@ -72,7 +78,7 @@ class CircleToSquareState {
     }
     startUpdating(startcb) {
         if(this.dir == 0) {
-            this.scale = 1 - 2*this.dir
+            this.dir = 1 - 2*this.scale
             startcb()
         }
     }
