@@ -96,3 +96,8 @@ class CircleToSquareAnimator {
         }
     }
 }
+const initCircleToSquareStage = () => {
+    const stage = new CircleToSquareStage()
+    stage.render()
+    stage.handleTap()
+}
