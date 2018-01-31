@@ -1,9 +1,22 @@
 class CircleToSquareStage extends CanvasStage {
     constructor() {
         super()
+        this.circleToSquare = new CircleToSquare()
+        this.animator = new CircleToSquareAnimator()
     }
     render() {
         super.render()
+    }
+    handleTap() {
+        this.canvas.onmousedown = (event) => {
+            this.circleToSquare.startUpdating(() => {
+                this.animator.start(() => {
+                    this.circleToSquare.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
+        }
     }
 }
 class CircleToSquare {
@@ -15,7 +28,8 @@ class CircleToSquare {
     }
     draw(context) {
         context.strokeStyle = '#2980b9'
-        context.strokeWidth = this.size/20
+        context.lineWidth = this.size/20
+        context.lineCap = 'round'
         const r = this.size/2, ax = r/Math.sqrt(2), by = r - r/Math.sqrt(2)
         for(var i=0;i<4;i++) {
             context.save()
