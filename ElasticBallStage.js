@@ -64,3 +64,32 @@ class ElasticBall {
         this.state.startUpdating(stopcb)
     }
 }
+class ElasticBallContainer {
+    constructor() {
+        this.balls = []
+    }
+    draw(context) {
+        this.balls.forEach((ball)=> {
+            ball.draw(context)
+        })
+    }
+    update(stopcb) {
+        this.balls.forEach((ball,index) => {
+            ball.update(()=>{
+                this.balls.splice(index,1)
+                if(this.balls.length == 0) {
+                    stopcb()
+                }
+            })
+        })
+    }
+    startUpdating(startcb,x,y) {
+        const ball = new ElasticBall(x,y)
+        ball.startUpdating(()=>{
+            if(this.balls.size == 0) {
+                startcb()
+            }
+            this.balls.push(ball)
+        })
+    }
+}
