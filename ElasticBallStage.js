@@ -29,3 +29,38 @@ class ElasticBallState {
         }
     }
 }
+class ElasticBall {
+    constructor(x,y,r) {
+        this.x = x
+        this.y = y
+        this.r = r
+        this.state = new ElasticBallState()
+    }
+    draw(context) {
+        context.fillStyle = 'cyan'
+        context.save()
+        context.translate(this.x,this.y)
+        context.beginPath()
+        for(var i=0;i<360;i++) {
+            var r = this.r
+            if(i > 240 && i < 300) {
+                r -= (r*Math.sin((i-90)*Math.PI/180)*this.state.scale)
+            }
+            const x = r*Math.cos(i*Math.PI/180), y = r*Math.sin(i*Math.PI/180)
+            if(i == 0) {
+                context.moveTo(x,y)
+            }
+            else {
+                context.lineTo(x,y)
+            }
+        }
+        context.fill()
+        context.restore()
+    }
+    update(startcb) {
+        this.state.update(startcb)
+    }
+    startUpdating(stopcb) {
+        this.state.startUpdating(stopcb)
+    }
+}
