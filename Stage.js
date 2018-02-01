@@ -33,4 +33,7 @@ class Size {
         this.w = w
         this.h = h
     }
+    getMin() {
+        return Math.min(this.w,this.h)
+    }
 }

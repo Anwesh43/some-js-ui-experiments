@@ -1,9 +1,28 @@
 class ElasticBallStage extends CanvasStage {
     constructor() {
         super()
+        this.container = new ElasticBallContainer()
+        this.animator = new ElasticBallAnimator()
     }
     render() {
         super.render()
+        if(this.container) {
+            this.container.draw(this.context)
+        }
+    }
+    handleTap() {
+        this.canvas.onmousedown = (event) => {
+            const r = this.size.getMin()/10
+            const x = event.offsetX, y = event.offsetY
+            this.container.startUpdating(() => {
+                this.animator.start(()=>{
+                    this.render()
+                    this.container.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            },x,y,r)
+        }
     }
 }
 class ElasticBallState {
@@ -83,13 +102,13 @@ class ElasticBallContainer {
             })
         })
     }
-    startUpdating(startcb,x,y) {
-        const ball = new ElasticBall(x,y)
+    startUpdating(startcb,x,y,r) {
+        const ball = new ElasticBall(x,y,r)
+        this.balls.push(ball)
         ball.startUpdating(()=>{
-            if(this.balls.size == 0) {
+            if(this.balls.size == 1) {
                 startcb()
             }
-            this.balls.push(ball)
         })
     }
 }
