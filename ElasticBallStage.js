@@ -106,7 +106,7 @@ class ElasticBallContainer {
         const ball = new ElasticBall(x,y,r)
         this.balls.push(ball)
         ball.startUpdating(()=>{
-            if(this.balls.size == 1) {
+            if(this.balls.length == 1) {
                 startcb()
             }
         })
@@ -130,4 +130,9 @@ class ElasticBallAnimator {
             clearInterval(this.interval)
         }
     }
+}
+const initElasticBallStage = () => {
+    const elasticBallStage = new ElasticBallStage()
+    elasticBallStage.render()
+    elasticBallStage.handleTap()
 }
