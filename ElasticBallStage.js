@@ -19,6 +19,7 @@ class ElasticBallStage extends CanvasStage {
                     this.render()
                     this.container.update(() => {
                         this.animator.stop()
+                        this.render()
                     })
                 })
             },x,y,r)
@@ -62,8 +63,8 @@ class ElasticBall {
         context.beginPath()
         for(var i=0;i<360;i++) {
             var r = this.r
-            if(i > 240 && i < 300) {
-                r -= (r*Math.sin((i-90)*Math.PI/180)*this.state.scale)
+            if(i > 180) {
+                r -= ((0.62*this.r)*Math.abs(Math.sin((i)*Math.PI/180))*this.state.scale)
             }
             const x = r*Math.cos(i*Math.PI/180), y = r*Math.sin(i*Math.PI/180)
             if(i == 0) {
