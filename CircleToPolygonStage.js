@@ -108,3 +108,8 @@ class CircleToPolygon {
         this.state.startUpdating(startcb)
     }
 }
+const initCircleToPolygonStage = (n) => {
+    const circleToPolygonStage = new CircleToPolygonStage(n)
+    circleToPolygonStage.render()
+    circleToPolygonStage.handleTap()
+}
