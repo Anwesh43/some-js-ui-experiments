@@ -17,9 +17,12 @@ class CircleToPolygonStage extends CanvasStage {
     handleTap() {
         this.canvas.onmousedown = (event) => {
             const x = event.offsetX, y = event.offsetY
-            this.animator.start(() => {
-                this.circleToPolygon.update(() => {
-                    this.animator.stop()
+            this.circleToPolygon.startUpdating(()=>{
+                this.animator.start(() => {
+                    this.render()
+                    this.circleToPolygon.update(() => {
+                        this.animator.stop()
+                    })
                 })
             })
         }
@@ -79,15 +82,15 @@ class CircleToPolygon {
         context.lineCap = 'round'
         context.strokeStyle = '#5E35B1'
         if(n > 0) {
-            const gap = (360/n), start = 90 - gap/2 , y_final = this.r*Math.cos(gap*Math.PI/180)
+            const gap = (360/n), start = 90 - gap/2 , y_final = this.r*Math.sin(start*Math.PI/180)
             context.save()
             context.translate(this.x,this.y)
             for(var i = 0; i<n; i++) {
                 context.save()
-                context.rotate(i*Math.PI/2)
+                context.rotate(i*gap*Math.PI/180)
                 context.beginPath()
-                for(var j=start;j<=start+deg;i++) {
-                    const x = this.r*Math.cos(j*Math.PI/180), y = y_final*scale + this.r*scale*Math.sin(j*Math.PI/180)
+                for(var j=start;j<=start+gap;j++) {
+                    const x = this.r*Math.cos(j*Math.PI/180), y = y_final*scale + this.r*(1-scale)*Math.sin(j*Math.PI/180)
                     if(j == start) {
                         context.moveTo(x,y)
                     }
