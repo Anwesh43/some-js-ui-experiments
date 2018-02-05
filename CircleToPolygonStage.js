@@ -45,3 +45,47 @@ class CTPAnimator {
         }
     }
 }
+class CircleToPolygon {
+    constructor(x,y,r,n) {
+        this.x = x
+        this.y = y
+        this.r = r
+        this.n = n
+        this.state = new CTPState()
+    }
+    draw(context) {
+        const n = this.n
+        const scale = this.state.scale
+        context.lineWidth = this.r/20
+        context.lineCap = 'round'
+        context.strokeStyle = '#5E35B1'
+        if(n > 0) {
+            const gap = (360/n), start = 90 - gap/2 , y_final = this.r*Math.cos(gap*Math.PI/180)
+            context.save()
+            context.translate(this.x,this.y)
+            for(var i = 0; i<n; i++) {
+                context.save()
+                context.rotate(i*Math.PI/2)
+                context.beginPath()
+                for(var j=start;j<=start+deg;i++) {
+                    const x = this.r*Math.cos(j*Math.PI/180), y = y_final*scale + this.r*scale*Math.sin(j*Math.PI/180)
+                    if(j == start) {
+                        context.moveTo(x,y)
+                    }
+                    else {
+                        context.lineTo(x,y)
+                    }
+                }
+                context.stroke()
+                context.restore()
+            }
+            context.restore()
+        }
+    }
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
+    }
+}
