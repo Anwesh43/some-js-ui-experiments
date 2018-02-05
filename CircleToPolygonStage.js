@@ -1,9 +1,28 @@
 class CircleToPolygonStage extends CanvasStage {
     constructor(n) {
         super()
+        this.initCircleToPolygon(n)
+    }
+    initCircleToPolygon(n) {
+        const w = this.size.w, h = this.size.h
+        this.circleToPolygon = new CircleToPolygon(w/2,h/2,Math.min(w,h)/3,n)
+        this.animator = new CTPAnimator()
     }
     render() {
         super.render()
+        if(this.circleToPolygon) {
+            this.circleToPolygon.draw(this.context)
+        }
+    }
+    handleTap() {
+        this.canvas.onmousedown = (event) => {
+            const x = event.offsetX, y = event.offsetY
+            this.animator.start(() => {
+                this.circleToPolygon.update(() => {
+                    this.animator.stop()
+                })
+            })
+        }
     }
 }
 class CTPState {
