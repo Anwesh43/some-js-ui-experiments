@@ -47,3 +47,44 @@ class ERBAnimator {
         }
     }
 }
+class ERB {
+    constructor(x,y,w,h) {
+        this.x = x
+        this.y = y
+        this.w = w
+        this.h = h
+        this.state = new ERBState()
+    }
+    draw(context) {
+        const scale = this.state.scale
+        context.save()
+        context.translate(this.x,this.y)
+        context.beginPath()
+        context.moveTo(-this.w/3*scale, -this.h/2)
+        context.lineTo(this.w/3*scale, -this.h/2)
+        context.lineTo(this.w/3*scale, this.h/2)
+        context.lineTo(-this.w/3*scale, this.h/2)
+        context.fill()
+        context.beginPath()
+        for(var i = 0;i<2;i++) {
+            const px = (this.w/3) * (1-2*i)
+            for(var j = 180*i,j <= 180*i+180;j++) {
+                const x = px+this.h/2*Math.cos(j*Math.PI/180), y = this.h/2*Math.sin(j*Math.PI/180)
+                if(j == 180*i) {
+                    context.moveTo(x,y)
+                }
+                else {
+                    context.lineTo(x,y)
+                }
+            }
+            context.fill()
+        }
+        context.restore()
+    }
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
+    }
+}
