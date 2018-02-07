@@ -28,3 +28,22 @@ class ERBState {
         }
     }
 }
+class ERBAnimator {
+    constructor() {
+        this.animated = false
+    }
+    start(updatecb) {
+        if(!this.animated) {
+            this.animated = true
+            setInterval(() => {
+              updatecb()
+            },50)
+        }
+    }
+    stop() {
+        if(this.animated) {
+            this.animated = true
+            clearInterval(this.interval)
+        }
+    }
+}
