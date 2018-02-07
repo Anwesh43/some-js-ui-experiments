@@ -1,9 +1,25 @@
 class ExpandingRoundButtonStage extends CanvasStage {
     constructor() {
         super()
+        this.erb = new ERB()
+        this.animator = new ERBAnimator()
     }
     render() {
         super.render()
+        if(this.erb) {
+            this.erb.draw(context)
+        }
+    }
+    handleTap() {
+        if(this.erb && this.animator) {
+            this.erb.startUpdating(() => {
+                this.animator.start(() => {
+                    this.erb.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
+        }
     }
 }
 class ERBState {
@@ -42,7 +58,7 @@ class ERBAnimator {
     }
     stop() {
         if(this.animated) {
-            this.animated = true
+            this.animated = false
             clearInterval(this.interval)
         }
     }
