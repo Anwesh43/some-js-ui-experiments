@@ -104,3 +104,8 @@ class ERB {
         this.state.startUpdating(startcb)
     }
 }
+const initERBStage = () => {
+    const stage = new ExpandingRoundButtonStage()
+    stage.render()
+    stage.handleTap()
+}
