@@ -7,13 +7,18 @@ class LineToXStage extends CanvasStage {
     render() {
         super.render()
         if(this.ltx) {
-            this.ltx.draw(context)
+            this.ltx.draw(this.context)
         }
+    }
+    onResize(w,h) {
+        super.onResize(w,h)
+        this.ltx = new LTX(this.size.w/2,this.size.h/2,2*Math.min(this.size.w,this.size.h)/3)
     }
     handleTap() {
         this.canvas.onmousedown = () => {
             this.ltx.startUpdating(() => {
                 this.animator.start(() => {
+                  this.render()
                   this.ltx.update(() => {
                       this.animator.stop()
                   })
@@ -44,14 +49,14 @@ class LTXAnimator {
 class LTXState {
     constructor() {
         this.scales = [0,0,0]
-        thsi.dir = 0
+        this.dir = 0
         this.j = 0
         this.prevScale = 0
     }
     update(stopcb) {
         this.scales[this.j] += this.dir * 0.1
-        if(Math.abs(this.scales[j] - this.prevScale) > 1) {
-            this.scales[j] = this.prevScale + this.dir
+        if(Math.abs(this.scales[this.j] - this.prevScale) > 1) {
+            this.scales[this.j] = this.prevScale + this.dir
             this.j += this.dir
             if(this.j == this.scales.length || this.j == -1) {
                 this.j -= this.dir
@@ -74,9 +79,16 @@ class LTX {
         this.y = y
         this.size = size
         this.state = new LTXState()
+        console.log(size)
     }
     draw(context) {
+        const color = '#2ecc71'
+        context.fillStyle = color
+        context.strokeStyle = color
+        context.lineWidth = this.size/30
+        context.lineCap = 'round'
         const scales = this.state.scales
+        const size = this.size
         context.save()
         context.translate(this.x,this.y)
         for(var i = 0;i<4;i++) {
@@ -86,7 +98,7 @@ class LTX {
             context.save()
             context.translate(-size/2,-size/2)
             context.beginPath()
-            context.arc(0,0,(size/20) * scales[0],0,2*Math.PI)
+            context.arc(0,0,(size/8) * scales[0],0,2*Math.PI)
             context.fill()
             context.save()
             context.rotate((Math.PI/4)*scales[2])
