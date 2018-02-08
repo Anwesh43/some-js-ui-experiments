@@ -108,3 +108,8 @@ class LTX {
         this.state.startUpdating(startcb)
     }
 }
+const initLTXStage = () => {
+    const ltxStage = new LineToXStage()
+    ltxStage.render()
+    ltxStage.handleTap()
+}
