@@ -50,5 +50,45 @@ class LTXState {
             this.dir = 1 - 2*this.prevScale
             startcb()
         }
-    } 
+    }
+}
+class LTX {
+    constructor(x,y,size) {
+        this.x = x
+        this.y = y
+        this.size = size
+        this.state = new LTXState()
+    }
+    draw(context) {
+        const scales = this.state.scales
+        context.save()
+        context.translate(this.x,this.y)
+        for(var i = 0;i<4;i++) {
+            const x_scale = 1 - 2*(i%2), y_scale = 1 - 2*Math.floor(i/2)
+            context.save()
+            context.scale(x_scale,y_scale)
+            context.save()
+            context.translate(-size/2,-size/2)
+            context.beginPath()
+            context.arc(0,0,(size/20) * scales[0],0,2*Math.PI)
+            context.fill()
+            context.save()
+            context.rotate((Math.PI/4)*scales[2])
+            context.beginPath()
+            context.moveTo(0,0)
+            const x_diff = (size/Math.sqrt(2)) - size/2
+            context.lineTo(size/2*scales[1]+x_diff*scales[2],0)
+            context.stroke()
+            context.restore()
+            context.restore()
+            context.restore()
+        }
+        context.restore()
+    }
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
+    }
 }
