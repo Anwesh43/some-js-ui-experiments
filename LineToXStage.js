@@ -1,9 +1,25 @@
 class LineToXStage extends CanvasStage {
     constructor() {
         super()
+        this.ltx = new LTX(this.size.w/2,this.size.h/2,2*Math.min(this.size.w,this.size.h)/3)
+        this.animator = new LTXAnimator()
     }
     render() {
         super.render()
+        if(this.ltx) {
+            this.ltx.draw(context)
+        }
+    }
+    handleTap() {
+        this.canvas.onmousedown = () => {
+            this.ltx.startUpdating(() => {
+                this.animator.start(() => {
+                  this.ltx.update(() => {
+                      this.animator.stop()
+                  })
+                })
+            })
+        }
     }
 }
 class LTXAnimator {
