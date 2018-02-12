@@ -15,8 +15,10 @@ class MShapeStage extends CanvasStage {
             const x = event.offsetX , y = event.offsetY
             this.mShapeContainer.startUpdating(x,y,() => {
                 this.animator.start(() => {
+                    this.render()
                     this.mShapeContainer.update(() => {
                         this.animator.stop()
+                        this.render()
                     })
                 })
             })
@@ -32,12 +34,14 @@ class MShapeState {
     }
     update(stopcb) {
         this.scales[this.j] += 0.1*this.dir
+        console.log(this.scales)
         if(Math.abs(this.scales[this.j] - this.prevScale) > 1) {
             this.scales[this.j] = this.prevScale + this.dir
             this.j += this.dir
             if(this.j == this.scales.length || this.j == -1) {
                 this.dir *= -1
                 this.j += this.dir
+                this.prevScale = this.scales[this.j]
                 if(this.j == 0) {
                     this.dir = 0
                     stopcb()
@@ -59,9 +63,11 @@ class MShapeAnimator {
     start(updatecb) {
         if(!this.animated) {
             this.animated = true
+            console.log(this.animated)
             this.interval = setInterval(()=>{
                 updatecb()
-            })
+                console.log("animating")
+            },50)
         }
     }
     stop() {
@@ -82,6 +88,7 @@ class MShape {
         context.lineWidth = this.size/25
         context.strokeStyle = '#2ecc71'
         context.lineCap = 'round'
+        const size = this.size
         const scales = this.state.scales
         const gap = this.size/(3*Math.sqrt(2))
         context.save()
@@ -123,9 +130,11 @@ class MShapeContainer {
         const size = Math.min(this.w,this.h)/8
         const mShape = new MShape(x,y,size)
         this.mshapes.push(mShape)
-        if(this.mshapes.size == 1) {
-            mShape.startUpdating(startcb)
-        }
+        mShape.startUpdating(() => {
+          if(this.mshapes.length == 1) {
+              startcb()
+          }
+        })
     }
     update(stopcb) {
         this.mshapes.forEach((mshape,index) => {
