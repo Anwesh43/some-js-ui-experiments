@@ -96,3 +96,33 @@ class MShape {
         this.state.startUpdating(startcb)
     }
 }
+class MShapeContainer {
+    constructor(w,h) {
+        this.mshapes = []
+        this.w = w
+        this.h = h
+    }
+    startUpdating(x,y,startcb) {
+        const size = Math.min(this.w,this.h)/8
+        const mShape = new MShape(x,y,size)
+        this.mshapes.push(mShape)
+        if(this.mshapes.size == 1) {
+            mShape.startUpdating(startcb)
+        }
+    }
+    update(stopcb) {
+        this.mshapes.forEach((mshape,index) => {
+            mshape.update(() => {
+                this.mshapes.splice(index,1)
+                if(this.mshapes.length == 0) {
+                    stopcb()
+                }
+            })
+        })
+    }
+    draw(context) {
+        this.mshapes.forEach((mshape) => {
+            mshape.draw(context)
+        })
+    }
+}
