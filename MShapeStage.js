@@ -54,3 +54,45 @@ class MShapeAnimator {
         }
     }
 }
+class MShape {
+    constructor(x,y,size) {
+        this.x = x
+        this.y = y
+        this.size = size
+        this.state = new MShapeState()
+    }
+    draw(context) {
+        context.lineWidth = this.size/25
+        context.strokeStyle = '#2ecc71'
+        context.lineCap = 'round'
+        const scales = this.state.scales
+        const gap = this.size/(3*Math.sqrt(2))
+        context.save()
+        context.translate(this.x,this.y)
+        for(var i=0;i<2;i++) {
+            const factor = i*2-1
+            context.save()
+            context.translate(gap*factor,0)
+            context.beginPath()
+            context.moveTo(0,(-size/2)*scales[0])
+            context.lineTo(0,(size/2)*scales[0])
+            context.stroke()
+            context.save()
+            context.translate(0,-size/2)
+            context.rotate((Math.PI/4)*factor*scales[1])
+            context.beginPath()
+            context.moveTo(0,0)
+            context.lineTo(0,(size/3)*scales[0])
+            context.stroke()
+            context.restore()
+            context.restore()
+        }
+        context.restore()
+    }
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
+    }
+}
