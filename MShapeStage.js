@@ -1,9 +1,26 @@
 class MShapeStage extends CanvasStage {
     constructor() {
         super()
+        this.animator = new MShapeAnimator()
+        this.mShapeContainer = new MShapeContainer(this.size.w,this.size.h)
     }
     render() {
         super.render()
+        if(this.mShapeContainer) {
+            this.mShapeContainer.draw(this.context)
+        }
+    }
+    handleTap() {
+        this.canvas.onmousedown = (event) => {
+            const x = event.offsetX , y = event.offsetY
+            this.mShapeContainer.startUpdating(x,y,() => {
+                this.animator.start(() => {
+                    this.mShapeContainer.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
+        }
     }
 }
 class MShapeState {
