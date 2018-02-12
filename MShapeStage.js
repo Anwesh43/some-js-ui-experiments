@@ -143,3 +143,8 @@ class MShapeContainer {
         })
     }
 }
+const initMShapeStage = () => {
+    const mShapeStage = new MShapeStage()
+    mShapeStage.render()
+    mShapeStage.handleTap()
+}
