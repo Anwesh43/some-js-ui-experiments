@@ -96,3 +96,8 @@ class SquaredBarList {
         this.state.startUpdating(startcb)
     }
 }
+const initSquaredBarStage = () => {
+    const stage = new SquaredBarStage()
+    stage.render()
+    stage.handleTap()
+}
