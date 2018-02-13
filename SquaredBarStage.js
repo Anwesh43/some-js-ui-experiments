@@ -1,4 +1,4 @@
-class SquaredBarState extrends CanvasStage {
+class SquaredBarStage extends CanvasStage {
     constructor() {
         super()
         this.animator = new SBAnimator()
@@ -7,13 +7,14 @@ class SquaredBarState extrends CanvasStage {
     render() {
         super.render()
         if(this.sbl) {
-            this.sbl.draw(context)
+            this.sbl.draw(this.context)
         }
     }
     handleTap() {
         this.canvas.onmousedown = () => {
             this.sbl.startUpdating(() => {
                 this.animator.start(() => {
+                    this.render()
                     this.sbl.update(() => {
                         this.animator.stop()
                     })
@@ -38,7 +39,7 @@ class SBState {
         }
     }
     startUpdating(startcb) {
-        if(this.dir == 0)( {
+        if(this.dir == 0) {
             this.dir = 1 - 2*this.scale
             startcb()
         }
@@ -65,16 +66,17 @@ class SBAnimator {
 }
 class SquaredBarList {
     constructor(w,h) {
-        this.state = new SquaredBarState()
+        this.state = new SBState()
         this.w = w
         this.h = h
     }
     draw(context) {
+        context.strokeStyle = '#d35400'
         const n = 10
-        const x_gap = this.w/(n+2), y_gap = this.h/(2*n+1)
+        const x_gap = this.w/(n+1), y_gap = this.h/(n+1)
+        context.lineWidth = Math.min(x_gap,y_gap)/12
         var x = x_gap, y = y_gap
         context.save()
-        context.translate(this.w/2,this.h/2)
         for(var i=0;i<n;i++) {
             context.beginPath()
             context.moveTo(0,y)
