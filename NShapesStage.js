@@ -15,8 +15,10 @@ class NShapeStage extends CanvasStage {
             const x = event.offsetX, y = event.offsetY
             this.container.startUpdating(x, y, () => {
                 this.animator.start(() => {
+                    this.render()
                     this.container.update(() => {
                         this.animator.stop()
+                        this.render()
                     })
                 })
             })
@@ -38,6 +40,7 @@ class NSSAnimator {
     stop() {
         if(this.animated) {
             this.animated = false
+            clearInterval(this.interval)
         }
     }
 }
@@ -80,22 +83,31 @@ class NShape {
     }
     draw(context) {
         const scales = this.state.scales
+        const size = this.size
         const gap = (this.size)/(2*Math.sqrt(2))
         context.save()
         context.translate(this.x, this.y)
         for(var i=0;i<2;i++) {
             context.save()
-            context.translate(gap*scales[1]*(i*2-1),0)
+            context.translate((gap)*scales[1]*(i*2-1),0)
             for(var j = 0; j < 2; j++) {
+                context.save()
                 context.beginPath()
                 context.moveTo(0,0)
-                context.lineTo(0,(size/2)*scales[0] * (j * 2 - 1))
+                context.lineTo(0,(gap)*scales[0] * (j * 2 - 1))
                 context.stroke()
+                context.restore()
             }
-            context.save()
-            context.translate(0,size/2*(i*2-1))
-            context.rotate(-1*Math.PI/4*scales[2])
-            context.restore()
+            if(this.state.j != 0) {
+                context.save()
+                context.translate(0,gap*(i*2-1))
+                context.rotate(-1*Math.PI/4*scales[2])
+                context.beginPath()
+                context.moveTo(0,0)
+                context.lineTo(0, (size/2)*(1-2*i))
+                context.stroke()
+                context.restore()
+            }
             context.restore()
         }
         context.restore()
@@ -114,6 +126,8 @@ class NShapeContainer {
     }
     draw(context) {
         context.strokeStyle = 'teal'
+        context.lineWidth = this.nSize/20
+        context.lineCap = 'round'
         this.nShapes.forEach((nShape) =>  {
             nShape.draw(context)
         })
@@ -129,7 +143,7 @@ class NShapeContainer {
         })
     }
     startUpdating(x,y,startcb) {
-        const nShape = new NShape(x, y, nSize)
+        const nShape = new NShape(x, y, this.nSize)
         this.nShapes.push(nShape)
         nShape.startUpdating(() =>  {
             if(this.nShapes.length == 1) {
