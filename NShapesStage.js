@@ -1,12 +1,26 @@
 class NShapeStage extends CanvasStage {
     constructor() {
         super()
+        this.animator = new NSSAnimator()
+        this.container = new NShapeContainer(this.size)
     }
     render() {
         super.render()
+        if(this.container) {
+            this.container.draw(this.context)
+        }
     }
     handleTap() {
-
+        this.canvas.onmousedown = (event) => {
+            const x = event.offsetX, y = event.offsetY
+            this.container.startUpdating(x, y, () => {
+                this.animator.start(() => {
+                    this.container.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
+        }
     }
 }
 class NSSAnimator {
