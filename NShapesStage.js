@@ -57,3 +57,39 @@ class NSSState {
         }
     }
 }
+class NShape {
+    constructor(x,y,size) {
+        this.x = x
+        this.y = y
+        this.size = size
+        this.state = new NSSState()
+    }
+    draw(context) {
+        const scales = this.state.scales
+        const gap = (this.size)/(2*Math.sqrt(2))
+        context.save()
+        context.translate(this.x, this.y)
+        for(var i=0;i<2;i++) {
+            context.save()
+            context.translate(gap*scales[1]*(i*2-1),0)
+            for(var j = 0; j < 2; j++) {
+                context.beginPath()
+                context.moveTo(0,0)
+                context.lineTo(0,(size/2)*scales[0] * (j * 2 - 1))
+                context.stroke()
+            }
+            context.save()
+            context.translate(0,size/2*(i*2-1))
+            context.rotate(-1*Math.PI/4*scales[2])
+            context.restore()
+            context.restore()
+        }
+        context.restore()
+    }
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
+    }
+}
