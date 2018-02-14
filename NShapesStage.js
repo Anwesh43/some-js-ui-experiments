@@ -138,3 +138,8 @@ class NShapeContainer {
         })
     }
 }
+const initNShapeStage = () => {
+    const nShapeStage = new NShapeStage()
+    nShapeStage.render()
+    nShapeStage.handleTap()
+}
