@@ -93,3 +93,34 @@ class NShape {
         this.state.startUpdating(startcb)
     }
 }
+class NShapeContainer {
+    constructor(size) {
+        this.nSize = Math.min(size.w,size.h)/6
+        this.nShapes = []
+    }
+    draw(context) {
+        context.strokeStyle = 'teal'
+        this.nShapes.forEach((nShape) =>  {
+            nShape.draw(context)
+        })
+    }
+    update(stopcb) {
+        this.nShapes.forEach((nShape,index) => {
+            nShape.update(() => {
+                this.nShapes.splice(index,1)
+                if(this.nShapes.length == 0) {
+                    stopcb()
+                }
+            })
+        })
+    }
+    startUpdating(x,y,startcb) {
+        const nShape = new NShape(x, y, nSize)
+        this.nShapes.push(nShape)
+        nShape.startUpdating(() =>  {
+            if(this.nShapes.length == 1) {
+                startcb()
+            }
+        })
+    }
+}
