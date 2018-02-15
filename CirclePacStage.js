@@ -100,3 +100,8 @@ class CirclePac {
         context.restore()
     }
 }
+const initCirclePacStage = () => {
+    const circlePacStage = new CirclePacStage()
+    circlePacStage.render()
+    circlePacStage.handleTap()
+}
