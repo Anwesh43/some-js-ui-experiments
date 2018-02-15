@@ -1,12 +1,27 @@
 class CirclePacStage extends CanvasStage {
     constructor() {
         super()
+        this.circlePac = new CirclePac(this.size.w/2, this.size.h/2, Math.min(this.size.w, this.size.h)/3)
+        this.animator = new CirclePacAnimator()
     }
     render() {
         super.render()
+        if(this.circlePac) {
+            this.circlePac.draw(this.context)
+        }
     }
     handleTap() {
-
+        this.canvas.onmousedown = (event) => {
+            this.circlePac.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.circlePac.update(() => {
+                        this.animator.stop()
+                        this.circle.render()
+                    })
+                })
+            })
+        }
     }
 }
 class CirclePacState {
@@ -72,6 +87,7 @@ class CirclePac {
     }
     draw(context) {
         const scale = this.state.scale
+        context.fillStyle = 'orange'
         context.save()
         context.translate(this.x, this.y)
         context.beginPath()
