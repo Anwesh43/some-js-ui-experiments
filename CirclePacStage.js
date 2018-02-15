@@ -57,3 +57,30 @@ class CirclePacAnimator {
         }
     }
 }
+class CirclePac {
+    constructor(x,y,r) {
+        this.x = x
+        this.y = y
+        this.r = r
+        this.state = new CirclePacStage()
+    }
+    startUpdating(startcb) {
+        this.circle.startUpdating(startcb)
+    }
+    update(stopcb) {
+        this.circlePacStage.update(stopcb)
+    }
+    draw(context) {
+        const scale = this.state.scale
+        context.save()
+        context.translate(this.x, this.y)
+        context.beginPath()
+        context.moveTo(0, 0)
+        for(var i = 30 * scale; i <= 360 - 30*scale; i++) {
+            const x = this.r * Math.cos(i*Math.PI/180), y = this.r * Math.sin(i * Math.PI/180)
+            context.lineTo(x,y)
+        }
+        context.fill()
+        context.restore()
+    }
+}
