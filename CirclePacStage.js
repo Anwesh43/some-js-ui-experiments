@@ -17,7 +17,7 @@ class CirclePacStage extends CanvasStage {
                     this.render()
                     this.circlePac.update(() => {
                         this.animator.stop()
-                        this.circle.render()
+                        this.render()
                     })
                 })
             })
@@ -27,14 +27,14 @@ class CirclePacStage extends CanvasStage {
 class CirclePacState {
     constructor(n) {
         this.j = 0
-        this.n = 0
+        this.n = n
         this.scale = 0
         this.dir = 0
         this.deg = 0
     }
     update(stopcb) {
         this.deg += this.dir * Math.PI/15
-        this.scale = Math.sin(this.deg * Math.PI/180)
+        this.scale = Math.sin(this.deg)
         if(this.deg > Math.PI) {
             this.deg = 0
             this.j ++
@@ -46,10 +46,11 @@ class CirclePacState {
             }
         }
     }
-    startUpdating() {
+    startUpdating(startcb) {
         if(this.dir == 0) {
             this.dir = 1
             this.j = 0
+            startcb()
         }
     }
 }
@@ -61,6 +62,7 @@ class CirclePacAnimator {
         if(!this.animated) {
             this.animated = true
             this.interval = setInterval(() => {
+                console.log("updating")
                 updatecb()
             },50)
         }
@@ -77,13 +79,13 @@ class CirclePac {
         this.x = x
         this.y = y
         this.r = r
-        this.state = new CirclePacStage()
+        this.state = new CirclePacState(5)
     }
     startUpdating(startcb) {
-        this.circle.startUpdating(startcb)
+        this.state.startUpdating(startcb)
     }
     update(stopcb) {
-        this.circlePacStage.update(stopcb)
+        this.state.update(stopcb)
     }
     draw(context) {
         const scale = this.state.scale
@@ -92,7 +94,8 @@ class CirclePac {
         context.translate(this.x, this.y)
         context.beginPath()
         context.moveTo(0, 0)
-        for(var i = 30 * scale; i <= 360 - 30*scale; i++) {
+        const deg = 30 * scale
+        for(var i = deg; i <= 360 - deg; i++) {
             const x = this.r * Math.cos(i*Math.PI/180), y = this.r * Math.sin(i * Math.PI/180)
             context.lineTo(x,y)
         }
