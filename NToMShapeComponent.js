@@ -1,4 +1,4 @@
-class NToShapeStage extends CanvasStage {
+class NToMShapeStage extends CanvasStage {
     constructor() {
         super()
         this.nToMShape = new NToMShape(this.size.w,this.size.h)
@@ -14,6 +14,7 @@ class NToShapeStage extends CanvasStage {
         this.canvas.onmousedown = (event) => {
             this.nToMShape.startUpdating(() => {
                 this.animator.start(() => {
+                    this.render()
                     this.nToMShape.update(() => {
                         this.animator.stop()
                     })
@@ -33,6 +34,7 @@ class NTSState {
         if(Math.abs(this.scale - this.prevScale) > 1) {
             this.scale = this.prevScale + this.dir
             this.dir = 0
+            this.prevScale = this.scale
             stopcb(this.scale)
         }
     }
@@ -49,7 +51,7 @@ class NTSAnimator {
     }
     start(updatecb) {
         if(!this.animated) {
-            this.animated = false
+            this.animated = true
             this.interval = setInterval(() => {
                 updatecb()
             },50)
@@ -64,8 +66,8 @@ class NTSAnimator {
 }
 class NToMShape {
     constructor(w,h) {
-        this.w = w
-        this.h = h
+        this.x = w/2
+        this.y = h/2
         this.size = 2*Math.min(w,h)/3
         this.state = new NTSState()
     }
@@ -85,13 +87,13 @@ class NToMShape {
             context.moveTo(0, -y_gap)
             context.lineTo(0, y_gap)
             context.stroke()
+            context.restore()
             context.save()
-            context.rotate(Math.PI/3*-factor + (2*Math.PI/3)*i*this.state.scale)
+            context.rotate(Math.PI/3*-factor + (2*Math.PI/3)*i+ (4*Math.PI/3)*i*(this.state.scale))
             context.beginPath()
             context.moveTo(0,0)
             context.lineTo(size/2*factor,0)
             context.stroke()
-            context.restore()
             context.restore()
         }
         context.restore()
@@ -102,4 +104,9 @@ class NToMShape {
     startUpdating(startcb) {
         this.state.startUpdating(startcb)
     }
+}
+const initNToMShape = () => {
+    const nToMStage = new NToMShapeStage()
+    nToMStage.render()
+    nToMStage.handleTap()
 }
