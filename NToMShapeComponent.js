@@ -1,12 +1,25 @@
 class NToShapeStage extends CanvasStage {
     constructor() {
         super()
+        this.nToMShape = new NToMShape(this.size.w,this.size.h)
+        this.animator = new NTSAnimator()
     }
     render() {
         super.render()
+        if(this.nToMShape) {
+            this.nToMShape.draw(this.context)
+        }
     }
     handleTap() {
-
+        this.canvas.onmousedown = (event) => {
+            this.nToMShape.startUpdating(() => {
+                this.animator.start(() => {
+                    this.nToMShape.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
+        }
     }
 }
 class NTSState {
