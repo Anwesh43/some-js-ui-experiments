@@ -1,12 +1,28 @@
 class LineBallStage extends CanvasStage {
     constructor() {
         super()
+        this.lineBall = new LineBall(this.size.w, this.size.h)
+        this.animator = new LBAnimator()
     }
     render() {
         super.render()
+        if(this.lineBall) {
+            this.lineBall.draw(this.context)
+        }
     }
-    handleTap() {
-
+    handleKeyDown() {
+        window.onkeydown = (event) => {
+            var dir = event.keyCode - 38
+            if(Math.abs(dir) == 1) {
+                this.lineBall.startUpdating(dir, () => {
+                    this.animator.start(() => {
+                        this.lineBall.update(() => {
+                            this.animator.stop()
+                        })
+                    })
+                })
+            }
+        }
     }
 }
 class LineBallState {
@@ -73,7 +89,7 @@ class LineBall {
     }
     draw(context) {
         const scales = this.state.scales
-        this.x = this.px + this.gap * scales[2]
+        this.x = this.px + this.gap * scales[2] * this.dir
         context.save()
         context.translate(this.x, this.y)
         context.beginPath()
@@ -93,7 +109,7 @@ class LineBall {
             stopcb()
         })
     }
-    startUpdating(startcb, dir) {
+    startUpdating(dir, startcb) {
         this.dir = dir
         this.state.startUpdating(() => {
             startcb()
