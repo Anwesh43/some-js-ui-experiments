@@ -37,6 +37,7 @@ class LineBallState {
     startUpdating(startcb) {
         if(this.dir == 0) {
             this.dir = 1
+            this.scales = [0,0,0]
             startcb()
         }
     }
@@ -58,5 +59,44 @@ class LBAnimator {
             this.animated = false
             clearInterval(this.interval)
         }
+    }
+}
+class LineBall {
+    constructor(w,h) {
+        this.x = w/20
+        this.y = h/2
+        this.px = this.x
+        this.gap = w/10
+        this.y_gap = h/5
+        this.state = new LineBallState()
+        this.dir = 0
+    }
+    draw(context) {
+        const scales = this.state.scales
+        this.x = this.px + this.gap * scales[2]
+        context.save()
+        context.translate(this.x, this.y)
+        context.beginPath()
+        context.moveTo(0,0)
+        const y_updated = -this.y_gap * (1 - scales[0])
+        context.lineTo(0, y_updated)
+        context.stroke()
+        context.beginPath()
+        const r_updated = (this.gap/10) * scales[1]
+        context.arc(0, y_updated, r_updated, 0, 2*Math.PI)
+        context.fill()
+        context.restore()
+    }
+    update(stopcb) {
+        this.state.update(() => {
+            this.px = this.x
+            stopcb()
+        })
+    }
+    startUpdating(startcb, dir) {
+        this.dir = dir
+        this.state.startUpdating(() => {
+            startcb()
+        })
     }
 }
