@@ -89,6 +89,12 @@ class LineBall {
     }
     draw(context) {
         const scales = this.state.scales
+        const color = 'orange'
+        const r = this.gap/10
+        context.strokeStyle = color
+        context.fillStyle = color
+        context.lineWidth = r * 0.1
+        context.lineCap = 'round'
         this.x = this.px + this.gap * scales[2] * this.dir
         context.save()
         context.translate(this.x, this.y)
@@ -98,7 +104,7 @@ class LineBall {
         context.lineTo(0, y_updated)
         context.stroke()
         context.beginPath()
-        const r_updated = (this.gap/10) * scales[1]
+        const r_updated = r * 0.1 + (r * 0.9) * scales[1]
         context.arc(0, y_updated, r_updated, 0, 2*Math.PI)
         context.fill()
         context.restore()
