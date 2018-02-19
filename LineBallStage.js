@@ -122,3 +122,8 @@ class LineBall {
         })
     }
 }
+const initLineBallStage = () => {
+    const stage = new LineBallStage()
+    stage.render()
+    stage.handleKeyDown()
+}
