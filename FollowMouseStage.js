@@ -107,3 +107,8 @@ class FollowMouse {
         this.state.startUpdating(startcb)
     }
 }
+const initFollowMouseStage = () =>  {
+    const followMouseStage = new FollowMouseStage()
+    followMouseStage.render()
+    followMo
+}
