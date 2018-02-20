@@ -1,6 +1,8 @@
 class FollowMouseStage extends CanvasStage {
     constructor() {
         super()
+        this.followMouse = new FollowMouse(this.size.w/2, this.size.h/2)
+        this.animator = new FollowMouseAnimator()
     }
     render() {
         super.render()
@@ -8,6 +10,13 @@ class FollowMouseStage extends CanvasStage {
     handleTap() {
         this.canvas.onmousedown = (event) => {
             const x = event.offsetX, y = event.offsetY
+            this.followMouse.startUpdating(() => {
+                this.animator.start(() => {
+                    this.followMouse.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
