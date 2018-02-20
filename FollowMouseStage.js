@@ -13,7 +13,7 @@ class FollowMouseStage extends CanvasStage {
 }
 class FollowMouseState {
     constructor() {
-        this.scales = [0,0]
+        this.scales = [0, 0, 0]
         this.dir = 0
         this.prevScale = 0
         this.j = 0
@@ -57,5 +57,44 @@ class FollowMouseAnimator {
             this.animated = false
             clearInterval(this.interval)
         }
+    }
+}
+class FollowMouse {
+    constructor(x,y) {
+        this.x = x
+        this.y = y
+        this.prevX = x
+        this.prevY = y
+        this.destX = x
+        this.destY = y
+        this.state = new FollowMouseState()
+    }
+    draw(context,size) {
+        const scales = this.state.scales
+        this.x = this.prevX + (this.destX - this.prevX) * scales[1]
+        this.y = this.prevY + (this.destY - this.prevY) * scales[0]
+        const x = this.x
+        const y = this.y
+        const x1 = this.prevX + (this.destX - this.prevX) * scales[2]
+        const y1 = this.prevY + (this.destY - this.prevY) * scales[1]
+        context.save()
+        context.beginPath()
+        context.arc(x, y, size * (1 - scales[0] + scales[2]), 0, 2*Math.PI)
+        context.fill()
+        context.beginPath()
+        context.moveTo(x , y1)
+        context.lineTo(x, y)
+        context.stroke()
+        context.beginPath()
+        context.moveTo(x1, y)
+        context.lineTo(x, y)
+        context.stroke()
+        context.restore()
+    }
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
     }
 }
