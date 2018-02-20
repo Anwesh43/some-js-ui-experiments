@@ -6,12 +6,16 @@ class FollowMouseStage extends CanvasStage {
     }
     render() {
         super.render()
+        if(this.followMouse) {
+            this.followMouse.draw(this.context, Math.min(this.size.w, this.size.h)/20)
+        }
     }
     handleTap() {
         this.canvas.onmousedown = (event) => {
             const x = event.offsetX, y = event.offsetY
-            this.followMouse.startUpdating(() => {
+            this.followMouse.startUpdating(x, y, () => {
                 this.animator.start(() => {
+                    this.render()
                     this.followMouse.update(() => {
                         this.animator.stop()
                     })
@@ -46,6 +50,7 @@ class FollowMouseState {
     startUpdating(startcb) {
         if(this.dir == 0) {
             this.dir = 1
+            startcb()
         }
     }
 }
@@ -79,6 +84,11 @@ class FollowMouse {
         this.state = new FollowMouseState()
     }
     draw(context,size) {
+        const color = '#4CAF50'
+        context.fillStyle = color
+        context.strokeStyle = color
+        context.lineCap = 'round'
+        context.lineWidth = size/20
         const scales = this.state.scales
         this.x = this.prevX + (this.destX - this.prevX) * scales[1]
         this.y = this.prevY + (this.destY - this.prevY) * scales[0]
@@ -91,24 +101,29 @@ class FollowMouse {
         context.arc(x, y, size * (1 - scales[0] + scales[2]), 0, 2*Math.PI)
         context.fill()
         context.beginPath()
-        context.moveTo(x , y1)
-        context.lineTo(x, y)
+        context.moveTo(this.prevX, y1)
+        context.lineTo(this.prevX, y)
         context.stroke()
+
         context.beginPath()
-        context.moveTo(x1, y)
-        context.lineTo(x, y)
+        context.moveTo(x1, this.destY)
+        context.lineTo(x, this.destY)
         context.stroke()
         context.restore()
     }
     update(stopcb) {
         this.state.update(stopcb)
     }
-    startUpdating(startcb) {
-        this.state.startUpdating(startcb)
+    startUpdating(x,y, startcb) {
+        this.state.startUpdating(() => {
+          this.destX = x
+          this.destY = y
+          startcb()
+        })
     }
 }
 const initFollowMouseStage = () =>  {
     const followMouseStage = new FollowMouseStage()
     followMouseStage.render()
-    followMo
+    followMouseStage.handleTap()
 }
