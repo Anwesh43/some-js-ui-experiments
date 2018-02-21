@@ -13,10 +13,11 @@ class SquareMoverStage extends CanvasStage {
     handleTap() {
         this.canvas.onmousedown = (event) => {
             const x = event.offsetX
-            if(x != squareMover.x) {
-                const diff = x - this.square.x
+            if(x != this.squareMover.x) {
+                const diff = x - this.squareMover.x
                 this.squareMover.startUpdating(diff/Math.abs(diff), () => {
                     this.animator.start(() => {
+                        this.render()
                         this.squareMover.update(() => {
                             this.animator.stop()
                         })
@@ -35,7 +36,7 @@ class SquareMoverState {
     update(stopcb) {
         this.scales[this.j] += this.dir * 0.1
         if(Math.abs(this.scales[this.j]) > 1) {
-            this.scales[this.j]  = this.prevScale + this.dir
+            this.scales[this.j]  = 1
             this.j += this.dir
             if(this.j == this.scales.length) {
                 this.dir = 0
@@ -48,6 +49,7 @@ class SquareMoverState {
         if(this.dir == 0) {
             this.dir = 1
             this.scales = [0, 0]
+            startcb()
         }
     }
 }
@@ -88,18 +90,20 @@ class SquareMover {
         const size_updated = this.size * (1 - this.state.scales[0])
         const square2_size = this.size * (this.state.scales[1])
         context.fillRect(-size_updated/2, -size_updated/2, size_updated, size_updated)
-        const x1 = 4 * this.size * this.state.scales[0], x = 4 * this.size * this.state.scales[1]
+        const x1 = 4 * this.size * this.state.scales[0] * this.dir, x = 4 * this.size * this.state.scales[1] * this.dir
         context.beginPath()
         context.moveTo(x, 0)
         context.lineTo(x1, 0)
         context.stroke()
-        context.fillRect(4 * this.size - square2_size/2, -square2_size/2, square2_size, square2_size)
+        console.log(`${x} ${x1}`)
+        context.fillRect(4 * this.size * this.dir - square2_size/2, -square2_size/2, square2_size, square2_size)
         context.restore()
     }
     update(stopcb) {
         this.state.update(() => {
             this.x += 4*this.size * this.dir
             this.dir = 0
+            stopcb()
         })
     }
     startUpdating(dir, startcb) {
@@ -108,4 +112,9 @@ class SquareMover {
             this.state.startUpdating(startcb)
         }
     }
+}
+const initSquareMoverStage = () => {
+    const squareMoverStage = new SquareMoverStage()
+    squareMoverStage.render()
+    squareMoverStage.handleTap()
 }
