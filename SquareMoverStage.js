@@ -1,12 +1,29 @@
 class SquareMoverStage extends CanvasStage {
     constructor() {
         super()
+        this.squareMover = new SquareMover(this.size.w, this.size.h)
+        this.animator = new SquareMoverAnimator()
     }
     render() {
         super.render()
+        if(this.squareMover) {
+            this.squareMover.draw(this.context)
+        }
     }
     handleTap() {
-
+        this.canvas.onmousedown = (event) => {
+            const x = event.offsetX
+            if(x != squareMover.x) {
+                const diff = x - this.square.x
+                this.squareMover.startUpdating(diff/Math.abs(diff), () => {
+                    this.animator.start(() => {
+                        this.squareMover.update(() => {
+                            this.animator.stop()
+                        })
+                    })
+                })
+            }
+        }
     }
 }
 class SquareMoverState {
