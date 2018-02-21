@@ -34,7 +34,7 @@ class SquareMoverState {
         }
     }
 }
-class SqaureMoverAnimator {
+class SquareMoverAnimator {
     constructor() {
         this.animated = false
     }
@@ -50,6 +50,45 @@ class SqaureMoverAnimator {
         if(this.animated) {
             this.animated = false
             clearInterval(this.interval)
+        }
+    }
+}
+class SquareMover {
+    constructor(w, h) {
+        this.dir = 0
+        this.x = w/2
+        this.y = h/2
+        this.size = Math.min(w,h)/15
+        this.state = new SquareMoverState()
+    }
+    draw(context) {
+        context.fillStyle = 'teal'
+        context.strokeStyle = 'teal'
+        context.lineWidth = Math.min(w,h)/60
+        context.lineCap = 'round'
+        context.save()
+        context.translate(this.x, this.y)
+        const size_updated = this.size * (1 - this.state.scales[0])
+        const square2_size = this.size * (this.state.scales[1])
+        context.fillRect(-size_updated/2, -size_updated/2, size_updated, size_updated)
+        const x1 = 4 * this.size * this.state.scales[0], x = 4 * this.size * this.state.scales[1]
+        context.beginPath()
+        context.moveTo(x, 0)
+        context.lineTo(x1, 0)
+        context.stroke()
+        context.fillRect(4 * this.size - square2_size/2, -square2_size/2, square2_size, square2_size)
+        context.restore()
+    }
+    update(stopcb) {
+        this.state.update(() => {
+            this.x += 4*this.size * this.dir
+            this.dir = 0
+        })
+    }
+    startUpdating(dir, startcb) {
+        if(this.dir == 0) {
+            this.dir = dir
+            this.state.startUpdating(startcb)
         }
     }
 }
