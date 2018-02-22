@@ -118,3 +118,8 @@ class CircleLineMover {
         }
     }
 }
+const initCircleLineMoverStage = () => {
+    const stage = new CircleLineMoverStage()
+    stage.render()
+    stage.handleTap()
+}
