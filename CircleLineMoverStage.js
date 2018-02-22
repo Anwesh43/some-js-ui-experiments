@@ -13,14 +13,17 @@ class CircleLineMoverStage extends CanvasStage {
     handleTap() {
         this.canvas.onmousedown = (event) => {
             const x = event.offsetX
-            this.circleLine.startUpdating(() => {
-                this.animator.start(() => {
-                    this.render()
-                    this.circleLine.update(() => {
-                        this.animator.stop()
+            const diff = x - this.circleLine.x
+            if(diff != 0) {
+                this.circleLine.startUpdating(diff/Math.abs(diff), () => {
+                    this.animator.start(() => {
+                        this.render()
+                        this.circleLine.update(() => {
+                            this.animator.stop()
+                        })
                     })
                 })
-            })
+            }
         }
     }
 }
@@ -60,6 +63,7 @@ class CircleLineState {
         this.scales[this.j] += this.dir * 0.1
         if(this.scales[this.j] > 1) {
             this.scales[this.j] = 1
+            this.j ++
             if(this.j == this.scales.length) {
                 this.dir = 0
                 this.j = 0
@@ -76,7 +80,7 @@ class CircleLineMover {
         this.state = new CircleLineState()
         this.dir = 0
     }
-    drawArc(context, startDeg, endDeg) {
+    drawArc(context, startDeg, endDeg, r) {
         context.beginPath()
         for(var i = startDeg; i <= endDeg; i++) {
             const x = r * Math.cos(i * Math.PI/180), y = r * Math.sin(i * Math.PI/180)
@@ -96,12 +100,20 @@ class CircleLineMover {
       context.stroke()
     }
     draw(context) {
+        context.strokeStyle = '#e74c3c'
+        context.lineWidth = this.size/12
+        context.lineCap = 'round'
         const r = this.size/2
         const scales = this.state.scales
         context.save()
         context.translate(this.x, this.y)
-        this.drawArc(context, 0, 360 * (1 - scales[0]))
-        this.drawLine(context, r + (2 * Math.PI * r - r) * scales[1], r + (2 * Math.PI * r - r) * scales[0])
+        this.drawArc(context, 90 * (1 - this.dir) + 360*scales[0], 90 * (1 - this.dir) + 360 , r)
+        const update_x = (index) => r*this.dir + (2 * Math.PI * r - 2*r) * scales[index] * this.dir
+        this.drawLine(context, update_x(1), update_x(0))
+        context.save()
+        context.translate(2*Math.PI*r*this.state.scales[0] * this.dir ,0)
+        this.drawArc(context, 90 * (1 + this.dir), 90 * (1 + this.dir) + 360 * (scales[1]), r)
+        context.restore()
         context.restore()
     }
     update(stopcb) {
@@ -113,7 +125,7 @@ class CircleLineMover {
     }
     startUpdating(dir, startcb) {
         if(this.dir == 0) {
-            this.dir = 1
+            this.dir = dir
             this.state.startUpdating(startcb)
         }
     }
