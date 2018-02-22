@@ -55,3 +55,53 @@ class CircleLineState {
         }
     }
 }
+class CircleLineMover {
+    constructor(x, y, size) {
+        this.x = x
+        this.y = y
+        this.size = size
+        this.state = new State()
+        this.dir = 0
+    }
+    drawArc(context, startDeg, endDeg) {
+        context.beginPath()
+        for(var i = startDeg; i <= endDeg; i++) {
+            const x = r * Math.cos(i * Math.PI/180), y = r * Math.sin(i * Math.PI/180)
+            if(i == 0) {
+                context.moveTo(x, y)
+            }
+            else {
+                context.lineTo(x,y)
+            }
+        }
+        context.stroke()
+    }
+    drawLine(context, x1, x2) {
+      context.beginPath()
+      context.moveTo(x1, 0)
+      context.lineTo(x2, 0)
+      context.stroke()
+    }
+    draw(context) {
+        const r = this.size/2
+        const scales = this.state.scales
+        context.save()
+        context.translate(this.x, this.y)
+        this.drawArc(context, 0, 360 * (1 - scales[0]))
+        this.drawLine(context, r + (2 * Math.PI * r - r) * scales[1], r + (2 * Math.PI * r - r) * scales[0])
+        context.restore()
+    }
+    update(stopcb) {
+        this.state.update(() => {
+            this.x += this.dir * 2 * Math.PI * (this.size/2)
+            this.dir = 0
+            stopcb()
+        })
+    }
+    startUpdating(dir, startcb) {
+        if(this.dir == 0) {
+            this.dir = 1
+            this.state.startUpdating(startcb)
+        }
+    }
+}
