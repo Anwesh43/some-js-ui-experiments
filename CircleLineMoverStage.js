@@ -1,13 +1,26 @@
 class CircleLineMoverStage extends CanvasStage {
     constructor() {
         super()
+        this.animator = new CircleLineAnimator()
+        this.circleLine = new CircleLineMover(this.size.w/2, this.size.h/2, Math.min(this.size.w, this.size.h)/15)
     }
     render() {
         super.render()
+        if(this.circleLine) {
+            this.circleLine.draw(this.context)
+        }
     }
     handleTap() {
         this.canvas.onmousedown = (event) => {
             const x = event.offsetX
+            this.circleLine.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.circleLine.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
@@ -60,7 +73,7 @@ class CircleLineMover {
         this.x = x
         this.y = y
         this.size = size
-        this.state = new State()
+        this.state = new CircleLineState()
         this.dir = 0
     }
     drawArc(context, startDeg, endDeg) {
