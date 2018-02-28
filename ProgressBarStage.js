@@ -3,13 +3,13 @@ const IN_PROGRESS_COLOR = '#2980b9'
 class ProgressBarStage extends CanvasStage {
     constructor() {
         super()
-        this.container = new ProgressBarContainer(Math.min(this.size.w, this.size.h))
+        this.container = new ProgressBarContainer(Math.min(this.size.w, this.size.h)/4)
         this.animator = new ProgressBarAnimator()
     }
     render() {
         super.render()
         if(this.container) {
-            this.container.draw(context)
+            this.container.draw(this.context)
         }
     }
     handleTap() {
@@ -20,6 +20,7 @@ class ProgressBarStage extends CanvasStage {
                         this.render()
                         this.container.update(() => {
                             this.animator.stop()
+                            this.render()
                         })
                     })
                 })
@@ -41,8 +42,8 @@ class ProgressBarState {
         }
     }
     update(stopcb) {
-        this.scales[this.j] += 0.1 * this.dir
-        if(Math.abs(this.scales[this.j] > this.prevScale)) {
+        this.scales[this.j] += 0.05 * this.dir
+        if(Math.abs(this.scales[this.j] - this.prevScale) > 1) {
             this.scales[this.j] = this.prevScale + this.dir
             this.j += this.dir
             if(this.j == this.scales.length || this.j == -1) {
@@ -69,7 +70,7 @@ class ProgressBarAnimator {
     stop() {
         if(this.animated) {
             this.animated = false
-            clearInteral(this.interval)
+            clearInterval(this.interval)
         }
     }
 }
@@ -81,17 +82,19 @@ class ProgressBar {
 
     }
     drawProgressBar(context, scale, size) {
-        context.lineWidth = this.size/30
+        context.lineWidth = size/25
         context.lineCap = 'round'
         context.save()
         context.translate(0, size/2 + this.i * size)
         this.drawShape(context, 1, PROGRESS_TO_DO_COLOR, size)
-        this.drawShape(context, scale, IN_PROGRESS_COLOR, size)
+        if(scale != 0) {
+            this.drawShape(context, scale, IN_PROGRESS_COLOR, size)
+        }
         context.restore()
     }
     draw(context, state, size) {
         const scales = state.scales
-        drawProgressBar(context, scales[this.i], size)
+        this.drawProgressBar(context, scales[this.i], size)
     }
 }
 class LinearProgressBar extends ProgressBar {
@@ -111,10 +114,10 @@ class CircularProgressBar extends ProgressBar {
         super(1)
     }
     drawShape(context, scale, color, size) {
-        context.fillStyle = color
+        context.strokeStyle = color
         context.beginPath()
         for(var i = 0; i < 360 * scale; i++) {
-            const x = (size/4) * Math.cos(i * Math.PI/180), y = (size/4) * Math.sin(i * Math.PI/180)
+            const x = (size/4) * Math.cos((i - 90) * Math.PI/180), y = (size/4) * Math.sin((i - 90) * Math.PI/180)
             if(i == 0) {
                 context.moveTo(x, y)
             }
@@ -131,7 +134,7 @@ class RectProgressBar extends ProgressBar {
     }
     drawShape(context, scale, color, size) {
         context.fillStyle = color
-        context.fillRect(-size/2, -size/2 , size * scale, size)
+        context.fillRect(-size/2, -size/2 , size * scale, size/8)
     }
 }
 class ProgressBarContainer {
@@ -141,9 +144,12 @@ class ProgressBarContainer {
         this.size = size
     }
     draw(context) {
+        context.save()
+        context.translate(this.size, 0)
         this.progressBars.forEach((progressBar) => {
             progressBar.draw(context, this.state, this.size)
         })
+        context.restore()
     }
     update(stopcb) {
         this.state.update(stopcb)
