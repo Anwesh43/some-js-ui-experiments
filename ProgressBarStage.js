@@ -11,7 +11,7 @@ class ProgressBarStage extends CanvasStage {
 
     }
 }
-class State {
+class ProgressBarState {
     constructor() {
         this.scales = [0, 0, 0]
         this.prevScale = 0
@@ -38,7 +38,7 @@ class State {
         }
     }
 }
-class Animator {
+class ProgressBarAnimator {
     constructor() {
         this.animated = false
     }
@@ -95,6 +95,7 @@ class CircularProgressBar extends ProgressBar {
         super(1)
     }
     drawShape(context, scale, color, size) {
+        context.fillStyle = color
         context.beginPath()
         for(var i = 0; i < 360 * scale; i++) {
             const x = (size/4) * Math.cos(i * Math.PI/180), y = (size/4) * Math.sin(i * Math.PI/180)
@@ -115,5 +116,23 @@ class RectProgressBar extends ProgressBar {
     drawShape(context, scale, color, size) {
         context.fillStyle = color
         context.fillRect(-size/2, -size/2 , size * scale, size)
+    }
+}
+class ProgressBarContainer {
+    constructor(size) {
+        this.state = new State()
+        this.progressBars = [new LinearProgressBar(), new CircularProgressBar(), new RectProgressBar()]
+        this.size = size
+    }
+    draw(context) {
+        this.progressBars.forEach((progressBar) => {
+            progressBar.draw(context, this.state, this.size)
+        })
+    }
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
     }
 }
