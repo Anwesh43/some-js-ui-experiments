@@ -152,3 +152,8 @@ class ProgressBarContainer {
         this.state.startUpdating(startcb)
     }
 }
+const initProgressBarStage = () => {
+    const progressBarStage = new ProgressBarStage()
+    progressBarStage.render()
+    progressBarStage.handleTap()
+}
