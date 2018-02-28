@@ -78,31 +78,42 @@ class ProgressBar {
         drawProgressBar(context, scales[this.i], size)
     }
 }
-class LinearProgressBar extends ProgressBar{
+class LinearProgressBar extends ProgressBar {
     constructor() {
         super(0)
     }
     drawShape(context, scale, color, size) {
         context.strokeStyle = color
         context.beginPath()
-        context.moveTo(0, 0)
-        context.lineTo(0, size * scale)
+        context.moveTo(-size/2, 0)
+        context.lineTo(-size/2 + size * scale, 0)
         context.stroke()
     }
 }
-class CircularProgressBar extends ProressBar {
+class CircularProgressBar extends ProgressBar {
     constructor() {
         super(1)
     }
     drawShape(context, scale, color, size) {
         context.beginPath()
         for(var i = 0; i < 360 * scale; i++) {
+            const x = (size/4) * Math.cos(i * Math.PI/180), y = (size/4) * Math.sin(i * Math.PI/180)
             if(i == 0) {
-                context.moveTo()
+                context.moveTo(x, y)
             }
             else {
-                context.lineTo()
+                context.lineTo(x, y)
             }
         }
+        context.stroke()
+    }
+}
+class RectProgressBar extends ProgressBar {
+    constructor() {
+        super(2)
+    }
+    drawShape(context, scale, color, size) {
+        context.fillStyle = color
+        context.fillRect(-size/2, -size/2 , size * scale, size)
     }
 }
