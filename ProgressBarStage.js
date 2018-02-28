@@ -1,3 +1,5 @@
+const PROGRESS_TO_DO_COLOR = '#95a5a6'
+const IN_PROGRESS_COLOR = '#2980b9'
 class ProgressBarStage extends CanvasStage {
     constructor() {
         super()
@@ -59,8 +61,17 @@ class ProgressBar {
     constructor(i) {
         this.i = i
     }
-    drawProgressBar(context, scale, size) {
+    drawShape(context, scale, color, size) {
 
+    }
+    drawProgressBar(context, scale, size) {
+        context.lineWidth = this.size/30
+        context.lineCap = 'round'
+        context.save()
+        context.translate(0, size/2 + this.i * size)
+        this.drawShape(context, 1, PROGRESS_TO_DO_COLOR, size)
+        this.drawShape(context, scale, IN_PROGRESS_COLOR, size)
+        context.restore()
     }
     draw(context, state, size) {
         const scales = state.scales
@@ -71,16 +82,27 @@ class LinearProgressBar extends ProgressBar{
     constructor() {
         super(0)
     }
-    drawProgressBar(context, scale, size) {
-        context.lineWidth = this.size/30
-        context.lineCap = 'round'
-        context.strokeStyle = ''
-        context.save()
-        context.translate(0, size/2 + this.i * size)
+    drawShape(context, scale, color, size) {
+        context.strokeStyle = color
         context.beginPath()
         context.moveTo(0, 0)
         context.lineTo(0, size * scale)
         context.stroke()
-        context.restore()
+    }
+}
+class CircularProgressBar extends ProressBar {
+    constructor() {
+        super(1)
+    }
+    drawShape(context, scale, color, size) {
+        context.beginPath()
+        for(var i = 0; i < 360 * scale; i++) {
+            if(i == 0) {
+                context.moveTo()
+            }
+            else {
+                context.lineTo()
+            }
+        }
     }
 }
