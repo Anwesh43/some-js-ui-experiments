@@ -55,15 +55,32 @@ class Animator {
         }
     }
 }
-class ProgreeBar {
+class ProgressBar {
     constructor(i) {
         this.i = i
     }
-    drawProgressBar(context, scale) {
+    drawProgressBar(context, scale, size) {
 
     }
-    draw(context, state) {
+    draw(context, state, size) {
         const scales = state.scales
-        drawProgressBar(context, scales[this.i])
+        drawProgressBar(context, scales[this.i], size)
+    }
+}
+class LinearProgressBar extends ProgressBar{
+    constructor() {
+        super(0)
+    }
+    drawProgressBar(context, scale, size) {
+        context.lineWidth = this.size/30
+        context.lineCap = 'round'
+        context.strokeStyle = ''
+        context.save()
+        context.translate(0, size/2 + this.i * size)
+        context.beginPath()
+        context.moveTo(0, 0)
+        context.lineTo(0, size * scale)
+        context.stroke()
+        context.restore()
     }
 }
