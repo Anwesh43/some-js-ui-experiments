@@ -55,3 +55,15 @@ class Animator {
         }
     }
 }
+class ProgreeBar {
+    constructor(i) {
+        this.i = i
+    }
+    drawProgressBar(context, scale) {
+
+    }
+    draw(context, state) {
+        const scales = state.scales
+        drawProgressBar(context, scales[this.i])
+    }
+}
