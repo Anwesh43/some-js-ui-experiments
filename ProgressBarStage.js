@@ -3,12 +3,28 @@ const IN_PROGRESS_COLOR = '#2980b9'
 class ProgressBarStage extends CanvasStage {
     constructor() {
         super()
+        this.container = new ProgressBarContainer(Math.min(this.size.w, this.size.h))
+        this.animator = new ProgressBarAnimator()
     }
     render() {
         super.render()
+        if(this.container) {
+            this.container.draw(context)
+        }
     }
     handleTap() {
-
+        if(this.container) {
+            this.canvas.onmousedown = () => {
+                this.container.startUpdating(() => {
+                    this.animator.start(() => {
+                        this.render()
+                        this.container.update(() => {
+                            this.animator.stop()
+                        })
+                    })
+                })
+            }
+        }
     }
 }
 class ProgressBarState {
@@ -120,7 +136,7 @@ class RectProgressBar extends ProgressBar {
 }
 class ProgressBarContainer {
     constructor(size) {
-        this.state = new State()
+        this.state = new ProgressBarState()
         this.progressBars = [new LinearProgressBar(), new CircularProgressBar(), new RectProgressBar()]
         this.size = size
     }
