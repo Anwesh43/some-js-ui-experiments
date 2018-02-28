@@ -29,10 +29,29 @@ class State {
             this.j += this.dir
             if(this.j == this.scales.length || this.j == -1) {
                 this.j -= this.dir
-                this.prevScale = this.scales[this.j] 
+                this.prevScale = this.scales[this.j]
                 this.dir = 0
                 stopcb()
             }
+        }
+    }
+}
+class Animator {
+    constructor() {
+        this.animated = false
+    }
+    start(updatecb) {
+        if(!this.animated) {
+            this.animated = true
+            this.interval = setInterval(() => {
+                updatecb()
+            }, 50)
+        }
+    }
+    stop() {
+        if(this.animated) {
+            this.animated = false
+            clearInteral(this.interval)
         }
     }
 }
