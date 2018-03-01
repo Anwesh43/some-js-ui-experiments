@@ -17,12 +17,27 @@ const getAngle = (x, y, x1, y1) => {
 class TapCircleMoverStage extends CanvasStage {
     constructor() {
         super()
+        this.animator = new TCMAnimator()
+        const w = this.size.w, h = this.size.h
+        this.mover = new TapCircleMover(w/2, h/2, Math.min(w, h)/5)
     }
     render() {
         super.render()
+        if(this.mover) {
+            this.mover.draw(this.context)
+        }
     }
     handleTap() {
-
+        this.canvas.onmousedown = (event) => {
+            const x = event.offsetX, y = event.offsetY
+            this.mover.startUpdating(x, y, () => {
+                this.animator.start(() => {
+                    this.mover.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
+        }
     }
 }
 class TCMState {
@@ -108,7 +123,8 @@ class TapCircleMover {
     }
     update(stopcb) {
         this.state.update(() => {
-            this.x += (2 * Math.PI * this.r + 2 * this.r)
+            this.x += (2 * Math.PI * this.r + 2 * this.r) * Math.cos(this.deg * Math.PI/180)
+            this.y += (2 * Math.PI * this.r + 2 * this.r) * Math.sin(this.deg * Math.PI/180)
             stopcb()
         })
     }
