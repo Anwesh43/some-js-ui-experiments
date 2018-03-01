@@ -2,7 +2,7 @@ const getAngle = (x, y, x1, y1) => {
     if(x1 == x) {
         return 90
     }
-    const deg = Math.atan((y1 - y)/(x1 - x))
+    const deg = Math.atan((y1 - y)/(x1 - x)) * (180 / Math.PI)
     if(y1 > y) {
         if(x1 < x) {
             return 180 - deg
@@ -12,14 +12,18 @@ const getAngle = (x, y, x1, y1) => {
         if(x1 > x) {
             return 360 - deg
         }
+        if(x1 < x) {
+            return 180 + deg
+        }
     }
+    return deg
 }
 class TapCircleMoverStage extends CanvasStage {
     constructor() {
         super()
         this.animator = new TCMAnimator()
         const w = this.size.w, h = this.size.h
-        this.mover = new TapCircleMover(w/2, h/2, Math.min(w, h)/5)
+        this.mover = new TapCircleMover(w/2, h/2, Math.min(w, h) / 15)
     }
     render() {
         super.render()
@@ -32,6 +36,7 @@ class TapCircleMoverStage extends CanvasStage {
             const x = event.offsetX, y = event.offsetY
             this.mover.startUpdating(x, y, () => {
                 this.animator.start(() => {
+                    this.render()
                     this.mover.update(() => {
                         this.animator.stop()
                     })
@@ -106,20 +111,23 @@ class TapCircleMover {
                 context.lineTo(x, y)
             }
         }
+        context.stroke()
         context.restore()
     }
     draw(context) {
+        context.strokeStyle = 'orange'
+        context.lineWidth = 8
         this.drawArc(context, this.x, this.y, this.deg + 360 * this.state.scales[0], 360 * (1 - this.state.scales[0]))
         const x_proj = Math.cos(this.deg * Math.PI/180), y_proj = Math.sin(this.deg * Math.PI/180)
         const x1 = this.x + (2 * Math.PI * this.r + 2 * this.r) * x_proj, y1 = this.y + (2 * Math.PI * this.r + 2 * this.r) * y_proj
         const sx = this.x + this.r * x_proj, sy = this.y + this.r * y_proj, dx = this.x + (2 * Math.PI * this.r + this.r) * x_proj, dy = this.y + (2 * Math.PI * this.r + this.r) * y_proj
-        const updated_point = (i) => {x : sx  + (dx - sx) * this.state.scales[i], y: sy + (dy - sy) * this.state.scales[i]}
+        const updated_point = (i) => ({x : sx  + (dx - sx) * this.state.scales[i], y: sy + (dy - sy) * this.state.scales[i]})
         const point1 = updated_point(1), point2 = updated_point(0)
         context.beginPath()
         context.moveTo(point1.x, point1.y)
         context.lineTo(point2.x, point2.y)
         context.stroke()
-        this.drawArc(context, x1, y1, 180 - this.deg, 360 * this.state.scales[0])
+        this.drawArc(context, x1, y1, 180 - this.deg, 360 * this.state.scales[1])
     }
     update(stopcb) {
         this.state.update(() => {
@@ -129,10 +137,11 @@ class TapCircleMover {
         })
     }
     startUpdating(x, y, startcb) {
-        if(this.state.dir == 0) {
+        this.state.startUpdating(() => {
             this.deg = getAngle(this.x, this.y, x, y)
+            console.log(this.deg)
             startcb()
-        }
+        })
     }
 }
 const initTapCircleMoverStage = () => {
