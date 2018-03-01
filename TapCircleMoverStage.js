@@ -135,3 +135,8 @@ class TapCircleMover {
         }
     }
 }
+const initTapCircleMoverStage = () => {
+    const tapCircleMoverStage = new TapCircleMoverStage()
+    tapCircleMoverStage.render()
+    tapCircleMoverStage.handleTap()
+}
