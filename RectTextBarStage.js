@@ -65,7 +65,8 @@ class RectTextBar {
         this.i = i
         this.text = text
     }
-    draw(context, scale, size) {
+    draw(context, scales, size) {
+        const scales = scales[this.i]
         const x = this.i * this.size
         context.save()
         context.translate(x - size + size * scale, size/10)
@@ -75,5 +76,31 @@ class RectTextBar {
         const tw = context.measureText(this.text).width
         context.fillText(text, size/2 - tw/2, size/2)
         context.restore()
+    }
+}
+class RectTextBarContainer {
+    constructor(text, w) {
+        this.w = w
+        this.rectTextBars = []
+        this.init(text)
+    }
+    init(text) {
+        var textArray = text.split(" ")
+        for(var i = 0; i < textArray.length; i++) {
+            var t = textArray[i]
+            this.rectTextBars.push(t)
+        }
+        this.state = new RectTextBarState(textArray.length)
+    }
+    draw(context) {
+        for(var i = 0; i < this.rectTextBars.length; i++) {
+            this.rectTextBars[i].draw(context, this.state.scales, this.w/this.rectTextBars.length)
+        }
+    }
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
     }
 }
