@@ -117,3 +117,8 @@ class RectTextBarContainer {
         this.state.startUpdating(startcb)
     }
 }
+const initRectTextBarStage = (text) => {
+    const stage = new RectTextBarStage(text)
+    stage.render(context)
+    stage.handleTap()
+}
