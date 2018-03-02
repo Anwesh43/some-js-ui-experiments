@@ -9,7 +9,7 @@ class RectTextBarStage extends CanvasStage {
 
     }
 }
-class State {
+class RectTextBarState {
     constructor(n) {
         this.scales = []
         this.prevScale = 0
@@ -38,6 +38,25 @@ class State {
         if(this.dir == 0) {
             this.dir = 1 - 2 * this.prevScale
             startcb()
+        }
+    }
+}
+class RectTextBarAnimator {
+    constructor() {
+        this.animated = false
+    }
+    start(updatecb) {
+        if(!this.animated) {
+            this.animated = true
+            this.interval = setInterval(() => {
+                updatecb()
+            }, 50)
+        }
+    }
+    stop() {
+        if(this.animated) {
+            this.animated = false
+            clearInterval(this.interval)
         }
     }
 }
