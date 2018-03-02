@@ -1,7 +1,8 @@
+const rectTextBarColors = ["#1abc9c", "#9b59b6", "#e74c3c", "#16a085"]
 class RectTextBarStage extends CanvasStage {
     constructor(text) {
         super()
-        this.container = new RectTextBarContainer(text)
+        this.container = new RectTextBarContainer(text, this.size.w/2)
         this.animator = new RectTextBarAnimator()
     }
     render() {
@@ -14,8 +15,10 @@ class RectTextBarStage extends CanvasStage {
         this.canvas.onmousedown = () => {
             this.container.startUpdating(() => {
                 this.animator.start(() => {
+                    this.render()
                     this.container.update(() => {
                         this.animator.stop()
+                        this.render()
                     })
                 })
             })
@@ -27,6 +30,7 @@ class RectTextBarState {
         this.scales = []
         this.prevScale = 0
         this.j = 0
+        this.dir = 0
         this.init(n)
     }
     init(n) {
@@ -35,7 +39,7 @@ class RectTextBarState {
         }
     }
     update(stopcb) {
-        this.scales[this.j] += 0.1 * this.dir
+        this.scales[this.j] += 0.05 * this.dir
         if(Math.abs(this.scales[this.j] - this.prevScale) > 1) {
             this.scales[this.j] = this.prevScale + this.dir
             this.j += this.dir
@@ -79,16 +83,20 @@ class RectTextBar {
         this.text = text
     }
     draw(context, scales, size) {
-        const scales = scales[this.i]
-        const x = this.i * this.size
+        const scale = scales[this.i]
+        const x = this.i * size
+        context.globalAlpha = 0.7
         context.save()
         context.translate(x - size + size * scale, size/10)
-        context.fillStyle = 'teal'
+        context.fillStyle = rectTextBarColors[this.i%rectTextBarColors.length]
         context.fillRect(0, 0, size, size)
-        context.font = context.font.replace(/\d{2}/,size/15)
+        context.font = context.font.replace(/\d{2}/,size/5)
         const tw = context.measureText(this.text).width
-        context.fillText(text, size/2 - tw/2, size/2)
+        context.fillStyle = 'white'
+        context.globalAlpha = 1
+        context.fillText(this.text, size/2 - tw/2, size/2 + size/20)
         context.restore()
+        console.log(x)
     }
 }
 class RectTextBarContainer {
@@ -101,12 +109,12 @@ class RectTextBarContainer {
         var textArray = text.split(" ")
         for(var i = 0; i < textArray.length; i++) {
             var t = textArray[i]
-            this.rectTextBars.push(t)
+            this.rectTextBars.push(new RectTextBar(i, t))
         }
         this.state = new RectTextBarState(textArray.length)
     }
     draw(context) {
-        for(var i = 0; i < this.rectTextBars.length; i++) {
+        for(var i = this.state.j; i >=0 ; i--) {
             this.rectTextBars[i].draw(context, this.state.scales, this.w/this.rectTextBars.length)
         }
     }
@@ -119,6 +127,6 @@ class RectTextBarContainer {
 }
 const initRectTextBarStage = (text) => {
     const stage = new RectTextBarStage(text)
-    stage.render(context)
+    stage.render()
     stage.handleTap()
 }
