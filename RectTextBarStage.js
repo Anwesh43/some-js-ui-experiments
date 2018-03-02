@@ -60,3 +60,20 @@ class RectTextBarAnimator {
         }
     }
 }
+class RectTextBar {
+    constructor(i, text) {
+        this.i = i
+        this.text = text
+    }
+    draw(context, scale, size) {
+        const x = this.i * this.size
+        context.save()
+        context.translate(x - size + size * scale, size/10)
+        context.fillStyle = 'teal'
+        context.fillRect(0, 0, size, size)
+        context.font = context.font.replace(/\d{2}/,size/15)
+        const tw = context.measureText(this.text).width
+        context.fillText(text, size/2 - tw/2, size/2)
+        context.restore()
+    }
+}
