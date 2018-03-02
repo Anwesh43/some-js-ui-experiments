@@ -1,12 +1,25 @@
 class RectTextBarStage extends CanvasStage {
-    constructor() {
+    constructor(text) {
         super()
+        this.container = new RectTextBarContainer(text)
+        this.animator = new RectTextBarAnimator()
     }
     render() {
         super.render()
+        if(this.container) {
+            this.container.draw(this.context)
+        }
     }
     handleTap() {
-
+        this.canvas.onmousedown = () => {
+            this.container.startUpdating(() => {
+                this.animator.start(() => {
+                    this.container.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
+        }
     }
 }
 class RectTextBarState {
