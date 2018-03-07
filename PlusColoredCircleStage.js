@@ -160,3 +160,8 @@ class PlusColoredCircleContainer {
         })
     }
 }
+const createPlusColoredCircleStage = () => {
+    const plusColoredCircleStage = new PlusColoredCircleStage()
+    plusColoredCircleStage.render()
+    plusColoredCircleStage.handleTap()
+}
