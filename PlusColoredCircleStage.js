@@ -7,16 +7,18 @@ class PlusColoredCircleStage extends CanvasStage {
     render() {
         super.render()
         if(this.container) {
+            this.container.draw(this.context, Math.min(this.size.w, this.size.h)/8)
         }
-        this.container.draw(this.context, Math.min(this.size.w, this.size.h)/8)
     }
     handleTap() {
         this.canvas.onmousedown = (event) => {
             const x = event.offsetX, y = event.offsetY
             this.container.startUpdating(x, y, () => {
                 this.animator.start(() => {
+                    this.render()
                     this.container.update(() => {
                         this.animator.stop()
+                        this.render()
                     })
                 })
             })
@@ -38,7 +40,7 @@ class PCCState {
             if(this.j == this.scales.length || this.j == -1) {
                 this.j -= this.dir
                 this.dir *= -1
-                this.prevScale = this
+                this.prevScale = this.scales[this.j]
                 if(this.dir == 1) {
                     this.dir = 0
                     stopcb()
@@ -79,6 +81,7 @@ class PlusColoredCircle {
         this.y = y
     }
     drawPlus(context, size) {
+        context.strokeStyle = 'white'
         const scale1 = this.state.scales[0], scale2 = this.state.scales[1], updated_size = size * scale1
         context.save()
         context.rotate(Math.PI/4 * scale2)
@@ -114,12 +117,14 @@ class PlusColoredCircle {
         const colors = ["#3498db", "#9b59b6", "#1abc9c", "#e74c3c", "#27ae60", "#e67e22"]
         const deg = 360/colors.length
         colors.forEach((color, index) => {
-            this.drawArc(context, color, r, index * deg, deg)
+            this.drawArc(context, color, r, index * deg, deg * this.state.scales[1])
         })
     }
     draw(context, size) {
+        context.lineWidth = size/8
+        context.lineCap = 'round'
         context.save()
-        context.tranlsate(this.x, this.y)
+        context.translate(this.x, this.y)
         this.drawPlus(context, size/3)
         this.drawColoredCircle(context, size/2)
         context.restore()
@@ -154,7 +159,7 @@ class PlusColoredCircleContainer {
         const circle = new PlusColoredCircle(x, y)
         this.circles.push(circle)
         circle.startUpdating(() => {
-            if(this.circles.length == 0) {
+            if(this.circles.length == 1) {
                 startcb()
             }
         })
