@@ -1,18 +1,29 @@
 class PlusColoredCircleStage extends CanvasStage {
     constructor() {
         super()
+        this.animator = new PCCAnimator()
+        this.container = new PlusColoredCircleContainer()
     }
     render() {
         super.render()
+        if(this.container) {
+        }
+        this.container.draw(this.context, Math.min(this.size.w, this.size.h)/8)
     }
     handleTap() {
         this.canvas.onmousedown = (event) => {
             const x = event.offsetX, y = event.offsetY
-
+            this.container.startUpdating(x, y, () => {
+                this.animator.start(() => {
+                    this.container.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
-class State {
+class PCCState {
     constructor() {
         this.scales = [0, 0]
         this.j = 0
@@ -42,7 +53,7 @@ class State {
         }
     }
 }
-class Animator {
+class PCCAnimator {
     constructor() {
         this.animated = false
     }
@@ -63,7 +74,7 @@ class Animator {
 }
 class PlusColoredCircle {
     constructor(x, y) {
-        this.state = new State()
+        this.state = new PCCState()
         this.x = x
         this.y = y
     }
@@ -121,7 +132,7 @@ class PlusColoredCircle {
     }
 }
 class PlusColoredCircleContainer {
-    constructor(w,h) {
+    constructor() {
         this.circles = []
     }
     draw(context, size) {
