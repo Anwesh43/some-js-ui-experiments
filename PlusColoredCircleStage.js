@@ -120,3 +120,32 @@ class PlusColoredCircle {
         this.state.startUpdating(startcb)
     }
 }
+class PlusColoredCircleContainer {
+    constructor(w,h) {
+        this.circles = []
+    }
+    draw(context, size) {
+        this.circles.forEach((circle) => {
+            circle.draw(context, size)
+        })
+    }
+    update(stopcb) {
+        this.circles.forEach((circle, index) => {
+            circle.update(() => {
+                this.circles.splice(index, 1)
+                if(this.circles.length == 0) {
+                    stopcb()
+                }
+            })
+        })
+    }
+    startUpdating(x, y, startcb) {
+        const circle = new PlusColoredCircle(x, y)
+        this.circles.push(circle)
+        circle.startUpdating(() => {
+            if(this.circles.length == 0) {
+                startcb()
+            }
+        })
+    }
+}
