@@ -14,6 +14,7 @@ class TraingleListStage extends CanvasStage {
         this.canvas.onmousedown = () => {
             this.triangleList.startUpdating(() => {
                 this.animator.start(() => {
+                    this.render()
                     this.triangleList.update(() => {
                         this.animator.stop()
                     })
@@ -77,7 +78,7 @@ class TriangleList {
         const k = 10
         for (var i = 0; i < k; i++) {
             context.save()
-            context.translate((i - k/2) * size, 0)
+            context.translate((i - k/2) * size * this.state.scales[2], 0)
             this.drawTriangle(context)
             context.restore()
         }
@@ -102,4 +103,9 @@ class TriangleList {
     startUpdating(startcb) {
         this.state.startUpdating(startcb)
     }
+}
+const initTriangleListStage = () => {
+    const stage = new TriangelListStage()
+    stage.render()
+    stage.handleTap()
 }
