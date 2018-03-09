@@ -1,13 +1,24 @@
 class TraingleListStage extends CanvasStage {
     constructor() {
         super()
+        this.triangleList = new TriangleList(Math.min(this.size.w, this.size.h))
+        this.animator = new TriangleListAnimator()
     }
     render() {
         super.render()
+        if (this.triangleList) {
+            this.triangleList.draw(this.context)
+        }
     }
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.triangleList.startUpdating(() => {
+                this.animator.start(() => {
+                    this.triangleList.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
