@@ -57,3 +57,21 @@ class ColoredBeadAnimator {
         }
     }
 }
+class ColoredBead {
+    constructor(i) {
+        this.r_val = Math.floor(255 * Math.random())
+        this.g_val = Math.floor(255 * Math.random())
+        this.b_val = Math.floor(255 * Math.random())
+        this.i = i
+    }
+    draw(context, scales, size, deg) {
+        const updateColorPart = (colorPart) => Math.floor(255 + (colorPart - 255) * scales[2])
+        context.fillStyle = `rgb(${updateColorPart(this.r_val)},${updateColorPart(this.g_val)},${updateColorPart(this.b_val)})`
+        context.save()
+        context.rotate(i * deg * scales[1])
+        context.beginPath()
+        context.arc(size * scales[0], 0, size/12, 0, 2 * Math.PI)
+        context.fill()
+        context.restore()
+    }
+}
