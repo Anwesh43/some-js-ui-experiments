@@ -1,13 +1,24 @@
 class ColoredBeadsStage extends CanvasStage {
     constructor () {
         super()
+        this.container = new ColorBeadContainer(this.size.w, this.size.h)
     }
     render() {
         super.render()
+        if (this.container) {
+            this.container.draw(this.context)
+        }
     }
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.container.startUpdating(() => {
+                this.animator.start(()=>{
+                    this.render()
+                    this.container.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
