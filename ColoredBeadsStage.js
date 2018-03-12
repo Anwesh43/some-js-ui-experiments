@@ -75,3 +75,31 @@ class ColoredBead {
         context.restore()
     }
 }
+class ColoredBeadContainer {
+    constructor (w,h) {
+        this.w = w
+        this.h = h
+        this.state = new ColoredBeadState()
+        this.initBeads()
+    }
+    initBeads () {
+        this.beads = []
+        for(var i = 0; i < 6; i++) {
+            this.beads.push(new ColoredBead(i))
+        }
+    }
+    draw (context) {
+        context.save()
+        context.translate(this.w/2, this.h/2)
+        this.beads.forEach((bead) =>{
+            bead.draw(context, this.state.scales, Math.min(this.w, this.h)/3, (2 * Math.PI/(this.beads.length)))
+        })
+        context.restore()
+    }
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
+    }
+}
