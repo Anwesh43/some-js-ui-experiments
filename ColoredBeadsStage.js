@@ -1,13 +1,17 @@
 class ColoredBeadsStage extends CanvasStage {
     constructor () {
         super()
-        this.container = new ColorBeadContainer(this.size.w, this.size.h)
+        this.container = new ColoredBeadContainer(this.size.w, this.size.h)
+        this.animator = new ColoredBeadAnimator()
     }
     render() {
         super.render()
         if (this.container) {
             this.container.draw(this.context)
         }
+    }
+    scroll() {
+        window.scrollBy(0, this.canvas.offsetTop)
     }
     handleTap() {
         this.canvas.onmousedown = () => {
@@ -79,7 +83,7 @@ class ColoredBead {
         const updateColorPart = (colorPart) => Math.floor(255 + (colorPart - 255) * scales[2])
         context.fillStyle = `rgb(${updateColorPart(this.r_val)},${updateColorPart(this.g_val)},${updateColorPart(this.b_val)})`
         context.save()
-        context.rotate(i * deg * scales[1])
+        context.rotate(this.i * deg * scales[1])
         context.beginPath()
         context.arc(size * scales[0], 0, size/12, 0, 2 * Math.PI)
         context.fill()
@@ -94,8 +98,9 @@ class ColoredBeadContainer {
         this.initBeads()
     }
     initBeads () {
+        const BEADS = 10;
         this.beads = []
-        for(var i = 0; i < 6; i++) {
+        for(var i = 0; i < BEADS; i++) {
             this.beads.push(new ColoredBead(i))
         }
     }
@@ -115,7 +120,8 @@ class ColoredBeadContainer {
     }
 }
 const initColoredBeadStage = () => {
-    const coloredBeadStage = new ColoredBeadStage()
+    const coloredBeadStage = new ColoredBeadsStage()
     coloredBeadStage.render()
     coloredBeadStage.handleTap()
+    coloredBeadStage.scroll()
 }
