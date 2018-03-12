@@ -114,3 +114,8 @@ class ColoredBeadContainer {
         this.state.startUpdating(startcb)
     }
 }
+const initColoredBeadStage = () => {
+    const coloredBeadStage = new ColoredBeadStage()
+    coloredBeadStage.render()
+    coloredBeadStage.handleTap()
+}
