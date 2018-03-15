@@ -32,3 +32,21 @@ class FlyBallState {
         }
     }
 }
+class FlyBallContainerState {
+    constructor() {
+        this.states = [new FlyBallState(), new FlyBallState()]
+        this.j = 0
+    }
+    update(stopcb) {
+        this.states[this.j].update(() => {
+            this.j++
+            if(this.j == this.states.length) {
+                this.j = 0
+                stopcb()
+            }
+        })
+    }
+    startUpdating(startcb) {
+        this.states[this.j].startUpdating(startcb)
+    }
+}
