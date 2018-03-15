@@ -11,15 +11,17 @@ class FlyBallContainerStage extends CanvasStage {
         }
     }
     handleTap() {
-        if (this.flyBallContainer) {
-            this.flyBallContainer.startUpdating(() => {
-                this.flyBallAnimator.start(() => {
-                    this.render()
-                    this.flyBallContainer.update(() => {
-                        this.flyBallAnimator.stop()
-                    })
-                })
-            })
+        this.canvas.onmousedown = () => {
+          if (this.flyBallContainer) {
+              this.flyBallContainer.startUpdating(() => {
+                  this.flyBallAnimator.start(() => {
+                      this.render()
+                      this.flyBallContainer.update(() => {
+                          this.flyBallAnimator.stop()
+                      })
+                  })
+              })
+          }
         }
     }
 }
@@ -58,15 +60,22 @@ class FlyBallContainerState {
                 this.j = 0
                 stopcb()
             }
+            else {
+                this.states[this.j].startUpdating(() => {
+
+                })
+            }
         })
     }
     execute(cb, index) {
-        if (index < this.j) {
-            cb(index)
+        if (index < this.states.length) {
+            cb(this.states[index].scale)
         }
     }
     startUpdating(startcb) {
-        this.states[this.j].startUpdating(startcb)
+        if (this.j == 0) {
+            this.states[0].startUpdating(startcb)
+        }
     }
 }
 class FlyBallContainer {
@@ -74,7 +83,10 @@ class FlyBallContainer {
         this.state = new FlyBallContainerState()
     }
     draw(context, w, h) {
+        context.strokeStyle = "#e74c3c"
         const r = Math.min(w, h)/10
+        context.lineWidth = r/25
+        context.lineCap = 'round'
         context.save()
         context.translate(w/2, h/2)
         context.beginPath()
@@ -82,10 +94,13 @@ class FlyBallContainer {
         context.stroke()
         for(var i = 0; i < 2; i++) {
             context.save()
-            context.rotate(Math.PI/4 * this.state.scales[i])
+            this.state.execute((scale) => {
+                console.log(`${this.state.j} : ${scale}`)
+                context.rotate(Math.PI/8 * scale)
+            }, i)
             context.beginPath()
-            context.moveTo(r, 0)
-            context.lineTo(r * 3, 0)
+            context.moveTo(r * (2 * i -1) , 0)
+            context.lineTo(r * 4 * (2 * i - 1), 0)
             context.stroke()
             context.restore()
         }
