@@ -2,12 +2,25 @@ class FlyBallContainerStage extends CanvasStage {
     constructor() {
         super()
         this.flyBallContainer = new FlyBallContainer()
+        this.flyBallAnimator = new FlyBallAnimator()
     }
     render() {
         super.render()
+        if (this.flyBallContainer) {
+            this.flyBallContainer.draw(this.context, this.size.w, this.size.h)
+        }
     }
     handleTap() {
-
+        if (this.flyBallContainer) {
+            this.flyBallContainer.startUpdating(() => {
+                this.flyBallAnimator.start(() => {
+                    this.render()
+                    this.flyBallContainer.update(() => {
+                        this.flyBallAnimator.stop()
+                    })
+                })
+            })
+        }
     }
 }
 class FlyBallState {
