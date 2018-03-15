@@ -117,3 +117,8 @@ class FlyBallAnimator {
         }
     }
 }
+const initFlyBallContainerStage = () => {
+    const flyBallContainerStage = new FlyBallContainerStage()
+    flyBallContainerStage.render()
+    flyBallContainerStage.handleTap()
+}
