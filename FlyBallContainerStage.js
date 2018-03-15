@@ -1,6 +1,7 @@
 class FlyBallContainerStage extends CanvasStage {
     constructor() {
         super()
+        this.flyBallContainer = new FlyBallContainer()
     }
     render() {
         super.render()
@@ -82,5 +83,24 @@ class FlyBallContainer {
     }
     startUpdating(startcb) {
         this.state.startUpdating(startcb)
+    }
+}
+class FlyBallAnimator {
+    constructor() {
+        this.animated = false
+    }
+    start (updatecb) {
+        if (!this.animated) {
+            this.animated = true
+            this.interval = setInterval(() => {
+               updatecb()
+            }, 50)
+        }
+    }
+    stop () {
+        if (this.animated) {
+            this.animated = false
+            clearInterval(this.interval)
+        }
     }
 }
