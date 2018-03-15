@@ -46,7 +46,41 @@ class FlyBallContainerState {
             }
         })
     }
+    execute(cb, index) {
+        if (index < this.j) {
+            cb(index)
+        }
+    }
     startUpdating(startcb) {
         this.states[this.j].startUpdating(startcb)
+    }
+}
+class FlyBallContainer {
+    constructor() {
+        this.state = new FlyBallContainerState()
+    }
+    draw(context, w, h) {
+        const r = Math.min(w, h)/10
+        context.save()
+        context.translate(w/2, h/2)
+        context.beginPath()
+        context.arc(0, 0, r, 0,  2 * Math.PI)
+        context.stroke()
+        for(var i = 0; i < 2; i++) {
+            context.save()
+            context.rotate(Math.PI/4 * this.state.scales[i])
+            context.beginPath()
+            context.moveTo(r, 0)
+            context.lineTo(r * 3, 0)
+            context.stroke()
+            context.restore()
+        }
+        context.restore()
+    }
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
     }
 }
