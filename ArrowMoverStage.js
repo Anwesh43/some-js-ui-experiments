@@ -1,12 +1,26 @@
 class ArrowMoverStage extends CanvasStage {
     constructor() {
         super()
+        this.arrowMover = new ArrowMover()
+        this.animator = new ArrowMoverAnimator()
     }
     render() {
         super.render()
+        if (this.arrowMover) {
+            this.arrowMover.draw(this.context, this.size.w, this.size.h)
+        }
     }
     handleTap() {
-
+        this.canvas.onmousedown = (event) => {
+            const x = event.offsetX, y = event.offsetY
+            this.arrowMover.startUpdating(() => {
+                this.animator.start(() => {
+                    this.arrowMover.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            }, x, y)
+        }
     }
 }
 class ArrowMoverState {
