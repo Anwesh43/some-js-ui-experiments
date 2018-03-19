@@ -125,3 +125,8 @@ class ArrowMover {
         })
     }
 }
+const initArrowMoverStage = () => {
+    const arrowMoverStage = new ArrowMoverStage()
+    arrowMoverStage.render()
+    arrowMoverStage.handleTap()
+}
