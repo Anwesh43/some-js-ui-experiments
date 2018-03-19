@@ -15,6 +15,7 @@ class ArrowMoverStage extends CanvasStage {
             const x = event.offsetX, y = event.offsetY
             this.arrowMover.startUpdating(() => {
                 this.animator.start(() => {
+                    this.render()
                     this.arrowMover.update(() => {
                         this.animator.stop()
                     })
@@ -42,6 +43,7 @@ class ArrowMoverState {
             if (this.j == this.scales.length) {
                 this.j = 0
                 this.dir = 0
+                this.scales = [0,0,0,0]
                 stopcb()
             }
         }
@@ -78,22 +80,24 @@ class ArrowMover {
         this.state = new ArrowMoverState()
     }
     draw(context, w, h) {
-        if (!this.x && !this.y) {
-            this.dx = this.x
-            this.dy = this.y
+        if (!this.ox && !this.oy) {
+            this.dx = w/2
+            this.dy = h/2
             this.ox = this.dx
             this.oy = this.dy
-            this.rotX = 0
-            this.rotY = 0
+            this.oRot = 0
+            this.dRot = 0
+            console.log(`${this.dx} ${this.dy}`)
         }
         context.strokeStyle = 'white'
         context.lineWidth = Math.min(w, h)/50
         context.lineCap = 'round'
         context.save()
         const updateXY  = (o, d, i) => o + (d - o) * this.state.scales[i]
-        context.translate(updateXY(this.ox, this.dx,1), updateXY(this.oy, this.dy, 3))
-        context.rotate(this.rotX * this.state.scales[0] + this.rotY * this.state.scales[2])
-        const size = Math.min(w,h)/20
+        context.translate(updateXY(this.ox, this.dx,3), updateXY(this.oy, this.dy, 1))
+        const updateRotAngle = (i) => this.oRot + (this.dRot - this.oRot) * this.state.scales[i]
+        context.rotate(updateRotAngle(Math.floor(this.state.j/2)))
+        const size = Math.min(w,h) / 20
         for(var i = 0; i< 2; i++) {
             context.beginPath()
             context.moveTo(0,0)
@@ -102,15 +106,19 @@ class ArrowMover {
         }
         context.restore()
     }
+    getUpdateRot(d,o) {
+        return (1 - Math.floor((d - o)/Math.abs(d - o))) * (Math.PI/2)
+    }
     update(stopcb) {
         this.state.update(() => {
             this.ox = this.dx
             this.oy = this.dy
+            this.oRot = this.dRot
             stopcb()
         }, (skipcb) => {
-            this.rotY = 0
+            this.oRot = this.dRot
             if (this.ox != this.dx) {
-                this.rotX = (1 - Math.floor((this.dx - this.ox)/Math.abs(this.ox - this.dx))) * (Math.PI/2)
+                this.dRot = this.getUpdateRot(this.dx, this.ox)
             }
             else {
                 skipcb()
@@ -121,6 +129,7 @@ class ArrowMover {
         this.state.startUpdating(() => {
             this.dx = x
             this.dy = y
+            this.dRot = Math.PI/2 + (this.getUpdateRot(this.dy,this.oy))
             startcb()
         })
     }
