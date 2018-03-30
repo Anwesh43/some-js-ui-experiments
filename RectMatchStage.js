@@ -54,3 +54,35 @@ class RMSAnimator {
         }
     }
 }
+class RectMatch {
+    constructor() {
+        this.state = new RMSState()
+    }
+    draw(context, w, h) {
+        cont rw = w/15, rh = w/15
+        context.strokeStyle = 'white'
+        context.lineWidth = Math.min(w,h) / 60
+        context.lineCap = 'round'
+        context.save()
+        context.translate(w/2, h/2)
+        context.rotate(Math.PI/2 * this.state.scales[1])
+        for (var i = 0; i < 2; i++) {
+            const x = ((w/2 + context.lineWidth) * this.state.scales[0] + (h/2 + context.lineWidth) * this.state.scales[2]) * (1 - 2*i)
+            context.save()
+            context.beginPath()
+            context.moveTo(0, -rh)
+            context.lineTo(rw, -rh)
+            context.lineTo(rw, rh)
+            context.lineTo(0, rh)
+            context.stroke()
+            context.restore()
+        }
+        context.restore()
+    }
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
+    }
+}
