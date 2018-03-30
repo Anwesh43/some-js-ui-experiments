@@ -106,4 +106,5 @@ const initRectMatchStage = () => {
     const rectMatchStage = new RectMatchStage()
     rectMatchStage.render()
     rectMatchStage.handleTap()
+    window.scrollTo(0, rectMatchStage.canvas.offsetTop)
 }
