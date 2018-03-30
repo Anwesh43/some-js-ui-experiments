@@ -14,7 +14,10 @@ class RectMatchStage extends CanvasStage {
         this.canvas.onmousedown = () => {
             this.rectMatch.startUpdating(() => {
                 this.animator.start(() => {
-                    this.rectMatch
+                    this.render()
+                    this.rectMatch.update(() => {
+                        this.animator.stop()
+                    })
                 })
             })
         }
@@ -42,7 +45,7 @@ class RMSState {
     }
     startUpdating(startcb) {
         if (this.dir == 0) {
-            this.dir = 1 - 2 * this.scale
+            this.dir = 1 - 2 * this.prevScale
             startcb()
         }
     }
@@ -55,7 +58,7 @@ class RMSAnimator {
         if (!this.animated) {
             this.animated = true
             this.interval = setInterval(() => {
-                updatcb()
+                updatecb()
             }, 50)
         }
     }
@@ -71,7 +74,7 @@ class RectMatch {
         this.state = new RMSState()
     }
     draw(context, w, h) {
-        cont rw = w/15, rh = w/15
+        const rw = w/15, rh = w/15
         context.strokeStyle = 'white'
         context.lineWidth = Math.min(w,h) / 60
         context.lineCap = 'round'
@@ -79,12 +82,13 @@ class RectMatch {
         context.translate(w/2, h/2)
         context.rotate(Math.PI/2 * this.state.scales[1])
         for (var i = 0; i < 2; i++) {
-            const x = ((w/2 + context.lineWidth) * this.state.scales[0] + (h/2 + context.lineWidth) * this.state.scales[2]) * (1 - 2*i)
+            const x = ((w/2 + context.lineWidth) * (1 - this.state.scales[0]) + (h/2 + context.lineWidth) * this.state.scales[2]) * (1 - 2*i)
             context.save()
+            context.translate(x, 0)
             context.beginPath()
             context.moveTo(0, -rh)
-            context.lineTo(rw, -rh)
-            context.lineTo(rw, rh)
+            context.lineTo(rw * (1 - 2 * i), -rh)
+            context.lineTo(rw * (1 - 2 * i), rh)
             context.lineTo(0, rh)
             context.stroke()
             context.restore()
