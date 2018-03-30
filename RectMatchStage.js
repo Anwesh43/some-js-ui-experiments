@@ -1,9 +1,14 @@
 class RectMatchStage extends CanvasStage {
     constructor() {
         super()
+        this.rectMatch = new RectMatch()
+        this.animator = new RMSAnimator()
     }
     render () {
         super.render()
+        if (this.rectMatch) {
+            this.rectMatch.draw(this.context, this.size.w, this.size.h)
+        }
     }
     handleTap () {
     }
