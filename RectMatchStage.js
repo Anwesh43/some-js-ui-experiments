@@ -11,6 +11,13 @@ class RectMatchStage extends CanvasStage {
         }
     }
     handleTap () {
+        this.canvas.onmousedown = () => {
+            this.rectMatch.startUpdating(() => {
+                this.animator.start(() => {
+                    this.rectMatch
+                })
+            })
+        }
     }
 }
 class RMSState {
@@ -90,4 +97,9 @@ class RectMatch {
     startUpdating(startcb) {
         this.state.startUpdating(startcb)
     }
+}
+const initRectMatchStage = () => {
+    const rectMatchStage = new RectMatchStage()
+    rectMatchStage.render()
+    rectMatchStage.handleTap()
 }
