@@ -52,3 +52,36 @@ class BrickGraphAnimator {
         }
     }
 }
+
+class BrickButton {
+    constructor(i, size, n) {
+        this.i = i
+        this.x = (i%n) * size
+        this.y = Math.floor(i/n) * size
+        this.size = size
+        this.state = new BrickGraphState()
+    }
+    draw(context) {
+        context.save()
+        context.translate(this.x, this.y)
+        context.fillStyle = '#3498db'
+        context.globalAlpha = 1
+        context.fillRect(0, 0, this.size, this.size)
+        context.globalAlpha = 0.5
+        context.fillStyle = '#bdc3c7'
+        context.save()
+        context.translate(this.size/2, this.size/2)
+        context.scale(this.state.scale, this.state.scale)
+        context.fillRect(-this.size/2, -this.size/2, this.size, this.size)
+        context.restore()
+        context.restore()
+    }
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+    handleTap(x, y, startcb) {
+        if (x >= this.x && x <= this.x + this.size && y >= this.y && y <= this.y + this.size) {
+            this.state.startUpdating(startcb)
+        }
+    }
+}
