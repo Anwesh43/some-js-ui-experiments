@@ -151,3 +151,9 @@ class BrickButtonGraph {
         })
     }
 }
+
+const initBrickGraphButtonStage = () => {
+    const stage = new BrickButtonGraphStage()
+    stage.render()
+    stage.handleTap()
+}
