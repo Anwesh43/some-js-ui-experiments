@@ -1,12 +1,24 @@
 class BrickGraphButtonStage extends Stage {
     constructor() {
         super()
+        this.brickButtonGraph = new BrickButtonGraph()
+        this.animator = new BrickGraphAnimator()
     }
     render() {
         super.render()
     }
     handleTap() {
-
+        this.img.onmousedown = (event) => {
+            const x = event.pageX, y = event.pageY
+            this.brickButtonGraph.startUpdating(x, y, () => {
+                this.animator.start(() => {
+                    this.render()
+                    this.brickButtonGraph.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
+        }
     }
 }
 
