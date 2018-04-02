@@ -32,3 +32,23 @@ class BrickGraphState {
         }
     }
 }
+
+class BrickGraphAnimator {
+    constructor() {
+        this.animated = false
+    }
+    start(updatecb) {
+        if (!this.animated) {
+            this.animated = true
+            this.interval = setInterval(() => {
+                updatecb()
+            }, 100)
+        }
+    }
+    stop() {
+        if (this.animated) {
+            this.animated = false
+            clearInterval(this.interval)
+        }
+    }
+}
