@@ -60,6 +60,7 @@ class BrickButton {
         this.y = Math.floor(i/n) * size
         this.size = size
         this.state = new BrickGraphState()
+        this.neighbors = []
     }
     draw(context) {
         context.save()
@@ -76,12 +77,65 @@ class BrickButton {
         context.restore()
         context.restore()
     }
+    addNeighbor(bb) {
+        this.neighbors.add(bb);
+    }
     update(stopcb) {
         this.state.update(stopcb)
     }
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
+    }
     handleTap(x, y, startcb) {
         if (x >= this.x && x <= this.x + this.size && y >= this.y && y <= this.y + this.size) {
-            this.state.startUpdating(startcb)
+            this.neighbors.forEach((n)=> {
+                n.startUpdating(() => {
+                    startcb(n, false)
+                })
+            })
+            this.startUpdating(() => {
+                startcb(this, true)
+            })
+
         }
+    }
+}
+
+class BrickButtonGraph {
+    constructor(w) {
+        this.init(w)
+        this.updating = []
+    }
+    init(w) {
+        this.buttons = []
+        const n = 4;
+        for (var i=0; i< n * n; i++) {
+            this.buttons.push(new BrickButton(i,(w/n,n)))
+        }
+    }
+    draw(context) {
+        this.buttons.forEach((button) => {
+            button.draw(context)
+        })
+    }
+    update(stopcb) {
+        this.updating.forEach((button,index) => {
+            button.update(() => {
+                this.updating.splice(0,1)
+                if (this.updating.length == 0) {
+                    stopcb()
+                }
+            })
+        })
+    }
+    handleTap(x, y, startcb) {
+        this.buttons.forEach((button) => {
+            this.button.handleTap(x, y, (n, condition) => {
+                this.updating.push(n)
+                if (condition) {
+                    startcb()
+                }
+            })
+        })
     }
 }
