@@ -76,3 +76,35 @@ class LinkedLineStep {
         }
     }
 }
+
+class LineToStepContainer {
+
+    constructor () {
+        this.state = new LineToStepState()
+        this.init()
+    }
+
+    init() {
+        this.steps = []
+        for (var i = 0; i < 6; i++) {
+            this.steps.push(new LinkedLineStep(i))
+        }
+        for (var i = 1; i < 6; i++) {
+            this.steps[i].addNext(this.steps[i-1])
+        }
+    }
+
+    draw (context, w, h) {
+        this.steps.forEach((step) => {
+            step.draw(context, w/6, h, this.state.scale)
+        })
+    }
+
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
+    }
+}
