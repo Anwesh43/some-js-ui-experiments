@@ -1,12 +1,26 @@
 class LineToStepStage extends CanvasStage {
     constructor() {
         super()
+        this.container = new LineToStepContainer()
+        this.animator = new LineToStepAnimator()
     }
     render() {
         super.render()
+        if (this.container) {
+            this.container.draw(this.context, this.size.w/2, this.size.h)
     }
+  }
     handleTap() {
-
+        this.canvas.onmousedown = (event) => {
+            this.container.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.container.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
+        }
     }
 }
 
