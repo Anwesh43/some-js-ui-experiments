@@ -31,3 +31,26 @@ class LineToStepState {
         }
     }
 }
+
+class LineToStepAnimator {
+
+    constructor () {
+        this.animated = false
+    }
+
+    start (updatecb) {
+        if (!this.animated) {
+            this.anmimated = true
+            this.interval = setInterval(() => {
+                updatecb()
+            }, 50)
+        }
+    }
+
+    stop () {
+        if (this.animated) {
+            this.animated = false
+            clearInterval(this.interval)
+        }
+    }
+}
