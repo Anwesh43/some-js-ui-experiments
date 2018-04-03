@@ -122,3 +122,9 @@ class LineToStepContainer {
         this.state.startUpdating(startcb)
     }
 }
+
+const initLineToStepStage = () => {
+    const stage = LineToStepStage()
+    stage.render()
+    stage.handleTap()
+}
