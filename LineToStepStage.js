@@ -54,3 +54,25 @@ class LineToStepAnimator {
         }
     }
 }
+
+class LinkedLineStep {
+    constructor(i) {
+       this.i = i
+
+    }
+    addNext(next) {
+        this.next = next
+    }
+    draw(context, w, h, scale) {
+        const y = h/3 + (2*h/3 - (this.i * w) - h/3) * scale
+        context.beginPath()
+        context.moveTo(i*w, y)
+        context.lineTo(i*w + w, y)
+        context.stroke()
+        if (this.next) {
+            context.beginPath()
+            context.moveTo(i*w+w, y)
+            context.lineTo(i * w + w, y - (w/3) * scale)
+        }
+    }
+}
