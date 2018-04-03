@@ -1,16 +1,19 @@
-class BrickGraphButtonStage extends Stage {
+class BrickGraphButtonStage extends CanvasStage {
     constructor() {
         super()
-        this.brickButtonGraph = new BrickButtonGraph()
+        this.brickButtonGraph = new BrickButtonGraph(this.size.h)
         this.animator = new BrickGraphAnimator()
     }
     render() {
         super.render()
+        if (this.brickButtonGraph) {
+            this.brickButtonGraph.draw(this.context)
+        }
     }
     handleTap() {
-        this.img.onmousedown = (event) => {
-            const x = event.pageX, y = event.pageY
-            this.brickButtonGraph.startUpdating(x, y, () => {
+        this.canvas.onmousedown = (event) => {
+            const x = event.offsetX, y = event.offsetY
+            this.brickButtonGraph.handleTap(x, y, () => {
                 this.animator.start(() => {
                     this.render()
                     this.brickButtonGraph.update(() => {
@@ -35,11 +38,12 @@ class BrickGraphState {
         }
     }
     update(stopcb) {
-        this.deg += Math.PI/20
-        this.scale = Math.sin(this.deg * Math.PI/180)
+        this.deg += Math.PI/20 * this.dir
+        this.scale = Math.sin(this.deg)
         if (this.deg > Math.PI) {
             this.deg = 0
             this.scale = 0
+            this.dir = 0
             stopcb()
         }
     }
@@ -73,24 +77,27 @@ class BrickButton {
         this.size = size
         this.state = new BrickGraphState()
         this.neighbors = []
+        console.log(`${this.x},${this.y}, ${this.size},${i}`)
     }
     draw(context) {
+        const rectSize = 2 * this.size/3
+        const drawRect = () => {
+            context.fillRect(-rectSize/2, -rectSize/2, rectSize, rectSize)
+        }
         context.save()
-        context.translate(this.x, this.y)
+        context.translate(this.x + this.size/2, this.y + this.size/2)
         context.fillStyle = '#3498db'
         context.globalAlpha = 1
-        context.fillRect(0, 0, this.size, this.size)
-        context.globalAlpha = 0.5
+        drawRect()
         context.fillStyle = '#bdc3c7'
         context.save()
-        context.translate(this.size/2, this.size/2)
         context.scale(this.state.scale, this.state.scale)
-        context.fillRect(-this.size/2, -this.size/2, this.size, this.size)
+        drawRect()
         context.restore()
         context.restore()
     }
     addNeighbor(bb) {
-        this.neighbors.add(bb);
+        this.neighbors.push(bb);
     }
     update(stopcb) {
         this.state.update(stopcb)
@@ -107,8 +114,9 @@ class BrickButton {
             })
             this.startUpdating(() => {
                 startcb(this, true)
+                console.log("tapped")
             })
-
+            console.log("drawn")
         }
     }
 }
@@ -120,9 +128,25 @@ class BrickButtonGraph {
     }
     init(w) {
         this.buttons = []
-        const n = 4;
+        const n = 4
         for (var i=0; i< n * n; i++) {
-            this.buttons.push(new BrickButton(i,(w/n,n)))
+            this.buttons.push(new BrickButton(i,(w/n),n))
+        }
+        for (var i = 0; i < n * n; i++) {
+            const button = this.buttons[i]
+            const ri = i % n, rj = Math.floor(i / n)
+            for (var e = ri - 1; e <= ri+ 1; e++) {
+                for (var f =rj-1; f <= rj + 1; f++) {
+                    if (ri == e && rj == f) {
+                        continue
+                    }
+                    if (e >=0 && e < n && f>=0 && f < n) {
+                        const index = f * n + e
+                        button.addNeighbor(this.buttons[index])
+                    }
+                }
+            }
+            console.log(button.neighbors)
         }
     }
     draw(context) {
@@ -133,8 +157,8 @@ class BrickButtonGraph {
     update(stopcb) {
         this.updating.forEach((button,index) => {
             button.update(() => {
-                this.updating.splice(0,1)
-                if (this.updating.length == 0) {
+                if (index == this.updating.length - 1) {
+                    this.updating = []
                     stopcb()
                 }
             })
@@ -142,10 +166,11 @@ class BrickButtonGraph {
     }
     handleTap(x, y, startcb) {
         this.buttons.forEach((button) => {
-            this.button.handleTap(x, y, (n, condition) => {
+            button.handleTap(x, y, (n, condition) => {
                 this.updating.push(n)
                 if (condition) {
                     startcb()
+                    console.log("started")
                 }
             })
         })
@@ -153,7 +178,8 @@ class BrickButtonGraph {
 }
 
 const initBrickGraphButtonStage = () => {
-    const stage = new BrickButtonGraphStage()
+    const stage = new BrickGraphButtonStage()
+    window.scrollTo(0, stage.canvas.offsetTop)
     stage.render()
     stage.handleTap()
 }
