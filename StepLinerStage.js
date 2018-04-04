@@ -3,12 +3,28 @@ const STEP_LINERS = 11
 class StepLinerStage extends CanvasStage {
     constructor() {
         super()
+        this.animator = new StepLinerAnimator()
+        this.container = new StepLinerContainer()
     }
     render() {
         super.render()
+        if (this.container) {
+            this.container.draw(this.context, this.size.w, this.size.h)
+        }
     }
     handleTap() {
-
+        if (this.container) {
+            this.canvas.onmousedown = () => {
+                this.container.startUpdating(() => {
+                    this.animator.start(() => {
+                        this.render()
+                        this.container.update(() => {
+                            this.animator.stop()
+                        })
+                    })
+                })
+            }
+        }
     }
 }
 
