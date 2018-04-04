@@ -99,3 +99,34 @@ class StepLinerContainerState {
         cb(this.j)
     }
 }
+
+class StepLinerContainer {
+    constructor() {
+        this.state = new StepLinerContainerState()
+        this.stepLiners = []
+        this.init()
+    }
+    init() {
+        for (var i = 0; i < this.stepLiners.length; i++) {
+            this.stepLiners.push(new StepLiner(i))
+        }
+    }
+    draw(context, w, h) {
+        this.stepLiners.forEach((stepLiner) => {
+            stepLiner.draw(context, w, h)
+        })
+    }
+    update(stopcb) {
+        this.state.executeCb((j) => {
+            this.stepLiners[this.j].update(() => {
+                this.state.incrementCounter()
+                stopcb()
+            })
+        })
+    }
+    startUpdating(startcb) {
+        this.state.executeCb(() =>{
+            this.stepLiners[this.j].startUpdating(startcb)
+        })
+    }
+}
