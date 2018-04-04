@@ -34,3 +34,23 @@ class StepLinerState {
         }
     }
  }
+
+class StepLinerAnimator {
+    constructor() {
+        this.animated = false
+    }
+    start(updatecb) {
+        if (!this.animated) {
+            this.amimated = true
+            this.interval = setInterval(() => {
+
+            }, 50)
+        }
+    }
+    stop() {
+        if (this.animated) {
+            this.animated = false
+            clearInterval(this.interval)
+        }
+    }
+}
