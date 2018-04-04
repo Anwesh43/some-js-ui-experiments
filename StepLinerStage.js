@@ -37,6 +37,7 @@ class StepLinerState {
 
     update (stopcb) {
         this.scale += 0.1 * this.dir
+        console.log(this.scale)
         if (Math.abs(this.scale - this.prevScale) > 1) {
             this.scale = this.prevScale + this.dir
             this.dir = 0
@@ -59,16 +60,18 @@ class StepLinerAnimator {
     }
     start(updatecb) {
         if (!this.animated) {
-            this.amimated = true
+            this.animated = true
             this.interval = setInterval(() => {
-
+                updatecb()
             }, 50)
         }
     }
     stop() {
+        console.log("stopping")
         if (this.animated) {
             this.animated = false
             clearInterval(this.interval)
+            console.log("stopped")
         }
     }
 }
@@ -79,9 +82,9 @@ class StepLiner {
         this.i = i
     }
     draw(context, w, h) {
-        const n = Math.floor(STEP_LINERS/2), k = Math.floor((this.i)/n)
-        const y_gap = (h / STEP_LINERS + 2), x_gap = (w/STEP_LINERS)
-        var i = this.i * (1 - k) + k * (n - this.i)
+        const n = Math.floor(STEP_LINERS/2), k = Math.floor((this.i)/(n+1))
+        const y_gap = ((0.9 * h) / STEP_LINERS + 2), x_gap = (w/STEP_LINERS)
+        var i = this.i * (1 - k) + k * (STEP_LINERS - this.i)
         const x = (w - x_gap / 2) - (x_gap * i)
         const y = y_gap + (y_gap * this.i)
         context.save()
@@ -102,7 +105,7 @@ class StepLiner {
 class StepLinerContainerState {
     constructor() {
         this.j = 0
-        this.dir = 0
+        this.dir = 1
     }
     incrementCounter() {
         this.j += this.dir
@@ -123,26 +126,36 @@ class StepLinerContainer {
         this.init()
     }
     init() {
-        for (var i = 0; i < this.stepLiners.length; i++) {
+        for (var i = 0; i < STEP_LINERS; i++) {
             this.stepLiners.push(new StepLiner(i))
         }
     }
     draw(context, w, h) {
+        context.strokeStyle = '#e74c3c'
+        context.lineWidth = Math.min(w, h)/50
+        context.lineCap = 'round'
         this.stepLiners.forEach((stepLiner) => {
             stepLiner.draw(context, w, h)
         })
     }
     update(stopcb) {
         this.state.executeCb((j) => {
-            this.stepLiners[this.j].update(() => {
+            this.stepLiners[j].update(() => {
                 this.state.incrementCounter()
                 stopcb()
             })
         })
     }
     startUpdating(startcb) {
-        this.state.executeCb(() =>{
-            this.stepLiners[this.j].startUpdating(startcb)
+        this.state.executeCb((j) =>{
+            this.stepLiners[j].startUpdating(startcb)
         })
     }
+}
+
+const initStepLinerStage = () => {
+    const stage = new StepLinerStage()
+    window.scrollTo(0, stage.canvas.offsetTop)
+    stage.render()
+    stage.handleTap()
 }
