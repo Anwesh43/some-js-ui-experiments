@@ -82,3 +82,20 @@ class StepLiner {
         this.state.startUpdating(startcb)
     }
 }
+
+class StepLinerContainerState {
+    constructor() {
+        this.j = 0
+        this.dir = 0
+    }
+    incrementCounter() {
+        this.j += this.dir
+        if (this.j == STEP_LINERS || this.j == -1) {
+            this.dir *= -1
+            this.j += this.dir
+        }
+    }
+    executeCb(cb) {
+        cb(this.j)
+    }
+}
