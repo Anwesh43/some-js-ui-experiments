@@ -56,3 +56,34 @@ class TriToSineAnimator {
         }
     }
 }
+
+class TriToSineWave {
+    constructor () {
+        this.state = new TriToSineState()
+    }
+    draw(context, w, h) {
+        const n = 12
+        const x_gap = w / (2 * n)
+        context.strokeStyle = '#c0392b'
+        context.lineWidth = Math.min(w, h) / 50
+        context.lineCap = 'round'
+        context.save()
+        context.translate(0, h/2)
+        context.beginPath()
+        context.moveTo(0, 0)
+        var x = 0, factor = 18 * this.state.scale
+        for(var i = 0; i <= n * Math.PI; ) {
+            context.lineTo(x, -Math.sin(i))
+            i += (Math.PI/(2+factor))
+            x += (x_gap/factor)
+        }
+        context.stroke()
+        context.restore()
+    }
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
+    }
+}
