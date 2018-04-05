@@ -1,4 +1,4 @@
-class TriToSingeWaveStage extends CanvasStage {
+class TriToSineWaveStage extends CanvasStage {
     constructor() {
         super()
         this.animator = new TriToSineAnimator()
@@ -59,7 +59,7 @@ class TriToSineAnimator {
             this.animated = true
             this.interval = setInterval(() => {
                 updatecb()
-            }, 50)
+            }, 100)
         }
     }
 
@@ -85,11 +85,11 @@ class TriToSineWave {
         context.translate(0, h/2)
         context.beginPath()
         context.moveTo(0, 0)
-        var x = 0, factor = 18 * this.state.scale
+        var x = 0, factor = 38 * this.state.scale
         for(var i = 0; i <= n * Math.PI; ) {
-            context.lineTo(x, -Math.sin(i))
+            context.lineTo(x, -(h/3) * Math.sin(i))
             i += (Math.PI/(2+factor))
-            x += (x_gap/factor)
+            x += (x_gap/(1+ factor/2))
         }
         context.stroke()
         context.restore()
