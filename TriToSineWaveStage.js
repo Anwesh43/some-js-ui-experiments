@@ -1,12 +1,26 @@
 class TriToSingeWaveStage extends CanvasStage {
     constructor() {
         super()
+        this.animator = new TriToSineAnimator()
+        this.triToSineWave = new TriToSineWave()
     }
     render() {
         super.render()
+        if (this.triToSineWave) {
+            this.triToSineWave.draw(this.context, this.size.w, this.size.h)
+        }
     }
     handleTap() {
-
+        this.canvas.onmousedown = (event) => {
+            this.triToSineWave.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.triToSineWave.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
+        }
     }
 }
 
