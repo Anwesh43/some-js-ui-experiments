@@ -101,3 +101,9 @@ class TriToSineWave {
         this.state.startUpdating(startcb)
     }
 }
+
+const initTriToSineWaveStage = () => {
+    const stage = new TriToSineWaveStage()
+    stage.render()
+    stage.handleTap()
+}
