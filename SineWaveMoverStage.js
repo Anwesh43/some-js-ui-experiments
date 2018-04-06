@@ -9,6 +9,7 @@ class SineWaveMoverStage extends CanvasStage {
 
     }
 }
+
 class SWMState {
     constructor (w, h) {
         this.scale = 0
@@ -25,5 +26,25 @@ class SWMState {
     }
     execute(cb) {
         cb(this.deg, this.scale)
+    }
+}
+
+class SWMAnimator {
+    constructor () {
+        this.animated = false
+    }
+    start (updatecb) {
+        if (!this.animated) {
+            this.animated = true
+            this.interval = setInterval(() => {
+                updatecb()
+            }, 50)
+        }
+    }
+    stop() {
+        if (this.animated) {
+            this.animated = false
+            clearInterval(this.interval)
+        }
     }
 }
