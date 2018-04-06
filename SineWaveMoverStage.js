@@ -79,3 +79,32 @@ class SineWaveMover {
         this.state.update(stopcb)
     }
 }
+
+class SineWaveMoverContainer {
+    constructor(w, h) {
+        this.movers = []
+        this.w = w
+        this.h = h
+    }
+    draw(context) {
+        this.movers.forEach((sineWaveMover) => {
+            sineWaveMover.draw(context)
+        })
+    }
+    update(stopcb) {
+        this.movers.forEach((mover) => {
+            mover.update(() => {
+                this.movers.splice(0, 1)
+                if (this.movers.length == 0) {
+                    stopcb()
+                }
+            })
+        })
+    }
+    startUpdating(startcb) {
+        this.movers.push(new SineWaveMover(this.w, this.h))
+        if (this.movers.length == 1) {
+            startcb()
+        }
+    }
+}
