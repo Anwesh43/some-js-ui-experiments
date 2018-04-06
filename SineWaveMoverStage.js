@@ -12,20 +12,21 @@ class SineWaveMoverStage extends CanvasStage {
 
 class SWMState {
     constructor (w, h) {
-        this.scale = 0
         this.deg = 0
         this.limit = w
         this.amp = h
     }
+    transformX(x) {
+        return this.amp * Math.sin((this.deg+x) * Math.PI/180)
+    }
     update(stopcb) {
         this.deg += 10
-        this.scale = this.amp * Math.sin(this.deg * Math.PI/180)
         if (this.deg > this.limit) {
             stopcb()
         }
     }
-    execute(cb) {
-        cb(this.deg, this.scale)
+    execute(cb,x) {
+        cb(this.deg, this.transformX(x))
     }
 }
 
@@ -46,5 +47,35 @@ class SWMAnimator {
             this.animated = false
             clearInterval(this.interval)
         }
+    }
+}
+
+class SineWaveMover {
+    constructor(w, h) {
+        this.w = w
+        this.h = h
+        this.state = new SWMState(this.w, this.h/4)
+    }
+    draw(context) {
+        context.save()
+        context.translate(0, this.h/2)
+        context.beginPath()
+        for (var i = 0; i < 36; i++) {
+            if (i == 0) {
+                this.state.execute((x,y) => {
+                    context.moveTo(x, y)
+                }, i*10)
+            }
+            else {
+                this.state.execute((x, y) => {
+                    context.lineTo(x, y)
+                }, i * 10)
+            }
+        }
+        context.stroke()
+        context.restore()
+    }
+    update(stopcb) {
+        this.state.update(stopcb)
     }
 }
