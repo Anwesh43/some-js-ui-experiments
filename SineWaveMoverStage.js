@@ -1,12 +1,26 @@
 class SineWaveMoverStage extends CanvasStage {
     constructor () {
         super()
+        this.container = new SineWaveMoverContainer(this.size.w, this.size.h)
+        this.animator = new SWMAnimator()
     }
     render() {
         super.render()
+        if (this.container) {
+            this.container.draw(this.context)
+        }
     }
     handleTap() {
-
+        this.canvas.onmousedown = () => {
+            this.container.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.container.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
+        }
     }
 }
 
