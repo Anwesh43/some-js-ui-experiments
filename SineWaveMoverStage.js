@@ -122,3 +122,9 @@ class SineWaveMoverContainer {
         }
     }
 }
+
+const initSineWaveMoverStage = () => {
+    const stage = new SineWaveMoverStage()
+    stage.render()
+    stage.handleTap()
+}
