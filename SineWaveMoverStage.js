@@ -26,7 +26,7 @@ class SineWaveMoverStage extends CanvasStage {
 
 class SWMState {
     constructor (w, h) {
-        this.deg = 0
+        this.deg = -360
         this.limit = w
         this.amp = h
     }
@@ -40,7 +40,7 @@ class SWMState {
         }
     }
     execute(cb,x) {
-        cb(this.deg, this.transformX(x))
+        cb(this.deg + x, this.transformX(x))
     }
 }
 
@@ -101,6 +101,9 @@ class SineWaveMoverContainer {
         this.h = h
     }
     draw(context) {
+        context.strokeStyle = '#2ecc71'
+        context.lineWidth = Math.min(this.w, this.h)/55
+        context.lineCap = 'round'
         this.movers.forEach((sineWaveMover) => {
             sineWaveMover.draw(context)
         })
