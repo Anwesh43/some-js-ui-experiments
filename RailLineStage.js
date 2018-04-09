@@ -1,12 +1,26 @@
 class RailLineStage extends CanvasStage{
     constructor () {
         super()
+        this.line = new RailLine()
+        this.animator = new RailLineAnimator()
     }
     render () {
       super.render()
+      if (this.line) {
+          this.line.draw(this.context, this.size.w, this.size.h)
+      }
     }
     handleTap() {
-
+        this.canvas.onmousedown = () => {
+            this.line.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.line.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
+        }
     }
 }
 
