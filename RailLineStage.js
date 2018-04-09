@@ -111,3 +111,9 @@ class RailLine {
         this.state.startUpdating(startcb)
     }
 }
+
+const initRailLine = () => {
+    this.railLineStage = new RailLineStage()
+    this.railLineStage.render()
+    this.railLineStage.handleTap()
+}
