@@ -1,11 +1,26 @@
 class SquareBallStage extends CanvasStage {
     constructor() {
         super()
+        this.squareBall = new SquareBallS()
+        this.animator = new SquareBallAnimator()
     }
     render() {
         super.render()
+        if (this.squareBall) {
+            this.squareBall.draw(this.context, this.size.w, this.size.h)
+        }
     }
     handleTap() {
+        this.canvas.onmousedown = () => {
+            this.squareBall.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.squareBall.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
+        }
     }
 }
 class SquareBallState {
