@@ -131,6 +131,7 @@ class SquareBall {
 }
 const initSquareBallStage = () => {
     this.stage = new SquareBallStage()
+    window.scrollBy(0, this.stage.canvas.offsetTop)
     this.stage.render()
     this.stage.handleTap()
 }
