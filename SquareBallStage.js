@@ -101,3 +101,8 @@ class SquareBall {
         this.state.startUpdating(startcb)
     }
 }
+const initSquareBallStage = () => {
+    this.stage = new SquareBallStage()
+    this.stage.render()
+    this.stage.handleTap()
+}
