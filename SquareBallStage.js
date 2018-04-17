@@ -55,3 +55,34 @@ class SquareBallAnimator {
         }
     }
 }
+
+class SquareBall {
+    constructor() {
+        this.state = new SquareBallState()
+    }
+    draw(context, w, h) {
+        context.save()
+        context.translate(w/2, h/2)
+        const sizeX = (Math.min(w, h)/3) * this.state.scales[0], sizeY = Math.min(w,h)/3 * this.state.scales[2]
+        for (var i = 0; i < 2; i++) {
+            context.save()
+            context.rotate(Math.PI/2 * i * this.state.scales[1])
+            for (var j = 0; j < 3; j++) {
+                context.save()
+                context.beginPath()
+                context.moveTo(-sizeX, sizeY)
+                context.lineTo(sizeX, sizeY)
+                context.stroke()
+                context.restore()
+            }
+            context.restore()
+        }
+        context.restore()
+    }
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
+    }
+}
