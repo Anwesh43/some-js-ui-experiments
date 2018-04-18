@@ -66,12 +66,21 @@ class SquareBridge {
         const size = Math.min(w, h)/6
         context.save()
         context.translate(w/2, h/2)
+        const px = [], py = []
         for (var i = 0; i < 2; i++) {
             const sx = (size/2) * this.state.scales[1] * (1 - 2 * i)
             context.save()
             context.translate(-sx, sx)
             context.fillRect(-size, -size, 2 * size, 2 * size)
             context.restore()
+            px.push([-sx - size, -sx + size])
+            py.push([sx - size, sx + size])
+        }
+        for(var i = 0 ; i < 2;i++) {
+            context.beginPath()
+            context.moveTo(px[0][i], py[0][i])
+            context.lineTo(px[1][i], py[1][i])
+            context.stroke()
         }
         context.restore()
     }
