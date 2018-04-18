@@ -57,3 +57,28 @@ class SQSAnimator {
         }
     }
 }
+
+class SquareBridge {
+    constructor() {
+        this.state = new SQSState()
+    }
+    draw(context, w, h) {
+        const size = Math.min(w, h)/6
+        context.save()
+        context.translate(w/2, h/2)
+        for (var i = 0; i < 2; i++) {
+            const sx = (size/2) * this.state.scales[1] * (1 - 2 * i)
+            context.save()
+            context.translate(-sx, sx)
+            context.fillRect(-size, -size, 2 * size, 2 * size)
+            context.restore()
+        }
+        context.restore()
+    }
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
+    }
+}
