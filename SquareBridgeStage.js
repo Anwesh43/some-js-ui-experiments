@@ -105,3 +105,9 @@ class SquareBridge {
         this.state.startUpdating(startcb)
     }
 }
+
+const initSquareBridgeStage = () => {
+    const stage = new SquareBridgeStage()
+    stage.render()
+    stage.handleTap()
+}
