@@ -1,12 +1,26 @@
 class SquareBridgeStage extends CanvasStage {
     constructor() {
         super()
+        this.animator = new SQSAnimator()
+        this.bridge = new SquareBridge()
     }
     render() {
         super.render()
+        if (!this.bridge) {
+            this.bridge.draw(context, this.size.w, this.size.h)
+        }
     }
     handleTap() {
-
+        this.canvas.onmousedown = () => {
+            this.bridge.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.bridge.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
+        }
     }
 }
 
