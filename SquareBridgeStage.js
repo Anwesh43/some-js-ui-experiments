@@ -6,8 +6,8 @@ class SquareBridgeStage extends CanvasStage {
     }
     render() {
         super.render()
-        if (!this.bridge) {
-            this.bridge.draw(context, this.size.w, this.size.h)
+        if (this.bridge) {
+            this.bridge.draw(this.context, this.size.w, this.size.h)
         }
     }
     handleTap() {
@@ -78,19 +78,26 @@ class SquareBridge {
     }
     draw(context, w, h) {
         const size = Math.min(w, h)/6
+        context.strokeStyle = '#e74c3c'
+        context.fillStyle = '#e74c3c'
+        context.lineWidth = Math.min(w, h)/45
+        context.lineCap = 'round'
         context.save()
         context.translate(w/2, h/2)
         const px = [], py = []
         for (var i = 0; i < 2; i++) {
             const sx = (size/2) * this.state.scales[1] * (1 - 2 * i)
+            context.globalAlpha = 1 - 0.5 * i
             context.save()
             context.translate(-sx, sx)
             context.fillRect(-size, -size, 2 * size, 2 * size)
             context.restore()
-            px.push([-sx - size, -sx + size])
-            py.push([sx - size, sx + size])
+            const sizeScaled = (size - Math.min(w,h)/90) * this.state.scales[2]
+            px.push([-sx - sizeScaled, -sx + sizeScaled, -sx - sizeScaled, -sx + sizeScaled])
+            py.push([sx - sizeScaled, sx + sizeScaled, sx + sizeScaled, sx - sizeScaled])
         }
-        for(var i = 0 ; i < 2;i++) {
+        context.globalAlpha = 1
+        for(var i = 0 ; i < 4;i++) {
             context.beginPath()
             context.moveTo(px[0][i], py[0][i])
             context.lineTo(px[1][i], py[1][i])
