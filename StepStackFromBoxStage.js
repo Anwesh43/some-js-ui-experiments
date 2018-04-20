@@ -2,15 +2,26 @@ class StepStackFromBoxStage extends HTMLElement {
 
     constructor() {
         super()
+        this.stepStack = new StepStack()
     }
 
     render() {
         super.render()
+        if (this.stepStack) {
+            this.stepStack.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = (event) => {
-
+            this.stepStack.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.stepStack.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
