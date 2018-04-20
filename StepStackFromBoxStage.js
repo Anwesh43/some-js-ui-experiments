@@ -86,3 +86,9 @@ class StepStack {
         this.state.startUpdating(startcb)
     }
 }
+
+const initStepStackStage = () => {
+    const stepStackStage = new StepStackStage()
+    stepStackStage.render()
+    stepStackStage.handleTap()
+}
