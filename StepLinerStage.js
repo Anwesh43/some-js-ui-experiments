@@ -9,6 +9,9 @@ class StepLinerStage extends CanvasStage {
     render() {
         super.render()
         if (this.container) {
+            console.log("rendering")
+            this.context.fillStyle = '#212121'
+            this.context.fillRect(0, 0, this.size.w, this.size.h)
             this.container.draw(this.context, this.size.w, this.size.h)
         }
     }
@@ -20,6 +23,7 @@ class StepLinerStage extends CanvasStage {
                         this.render()
                         this.container.update(() => {
                             this.animator.stop()
+                            this.render()
                         })
                     })
                 })

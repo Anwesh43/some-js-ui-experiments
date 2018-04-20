@@ -47,7 +47,7 @@ class StepStackState {
                 this.j -= this.dir
                 this.dir = 0
                 this.prevScale = this.scales[this.j]
-                stopb()
+                stopcb()
             }
         }
     }
@@ -78,7 +78,7 @@ class StepStack {
                 context.fillRect(0, 0, size * this.state.scales[0], size/2 * this.state.scales[0])
                 context.restore()
             }
-            context.fillRect(-size/2, -size/4, size, size/2)
+            context.fillRect(-size/2, -size/4, size * this.state.scales[0], size/2 * this.state.scales[0])
             context.restore()
         }
         context.restore()
