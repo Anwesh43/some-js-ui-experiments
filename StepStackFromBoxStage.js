@@ -61,6 +61,7 @@ class StepStack {
         this.state = new StepStackState()
     }
     draw(context, w, h) {
+        context.fillStyle = '#f39c12'
         const size = Math.min(w, h)/10
         context.save()
         context.translate(w/2, h/2)
