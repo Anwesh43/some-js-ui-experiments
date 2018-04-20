@@ -1,8 +1,9 @@
-class StepStackFromBoxStage extends HTMLElement {
+class StepStackFromBoxStage extends CanvasStage {
 
     constructor() {
         super()
         this.stepStack = new StepStack()
+        this.animator = new StepStackAnimator()
     }
 
     render() {
@@ -13,14 +14,17 @@ class StepStackFromBoxStage extends HTMLElement {
     }
 
     handleTap() {
+
         this.canvas.onmousedown = (event) => {
             this.stepStack.startUpdating(() => {
-                this.animator.start(() => {
-                    this.render()
-                    this.stepStack.update(() => {
-                        this.animator.stop()
+                if (this.animator) {
+                    this.animator.start(() => {
+                        this.render()
+                        this.stepStack.update(() => {
+                            this.animator.stop()
+                        })
                     })
-                })
+                }
             })
         }
     }
@@ -65,7 +69,7 @@ class StepStack {
         const size = Math.min(w, h)/10
         context.save()
         context.translate(w/2, h/2)
-        for (var i = 0; i < 2; i++) {}
+        for (var i = 0; i < 2; i++) {
             context.save()
             context.scale(1 - 2 * i, 1 - 2 * i)
             for(var j = 0; j < 3; j++) {
@@ -75,7 +79,6 @@ class StepStack {
                 context.restore()
             }
             context.fillRect(-size/2, -size/4, size, size/2)
-            context.fillRect()
             context.restore()
         }
         context.restore()
@@ -88,8 +91,27 @@ class StepStack {
     }
 }
 
+class StepStackAnimator {
+    constructor() {
+        this.animated = false
+    }
+    start(updatecb) {
+        if (!this.animated) {
+            this.animated = true
+            this.interval = setInterval(() => {
+                updatecb()
+            }, 50)
+        }
+    }
+    stop() {
+        if (this.animated) {
+            this.animated = false
+            clearInterval(this.interval)
+        }
+    }
+}
 const initStepStackStage = () => {
-    const stepStackStage = new StepStackStage()
+    const stepStackStage = new StepStackFromBoxStage()
     stepStackStage.render()
     stepStackStage.handleTap()
 }
