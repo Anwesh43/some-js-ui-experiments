@@ -10,7 +10,9 @@ class SquareSeqMoverStage extends CanvasStage {
     render() {
         super.render()
         if (this.mover) {
-            this.mover.draw(this.context)
+            this.context.strokeStyle = '#27ae60'
+            this.context.lineWidth = Math.min(this.size.w, this.size.h) / 60
+            this.mover.draw(this.context, this.size.w, this.size.h)
         }
     }
 
@@ -30,20 +32,18 @@ class SquareSeqMoverStage extends CanvasStage {
 
 class SSMState {
 
-    constructor(n) {
+    constructor() {
         this.scales = [0, 0]
         this.prevScale = 0
         this.dir = 0
         this.j = 0
-        this.k = 0
-        this.n = n
     }
 
     update(stopcb) {
         this.scales[this.j] += this.dir * 0.1
         if (Math.abs(this.scales[this.j] - this.prevScale) > 1) {
-            this.j += this.dir
             this.scales[this.j] = this.prevScale + this.dir
+            this.j += this.dir
             if (this.j == this.scales.length || this.j == -1) {
                 this.j -= this.dir
                 this.dir = 0
@@ -72,7 +72,7 @@ class SSMAnimator {
             this.animated = true
             this.interval = setInterval(() => {
                 updatecb()
-            },{ 50)
+            }, 50)
         }
     }
 
@@ -96,7 +96,7 @@ class SquareSeqNode {
     }
 
     addNeighbor() {
-        if (this.i < N - 1) {
+        if (this.i < MAX_SEQ_SQUARE - 1) {
             const NODE = new SquareSeqNode(this.i + 1)
             this.next = NODE
             NODE.prev = this
@@ -105,8 +105,8 @@ class SquareSeqNode {
     }
 
     draw(context, w, h) {
-        const size = w/N
-        const x1 = this.i * size + size * this.state..scales[1], x2 = this.i * size + size * this.state.scales[0], y1 = h/2 - size/2, y2 = h/2 + size/2
+        const size = w/(MAX_SEQ_SQUARE)
+        const x1 = this.i * size + size * this.state.scales[1], x2 = this.i * size + size * this.state.scales[0], y1 = h/2 - size/2, y2 = h/2 + size/2
         context.beginPath()
         context.moveTo(x1, y1)
         context.lineTo(x2, y1)
@@ -154,8 +154,8 @@ class SquareSeqMover {
         this.curr.addNeighbor()
     }
 
-    draw(context) {
-        this.curr.draw(this.context)
+    draw(context, w, h) {
+        this.curr.draw(context, w, h)
     }
 
     update(stopcb) {
@@ -163,6 +163,7 @@ class SquareSeqMover {
             this.curr = this.curr.move(this.dir, () => {
                 this.dir *= -1
             })
+            console.log(this.curr)
             stopcb()
         })
     }
