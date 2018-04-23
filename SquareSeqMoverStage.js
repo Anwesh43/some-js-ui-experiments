@@ -1,6 +1,5 @@
 const MAX_SEQ_SQUARE = 5
 class SquareSeqMoverStage extends CanvasStage {
-
     constructor() {
         super()
         this.mover = new SquareSeqMover()
@@ -12,6 +11,7 @@ class SquareSeqMoverStage extends CanvasStage {
         if (this.mover) {
             this.context.strokeStyle = '#27ae60'
             this.context.lineWidth = Math.min(this.size.w, this.size.h) / 60
+            this.context.lineCap = 'round'
             this.mover.draw(this.context, this.size.w, this.size.h)
         }
     }
@@ -125,24 +125,15 @@ class SquareSeqNode {
     }
 
     move(dir, cb)  {
+        var currNode = this.prev
         if (dir == 1) {
-            if (this.next) {
-                return this.next
-            }
-            else {
-                cb()
-                return this.prev
-            }
+            currNode = this.next
         }
-        else {
-            if (this.prev) {
-                return this.prev
-            }
-            else {
-                cb()
-                return this.next
-            }
+        if (currNode) {
+            return currNode
         }
+        cb()
+        return this
     }
 }
 
