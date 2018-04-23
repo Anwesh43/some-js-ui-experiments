@@ -171,3 +171,9 @@ class SquareSeqMover {
         this.curr.startUpdating(startcb)
     }
 }
+
+const initSquareSeqMover = () => {
+    const stage = new SquareSeqMoverStage()
+    stage.render()
+    stage.handleTap()
+}
