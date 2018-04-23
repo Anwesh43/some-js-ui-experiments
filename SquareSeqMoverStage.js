@@ -60,7 +60,7 @@ class SSMAnimator {
             this.animated = true
             this.interval = setInterval(() => {
                 updatecb()
-            }, 50)
+            },{ 50)
         }
     }
 
@@ -110,5 +110,52 @@ class SquareSeqNode {
 
     startUpdating(startcb) {
         this.state.startUpdating(startcb)
+    }
+
+    move(dir, cb)  {
+        if (dir == 1) {
+            if (this.next) {
+                return this.next
+            }
+            else {
+                cb()
+                return this.prev
+            }
+        }
+        else {
+            if (this.prev) {
+                return this.prev
+            }
+            else {
+                cb()
+                return this.next
+            }
+        }
+    }
+}
+
+class SquareSeqMover {
+    constructor() {
+        this.root = new SquareSeqNode()
+        this.dir = 1
+        this.curr = this.root
+        this.curr.addNeighbor()
+    }
+
+    draw(context) {
+        this.curr.draw(this.context)
+    }
+
+    update(stopcb) {
+        this.curr.update(() => {
+            this.curr = this.curr.move(this.dir, () => {
+                this.dir *= -1
+            })
+            stopcb()
+        })
+    }
+
+    startUpdating(startcb) {
+        this.curr.startUpdating(startcb)
     }
 }
