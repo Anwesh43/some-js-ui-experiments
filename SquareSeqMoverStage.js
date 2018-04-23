@@ -3,15 +3,27 @@ class SquareSeqMoverStage extends CanvasStage {
 
     constructor() {
         super()
+        this.mover = new SquareSeqMover()
+        this.animator = new SSMAnimator()
     }
 
     render() {
         super.render()
+        if (this.mover) {
+            this.mover.draw(this.context)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = (event) => {
-
+            this.mover.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.mover.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
