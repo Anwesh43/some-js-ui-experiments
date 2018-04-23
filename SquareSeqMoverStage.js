@@ -1,3 +1,4 @@
+const MAX_SEQ_SQUARE = 5
 class SquareSeqMoverStage extends CanvasStage {
 
     constructor() {
@@ -68,5 +69,46 @@ class SSMAnimator {
             this.animated = false
             clearInterval(this.interval)
         }
+    }
+}
+
+class SquareSeqNode {
+    constructor(i) {
+        this.state = new SSMState()
+        if (!i) {
+            this.i = 0
+        }
+        else {
+            this.i = i
+        }
+    }
+
+    addNeighbor() {
+        if (this.i < N - 1) {
+            const NODE = new SquareSeqNode(this.i + 1)
+            this.next = NODE
+            NODE.prev = this
+            NODE.addNeighbor()
+        }
+    }
+
+    draw(context, w, h) {
+        const size = w/N
+        const x1 = this.i * size + size * this.state..scales[1], x2 = this.i * size + size * this.state.scales[0], y1 = h/2 - size/2, y2 = h/2 + size/2
+        context.beginPath()
+        context.moveTo(x1, y1)
+        context.lineTo(x2, y1)
+        context.lineTo(x2, y2)
+        context.lineTo(x1, y2)
+        context.lineTo(x1, y1)
+        context.stroke()
+    }
+
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
     }
 }
