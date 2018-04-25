@@ -10,7 +10,7 @@ class CircleLinkedStepStage extends CanvasStage {
     render() {
         super.render()
         if (this.circleLinkedStep) {
-            this.circleLinkedStep.draw(this.context)
+            this.circleLinkedStep.draw(this.context, this.size.w, this.size.h)
         }
     }
 
@@ -100,14 +100,14 @@ class CLSNode {
     }
 
     draw(context, w, h) {
-        const GAP = w / CL_NODES
+        const gap = w / CL_NODES
         context.strokeStyle = '#2ecc71'
         context.lineWidth = Math.min(w, h) / 50
         context.lineCap = 'round'
         const getAngles = (i) => 180 + Math.floor(180 * this.state.scales[i])
         const start = getAngles(1), end = getAngles(0)
         context.save()
-        context.translate(this.i * gap, h/2)
+        context.translate(this.i * gap + gap/2, h/2)
         for (var i = start; i <= end; i++) {
             const x = (gap/2) * Math.cos(i * Math.PI/180), y = (gap/2) * Math.sin(i * Math.PI/180)
             if (i == start) {
@@ -151,12 +151,12 @@ class CircleLinkedStep {
     }
 
     draw(context, w, h) {
-        this.curr.draw(this.context)
+        this.curr.draw(context, w, h)
     }
 
     update(stopcb) {
         this.curr.update(() => {
-            this.curr = this.getNext(() => {
+            this.curr = this.curr.getNext(this.dir, () => {
                 this.dir *= -1
             })
             stopcb()
