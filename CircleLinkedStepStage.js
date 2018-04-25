@@ -1,3 +1,4 @@
+const CL_NODES = 10;
 class CircleLinkedStepStage extends CanvasStage {
 
     constructor() {
@@ -22,7 +23,6 @@ class CLSState {
         this.dir = 0
         this.j = 0
     }
-
     update(stopcb) {
         this.scales[this.j] += 0.1 * this.dir
         if (Math.abs(this.scales[this.j] - this.prevScale) > 1) {
@@ -65,5 +65,55 @@ class CLSAnimator {
             this.animated = false
             clearInterval(this.interval)
         }
+    }
+}
+
+class CLSNode {
+
+    constructor(i) {
+        this.state = new CLSState()
+        this.i = 0
+        if (i) {
+            this.i = i
+        }
+    }
+
+    addNeighbor() {
+        if (this.i < CL_NODES - 1) {
+            const NODE = new CLSNode(this.i + 1)
+            this.next = NODE
+            NODE.prev = this
+            NODE.addNeighbor()
+        }
+    }
+
+    draw(context, w, h) {
+        const GAP = w / CL_NODES
+        context.strokeStyle = '#2ecc71'
+        context.lineWidth = Math.min(w, h) / 50
+        context.lineCap = 'round'
+        const getAngles = (i) => 180 + Math.floor(180 * this.state.scales[i])
+        const start = getAngles(1), end = getAngles(0)
+        context.save()
+        context.translate(this.i * gap, h/2)
+        for (var i = start; i <= end; i++) {
+            const x = (gap/2) * Math.cos(i * Math.PI/180), y = (gap/2) * Math.sin(i * Math.PI/180)
+            if (i == start) {
+                context.beginPath()
+                context.moveTo(x, y)
+            } else {
+                context.lineTo(x, y)
+            }
+        }
+        context.stroke()
+        context.restore()
+    }
+
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
     }
 }
