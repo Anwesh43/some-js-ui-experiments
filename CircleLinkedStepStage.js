@@ -109,6 +109,18 @@ class CLSNode {
         context.restore()
     }
 
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
+    }
+
     update(stopcb) {
         this.state.update(stopcb)
     }
@@ -132,6 +144,9 @@ class CircleLinkedStep {
 
     update(stopcb) {
         this.curr.update(() => {
+            this.curr = this.getNext(() => {
+                this.dir *= -1
+            })
             stopcb()
         })
     }
