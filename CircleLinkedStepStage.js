@@ -3,15 +3,27 @@ class CircleLinkedStepStage extends CanvasStage {
 
     constructor() {
         super()
+        this.animator = new CLSAnimator()
+        this.circleLinkedStep = new CircleLinkedStep()
     }
 
     render() {
         super.render()
+        if (this.circleLinkedStep) {
+            this.circleLinkedStep.draw(this.context)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.circleLinkedStep.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.circleLinkedStep.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
