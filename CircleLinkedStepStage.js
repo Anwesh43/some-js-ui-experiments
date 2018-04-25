@@ -167,3 +167,9 @@ class CircleLinkedStep {
         this.curr.startUpdating(startcb)
     }
 }
+
+const initCircleLinkedStepStage = () => {
+    const circleLinkedStepStage = new CircleLinkedStepStage()
+    circleLinkedStepStage.render()
+    circleLinkedStepStage.handleTap()
+}
