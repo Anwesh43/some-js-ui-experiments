@@ -117,3 +117,26 @@ class CLSNode {
         this.state.startUpdating(startcb)
     }
 }
+
+class CircleLinkedStep {
+
+    constructor() {
+        this.curr = new CLSNode()
+        this.curr.addNeighbor()
+        this.dir = 1
+    }
+
+    draw(context, w, h) {
+        this.curr.draw(this.context)
+    }
+
+    update(stopcb) {
+        this.curr.update(() => {
+            stopcb()
+        })
+    }
+
+    startUpdating(startcb) {
+        this.curr.startUpdating(startcb)
+    }
+}
