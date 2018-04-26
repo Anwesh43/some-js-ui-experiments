@@ -3,15 +3,27 @@ class TriWaveStepStage extends HTMLElement {
 
     constructor() {
         super()
+        this.triWaveStep = new TriWaveStep()
+        this.animator = new TWSAnimator()
     }
 
     render() {
         super.render()
+        if (this.triWaveStep) {
+            this.triWaveStep.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = (event) => {
-
+            this.triWaveStep.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.triWaveStep.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
