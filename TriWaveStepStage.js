@@ -109,4 +109,45 @@ class TWSNode {
             NODE.addNeighbor()
         }
     }
+
+    move(dir, cb) {
+        var curr = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
+    }
+}
+
+class TriWaveStep {
+
+    constructor() {
+        this.curr = new TWSNode()
+        this.dir = 1
+        this.curr.addNeighbor()
+    }
+
+    draw(context, w, h) {
+        context.strokeStyle = '#2ecc71'
+        context.lineWidth = Math.min(w, h)/50
+        context.lineCap = 'round'
+        this.curr.draw(context, w, h)
+    }
+
+    update(stopcb) {
+        this.curr.update(() => {
+            this.curr = this.curr.move(this.dir, () => {
+                this.dir *= -1
+                stopcb()
+            })
+        })
+    }
+
+    startUpdating(startcb) {
+        this.curr.startUpdating(startcb)
+    }
 }
