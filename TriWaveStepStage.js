@@ -1,5 +1,5 @@
 const NUM_TRI_WAVES = 10
-class TriWaveStepStage extends HTMLElement {
+class TriWaveStepStage extends CanvasStage {
 
     constructor() {
         super()
@@ -20,6 +20,7 @@ class TriWaveStepStage extends HTMLElement {
                 this.animator.start(() => {
                     this.render()
                     this.triWaveStep.update(() => {
+                        console.log("stopping")
                         this.animator.stop()
                     })
                 })
@@ -42,7 +43,7 @@ class TWSState {
         if (Math.abs(this.scales[this.j] - this.prevScale) > 1) {
             this.scales[this.j] = this.prevScale + this.dir
             this.j += this.dir
-            if (this.j == this.scales.length || this.j == 0) {
+            if (this.j == this.scales.length || this.j == -1) {
                 this.j -= this.dir
                 this.dir = 0
                 this.prevScale = this.scales[this.j]
@@ -103,10 +104,11 @@ class TWSNode {
     draw(context, w, h) {
         const gap = w / NUM_TRI_WAVES
         const gap1 = (gap/2) * this.state.scales[0], gap2 = (gap/2) * this.state.scales[1], gap3 = (gap/2) * this.state.scales[2]
+        console.log(gap3)
         context.save()
-        context.translate(i * gap , h/2)
+        context.translate(this.i * gap , h/2)
         context.beginPath()
-        context.moveTo(gap2, -gap2)
+        context.moveTo(gap2 + gap3, -gap2 + gap3)
         context.lineTo(gap1 + gap3, -gap1 + gap3)
         context.lineTo(gap1 + gap2, -gap1 + gap2)
         context.stroke()
@@ -154,12 +156,18 @@ class TriWaveStep {
         this.curr.update(() => {
             this.curr = this.curr.move(this.dir, () => {
                 this.dir *= -1
-                stopcb()
             })
+            stopcb()
         })
     }
 
     startUpdating(startcb) {
         this.curr.startUpdating(startcb)
     }
+}
+
+const initTriWaveStepStage = () => {
+    const tws = new TriWaveStepStage()
+    tws.render()
+    tws.handleTap()
 }
