@@ -40,6 +40,7 @@ class ALState {
 
     update(stopcb) {
         this.scales[this.j] += 0.1 * this.dir
+        console.log(this.scales)
         if (Math.abs(this.scales[this.j] - this.prevScale) > 1) {
             this.scales[this.j] = this.prevScale + this.dir
             this.j += this.dir
@@ -102,19 +103,20 @@ class ALNode {
     }
 
     draw(context, w, h) {
-      var start = 180 + Math.floor(180 * this.state.scales[0]), end = 180 + Math.floor(180 * this.state.scales[0])
-        const size = w / ALNODES, r = size/2
+        var start = 180 + Math.floor(180 * this.state.scales[1]), end = 180 + Math.floor(180 * this.state.scales[0])
+        const size = (0.9 * w) / ALNODES, r = size/2
+        console.log(size)
         context.strokeStyle = '#2ecc71'
         context.lineWidth = Math.min(w, h)/50
         context.lineCap = 'round'
         context.save()
-        context.translate(this.i * size + r, h/2)
+        context.translate(0.1 * size + this.i * size + r, h/2)
         for (var i = 0; i < 2; i++) {
             context.save()
             context.scale(1, 1 - 2 * i)
             context.beginPath()
             for (var j = start; j <= end; j++) {
-                const x = Math.cos(j * Math.PI/180), y = Math.sin(j * Math.PI/180)
+                const x = r * Math.cos(j * Math.PI/180), y = r * Math.sin(j * Math.PI/180)
                 if (j == start) {
                     context.moveTo(x, y)
                 }
