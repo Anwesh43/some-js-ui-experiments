@@ -104,6 +104,9 @@ class ALNode {
     draw(context, w, h) {
       var start = 180 + Math.floor(180 * this.state.scales[0]), end = 180 + Math.floor(180 * this.state.scales[0])
         const size = w / ALNODES, r = size/2
+        context.strokeStyle = '#2ecc71'
+        context.lineWidth = Math.min(w, h)/50
+        context.lineCap = 'round'
         context.save()
         context.translate(this.i * size + r, h/2)
         for (var i = 0; i < 2; i++) {
@@ -168,4 +171,10 @@ class ArcLinked {
     startUpdating(startcb) {
         this.curr.startUpdating(startcb)
     }
+}
+
+const initArcLinkedStage = () => {
+    const arcLinkedStage = new ArcLinkedStage()
+    arcLinkedStage.render()
+    arcLinkedStage.handleTap()
 }
