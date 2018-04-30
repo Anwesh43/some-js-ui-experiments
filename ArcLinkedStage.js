@@ -4,15 +4,27 @@ class ArcLinkedStage extends CanvasStage {
 
     constructor() {
         super()
+        this.arcLinked = new ArcLinked()
+        this.animator = new ALAnimator()
     }
 
     render() {
         super.render()
+        if (this.arcLinked) {
+            this.arcLinked.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.arcLinked.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.arcLinked.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
