@@ -21,6 +21,7 @@ class ArcLinkedStage extends CanvasStage {
                 this.animator.start(() => {
                     this.render()
                     this.arcLinked.update(() => {
+                        this.render()
                         this.animator.stop()
                     })
                 })
@@ -106,7 +107,7 @@ class ALNode {
         var start = 180 + Math.floor(180 * this.state.scales[1]), end = 180 + Math.floor(180 * this.state.scales[0])
         const size = (0.9 * w) / ALNODES, r = size/2
         console.log(size)
-        context.strokeStyle = '#2ecc71'
+        context.strokeStyle = '#16a085'
         context.lineWidth = Math.min(w, h)/50
         context.lineCap = 'round'
         context.save()
