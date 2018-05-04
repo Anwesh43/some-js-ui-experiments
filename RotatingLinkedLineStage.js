@@ -100,6 +100,9 @@ class RLLNode {
     }
 
     draw(context, w, h) {
+        context.strokeStyle = '#2ecc71'
+        context.lineWidth = Math.min(w, h) / 60
+        context.lineCap = 'round'
         const size = (0.9 * w) / (RL_NODES)
         context.save()
         context.translate(this.i * size, h/2)
