@@ -3,15 +3,27 @@ class RotatingLinkedLineStage extends CanvasStage {
 
     constructor() {
         super()
+        this.animator = new RLLAnimator()
+        this.rotatingLinkedLine = new RotatingLinkedLine()
     }
 
     render() {
         super.render()
+        if (this.rotatingLinkedLine) {
+            this.rotatingLinkedLine.draw(this.context)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.rotatingLinkedLine.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.rotatingLinkedLine.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
