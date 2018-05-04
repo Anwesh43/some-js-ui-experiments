@@ -77,7 +77,6 @@ class RLLNode {
             this.i = i
         }
     }
-
     draw(context, w, h) {
         const size = (0.9 * w) / (RL_NODES)
         context.save()
@@ -92,6 +91,26 @@ class RLLNode {
 
     update(stopcb) {
         this.state.update(stopcb)
+    }
+
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
+    }
+}
+
+class RotatingLinkedLine {
+
+    constructor() {
+        this.curr = new RLLNode(0)
+        this.dir = 1
+    }
+
+    draw(context) {
+        this.curr.draw(context)
+    }
+
+    update(stopcb) {
+        this.curr.update(stopcb)
     }
 
     startUpdating(startcb) {
