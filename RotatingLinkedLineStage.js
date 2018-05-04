@@ -76,7 +76,17 @@ class RLLNode {
         if (i) {
             this.i = i
         }
+        this.addNeighbor()
     }
+
+    addNeighbor() {
+        if (this.i < RL_NODES - 1) {
+            const NODE = new RLLNode(this.i+1)
+            this.next = NODE
+            NODE.prev = this
+        }
+    }
+
     draw(context, w, h) {
         const size = (0.9 * w) / (RL_NODES)
         context.save()
@@ -96,6 +106,18 @@ class RLLNode {
     startUpdating(startcb) {
         this.state.startUpdating(startcb)
     }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
+    }
 }
 
 class RotatingLinkedLine {
@@ -110,7 +132,12 @@ class RotatingLinkedLine {
     }
 
     update(stopcb) {
-        this.curr.update(stopcb)
+        this.curr.update(() => {
+            this.curr = this.curr.getNext(this.dir, () => {
+                this.dir *= -1
+            })
+            stopcb()
+        })
     }
 
     startUpdating(startcb) {
