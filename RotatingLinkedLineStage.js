@@ -1,3 +1,4 @@
+const RL_NODES = 5
 class RotatingLinkedLineStage extends CanvasStage {
 
     constructor() {
@@ -64,5 +65,36 @@ class RLLAnimator {
             this.animated = false
             clearInterval(this.interval)
         }
+    }
+}
+
+class RLLNode {
+
+    constructor(i) {
+        this.state = new RLLState()
+        this.i = 0
+        if (i) {
+            this.i = i
+        }
+    }
+
+    draw(context, w, h) {
+        const size = (0.9 * w) / (RL_NODES)
+        context.save()
+        context.translate(this.i * size, h/2)
+        context.rotate(Math.PI/2 * this.state.scales[1])
+        context.beginPath()
+        context.moveTo(0, -size * this.state.scales[2])
+        context.lineTo(0, -size * this.state.scales[0])
+        context.stroke()
+        context.restore()
+    }
+
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
     }
 }
