@@ -156,3 +156,9 @@ class RotatingLinkedLine {
         this.state.startUpdating(startcb)
     }
 }
+
+const initRotatingLinkedLine = () => {
+    const stage = new RotatingLinkedLineStage()
+    stage.render()
+    stage.handleTap()
+}
