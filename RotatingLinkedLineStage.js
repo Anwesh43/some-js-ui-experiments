@@ -10,7 +10,7 @@ class RotatingLinkedLineStage extends CanvasStage {
     render() {
         super.render()
         if (this.rotatingLinkedLine) {
-            this.rotatingLinkedLine.draw(this.context)
+            this.rotatingLinkedLine.draw(this.context, this.size.w, this.size.h)
         }
     }
 
@@ -30,14 +30,14 @@ class RotatingLinkedLineStage extends CanvasStage {
 
 class RLLState {
     constructor() {
-        this.scales = [0, 0]
+        this.scales = [0, 0, 0]
         this.dir = 0
         this.j = 0
         this.prevScale = 0
     }
 
     update(stopcb) {
-        this.scales[this.j] += 0.1
+        this.scales[this.j] += 0.1 * this.dir
         if (Math.abs(this.scales[this.j] - this.prevScale) > 1) {
             this.scales[this.j] = this.prevScale + this.dir
             this.j += this.dir
@@ -104,11 +104,12 @@ class RLLNode {
         context.lineWidth = Math.min(w, h) / 60
         context.lineCap = 'round'
         const size = (0.9 * w) / (RL_NODES)
+        console.log(this.state.scales[2])
         context.save()
-        context.translate(this.i * size, h/2)
+        context.translate(0.05 * w + this.i * size, h/2)
         context.rotate(Math.PI/2 * this.state.scales[1])
         context.beginPath()
-        context.moveTo(0, -size * this.state.scales[2])
+        context.moveTo(0, - (size * this.state.scales[2]))
         context.lineTo(0, -size * this.state.scales[0])
         context.stroke()
         context.restore()
@@ -142,8 +143,8 @@ class RotatingLinkedLine {
         this.dir = 1
     }
 
-    draw(context) {
-        this.curr.draw(context)
+    draw(context, w, h) {
+        this.curr.draw(context, w, h)
     }
 
     update(stopcb) {
@@ -156,7 +157,7 @@ class RotatingLinkedLine {
     }
 
     startUpdating(startcb) {
-        this.state.startUpdating(startcb)
+        this.curr.startUpdating(startcb)
     }
 }
 
