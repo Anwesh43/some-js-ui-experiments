@@ -172,3 +172,9 @@ class BinaryTreeBall {
         })
     }
 }
+
+const initBinaryTreeBallStage = () => {
+    const binaryTreeBallStage = new BinaryTreeBallStage()
+    binaryTreeBallStage.render()
+    binaryTreeBallStage.handleTap()
+}
