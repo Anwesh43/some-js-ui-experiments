@@ -3,15 +3,26 @@ class BinaryTreeBallStage extends CanvasStage {
 
     constructor() {
         super()
+        this.binaryTreeBall = new BinaryTreeBall()
+        this.animator = new BTBAnimator()
     }
 
     render() {
         super.render()
+        if (this.binaryTreeBall) {
+            this.binaryTreeBall.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.binaryTreeBall.startUpdating(() => {
+                this.animator.start(() => {
+                    this.binaryTreeBall.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
