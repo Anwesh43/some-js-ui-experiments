@@ -67,20 +67,20 @@ class BTBAnimator {
 
 class BTBNode {
 
-    constructor(i, x, y, gap) {
+    constructor(i, x, y, gapW, gapH) {
         this.x = x
         this.y = y
         this.i = i
-        this.addChildren(gap)
+        this.addChildren(gapW, gapH)
     }
     addParent(parent) {
         this.parent = parent
         this.state = new BTBState()
     }
-    addChildren(gap) {
+    addChildren(gapW, gapH) {
         if (this.i < LEVELS -1) {
-            const left = new BTBNode(this.i+1, this.x - gap, y + gap, gap)
-            const right = new BTBNode(this.i+1, this.x - gap, y + gap, gap)
+            const left = new BTBNode(this.i+1, this.x - gapW, y + gapH, gap)
+            const right = new BTBNode(this.i+1, this.x + gapW, y + gapH, gap)
             left.addParent(parent)
             right.addParent(parent)
             this.left = left
@@ -88,13 +88,12 @@ class BTBNode {
         }
     }
 
-    draw(context, w , h) {
-        var x = this.x, y = this.y, r = Math.min(w,h) / (LEVELS * 3)
+    draw(context, r) {
+        var x = this.x, y = this.y
         if (this.parent) {
             x = this.parent.x + (this.x - this.parent.x) * this.state.scale
             y = this.parent.y + (this.y - this.parent.y) * this.state.scale
         }
-        context.fillStyle = '#e67e22'
         context.beginPath()
         context.arc(x, y, r, 0, 2 * Math.PI)
         context.fill()
@@ -106,5 +105,59 @@ class BTBNode {
 
     startUpdating(startcb) {
         this.state.startUpdating(startcb)
+    }
+}
+
+class BinaryTreeBall {
+    constructor() {
+        this.dir = 1
+        this.currs = []
+    }
+
+    draw(context, w, h) {
+        const r = Math.min(w, h)/25
+        if (!this.started) {
+            const x = w/2, y = r/2
+            this.started = true
+            this.currs.push(new BTBNode(0, x, y, w/(Math.pow(2,LEVELS)), h/(2 * LEVELS)))
+        }
+        context.fillStyle = '#e67e22'
+        this.currs.forEach((curr) => {
+            curr.draw(context, r)
+        })
+    }
+
+    update(stopcb) {
+        const n = this.currs.length
+        this.currs.forEach((curr, index) => {
+            curr.update(() => {
+                if (curr.left && curr.right) {
+                    this.currs.push(curr.left)
+                    this.currs.push(curr.right)
+                    this.currs.splice(0, 1)
+                }
+                if (index == this.currs.length - 1) {
+                    stopcb()
+                }
+            })
+        })
+    }
+
+    startUpdating(startcb) {
+        if (this.currs.length == 1) {
+            const root = this.currs[0]
+            if (root.left && root.right) {
+                this.currs.push(root)
+                this.currs.push(left)
+                this.currs.splice(0, 1)
+            }
+        }
+        this.currs.forEach((curr, index) => {
+            curr.startUpdating(() => {
+                if (index == this.currs.length - 1) {
+                    startcb()
+                }
+            })
+        })
     }
 }
