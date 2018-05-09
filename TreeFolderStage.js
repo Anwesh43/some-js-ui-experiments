@@ -2,15 +2,27 @@ const FN_LEVEL = 4
 class TreeFolderStage extends CanvasStage {
     constructor() {
         super()
+        this.fnTree = new FNTree()
+        this.animator = new FNAnimator()
     }
 
     render() {
         super.render()
+        if (this.fnTree) {
+            this.fnTree.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.img.onmousedown = () => {
-
+            this.fnTree.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.fnTree.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
