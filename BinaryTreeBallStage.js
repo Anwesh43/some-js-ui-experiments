@@ -18,6 +18,7 @@ class BinaryTreeBallStage extends CanvasStage {
         this.canvas.onmousedown = () => {
             this.binaryTreeBall.startUpdating(() => {
                 this.animator.start(() => {
+                    this.render()
                     this.binaryTreeBall.update(() => {
                         this.animator.stop()
                     })
@@ -90,10 +91,10 @@ class BTBNode {
     }
     addChildren(gapW, gapH) {
         if (this.i < LEVELS -1) {
-            const left = new BTBNode(this.i+1, this.x - gapW, y + gapH, gap)
-            const right = new BTBNode(this.i+1, this.x + gapW, y + gapH, gap)
-            left.addParent(parent)
-            right.addParent(parent)
+            const left = new BTBNode(this.i+1, this.x - gapW, this.y + gapH, gapW, gapH)
+            const right = new BTBNode(this.i+1, this.x + gapW, this.y + gapH, gapW, gapH)
+            left.addParent(this)
+            right.addParent(this)
             this.left = left
             this.right = right
         }
@@ -130,7 +131,7 @@ class BinaryTreeBall {
         if (!this.started) {
             const x = w/2, y = r/2
             this.started = true
-            this.currs.push(new BTBNode(0, x, y, w/(Math.pow(2,LEVELS)), h/(2 * LEVELS)))
+            this.currs.push(new BTBNode(0, x, y, w/(Math.pow(2,LEVELS)), h/(LEVELS)))
         }
         context.fillStyle = '#e67e22'
         this.currs.forEach((curr) => {
@@ -140,27 +141,38 @@ class BinaryTreeBall {
 
     update(stopcb) {
         const n = this.currs.length
-        this.currs.forEach((curr, index) => {
+        for (var i = 0; i < n; i++) {
+            const curr = this.currs[i]
             curr.update(() => {
-                if (curr.left && curr.right) {
+                if (curr.left && curr.right && this.dir == 1) {
                     this.currs.push(curr.left)
                     this.currs.push(curr.right)
                     this.currs.splice(0, 1)
+                    console.log(i)
                 }
-                if (index == this.currs.length - 1) {
+                else if (this.dir == -1 && this.parent) {
+                    this.currs.push(this.parent)
+                    this.currs.splice(0, 2)
+                }
+                else {
+                    this.dir *= -1
+                }
+                if (i == n-1) {
+                    console.log(i)
                     stopcb()
                 }
             })
-        })
+        }
     }
 
     startUpdating(startcb) {
         if (this.currs.length == 1) {
             const root = this.currs[0]
             if (root.left && root.right) {
-                this.currs.push(root)
-                this.currs.push(left)
+                this.currs.push(root.left)
+                this.currs.push(root.right)
                 this.currs.splice(0, 1)
+                console.log(this.currs)
             }
         }
         this.currs.forEach((curr, index) => {
