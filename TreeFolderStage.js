@@ -156,3 +156,10 @@ class FNTree {
         this.curr.startUpdating(startcb)
     }
 }
+
+
+const initTreeFolderStage = () => {
+    const stage = new TreeFolderStage()
+    stage.render()
+    stage.handleTap()
+}
