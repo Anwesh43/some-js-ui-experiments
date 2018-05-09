@@ -90,7 +90,7 @@ class FNNode {
         context.save()
         context.translate(x, y)
         context.beginPath()
-        context.arc(0, 0, r, 0, 2 * Math.PI)
+        context.arc(0, 0, 100, 0, 2 * Math.PI)
         context.fill()
         context.restore()
         this.children.forEach((child) => {
@@ -124,5 +124,23 @@ class FNNode {
         else {
             startcb()
         }
+    }
+}
+
+class FNTree {
+    draw(context, w, h) {
+        if (!this.curr) {
+            this.curr = new FNNode(0, 100, 100, w/ FN_LEVEL, h/(FN_LEVEL * 3))
+            this.dir = 1
+        }
+        this.curr.draw(context, 100, 100)
+    }
+
+    update(stopcb) {
+        this.curr.update(stopcb, this.dir)
+    }
+
+    startUpdating(startcb) {
+        this.curr.startUpdating(startcb)
     }
 }
