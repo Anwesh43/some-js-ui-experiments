@@ -14,7 +14,7 @@ class TreeFolderStage extends CanvasStage {
     }
 
     handleTap() {
-        this.img.onmousedown = () => {
+        this.canvas.onmousedown = () => {
             this.fnTree.startUpdating(() => {
                 this.animator.start(() => {
                     this.render()
@@ -36,6 +36,7 @@ class FNState {
 
     update(stopcb) {
         this.scale += 0.1 * this.dir
+        console.log(this.scale)
         if (Math.abs(this.scale - this.prevScale) > 1) {
             this.scale = this.prevScale + this.dir
             this.dir = 0
@@ -47,6 +48,7 @@ class FNState {
     startUpdating(startcb) {
         if (this.dir == 0) {
             this.dir = 1 - 2 * this.prevScale
+            console.log(this.dir)
             startcb()
         }
     }
@@ -89,12 +91,14 @@ class FNNode {
         if (this.i < FN_LEVEL - 1) {
             for (var i = 0; i < 3; i++) {
                 const fnNode = new FNNode(this.i+1, this.x + ew, this.x + eh * i ,ew, eh)
+                fnNode.parent = this
                 this.children.push(fnNode)
             }
         }
     }
 
-    draw(context, px, py) {
+    draw(context, px, py, r) {
+        context.fillStyle = '#e74c3c'
         const x = px + (this.x - px) * this.state.scale,y = py + (this.y - py) * this.state.scale
         context.moveTo(px, py)
         context.lineTo(x, y)
@@ -102,58 +106,66 @@ class FNNode {
         context.save()
         context.translate(x, y)
         context.beginPath()
-        context.arc(0, 0, 100, 0, 2 * Math.PI)
+        context.arc(0, 0, r, 0, 2 * Math.PI)
         context.fill()
         context.restore()
         this.children.forEach((child) => {
-            child.draw(context, this.x, this.y)
+            child.draw(context, x, y, r)
         })
     }
 
-    update(stopcb, dir) {
+    update(stopcb, cb) {
         this.state.update(() => {
-            if (this.children.length > 0 || dir == 1) {
-                this.children.startUpdating(() => {
-                    stopcb()
-                })
-            }
-            else {
-                stopcb()
-            }
+            cb(this.children)
+            stopcb()
         })
     }
 
     startUpdating(startcb) {
-        if (this.i == 0) {
-            this.childrens.forEach((child,index) => {
-                child.startUpdating(() => {
-                    if (index == this.childrens.length - 1) {
-                        startcb()
-                    }
-                })
-            })
-        }
-        else {
-            startcb()
-        }
+        this.state.startUpdating(startcb)
     }
 }
 
 class FNTree {
+    constructor() {
+        this.currs = []
+    }
     draw(context, w, h) {
-        if (!this.curr) {
-            this.curr = new FNNode(0, 100, 100, w/ FN_LEVEL, h/(FN_LEVEL * 3))
+        var r = h / (FN_LEVEL*10)
+        if (!this.root) {
+            this.root = new FNNode(0, r, r, w/ FN_LEVEL, h/(FN_LEVEL * 3))
             this.dir = 1
+            this.currs.push(this.root)
         }
-        this.curr.draw(context, 100, 100)
+        this.currs.forEach((curr)=>{
+            var x = curr.parent ? curr.parent.x : r, y = curr.parent? curr.parent.y : r
+            curr.draw(context, x, y, r)
+        })
     }
 
     update(stopcb) {
-        this.curr.update(stopcb, this.dir)
+        this.currs.forEach((curr) => {
+            curr.update((children) => {
+                children.forEach((child) => {
+                    this.currs.push(child)
+                })
+                this.currs.splice(0, 1)
+            })
+        })
     }
 
     startUpdating(startcb) {
-        this.curr.startUpdating(startcb)
+        if (this.currs.length == 1) {
+            this.currs.forEach((curr)=>{
+                curr.children.forEach((curr) => {
+                    this.currs.push(curr)
+                })
+            })
+            this.currs.splice(0,1)
+        }
+        this.currs.forEach((curr) => {
+            curr.startUpdating(startcb)
+        })
     }
 }
 
