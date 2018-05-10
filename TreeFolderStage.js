@@ -36,7 +36,6 @@ class FNState {
 
     update(stopcb) {
         this.scale += 0.1 * this.dir
-        console.log(this.scale)
         if (Math.abs(this.scale - this.prevScale) > 1) {
             this.scale = this.prevScale + this.dir
             this.dir = 0
@@ -48,7 +47,6 @@ class FNState {
     startUpdating(startcb) {
         if (this.dir == 0) {
             this.dir = 1 - 2 * this.prevScale
-            console.log(this.dir)
             startcb()
         }
     }
@@ -98,6 +96,7 @@ class FNNode {
     }
 
     draw(context, px, py, r) {
+
         context.fillStyle = '#e74c3c'
         const x = px + (this.x - px) * this.state.scale,y = py + (this.y - py) * this.state.scale
         context.moveTo(px, py)
@@ -109,15 +108,12 @@ class FNNode {
         context.arc(0, 0, r, 0, 2 * Math.PI)
         context.fill()
         context.restore()
-        this.children.forEach((child) => {
-            child.draw(context, x, y, r)
-        })
     }
 
-    update(stopcb, cb) {
+    update(stopcb) {
         this.state.update(() => {
-            cb(this.children)
-            stopcb()
+            console.log(this.i)
+            stopcb(this.children)
         })
     }
 
@@ -144,12 +140,18 @@ class FNTree {
     }
 
     update(stopcb) {
+        var i = 0, k = this.currs.length
         this.currs.forEach((curr) => {
             curr.update((children) => {
                 children.forEach((child) => {
                     this.currs.push(child)
                 })
                 this.currs.splice(0, 1)
+                i++
+                console.log(i)
+                if (i == k) {
+                    stopcb()
+                }
             })
         })
     }
