@@ -1,3 +1,4 @@
+const TRLL_NODES = 5
 class TRotatingLinkedLineStage extends CanvasStage {
 
     constructor() {
@@ -65,5 +66,50 @@ class TRLLAnimator {
             this.animated = false
             clearInterval(this.interval)
         }
+    }
+}
+
+class TRLLNode {
+
+    constructor(i) {
+        this.i = i
+        if (i) {
+            this.i = i
+        }
+        this.addNeighbor()
+        this.state = new TRLLState()
+    }
+
+    addNeighbor() {
+        if (this.i < TRLL_NODES - 1) {
+            const next = new TRLLNode(this.i + 1)
+            next.prev = this
+            this.next = next
+
+        }
+    }
+
+    draw(context, w, h) {
+        context.strokeStyle = '#00838F'
+        context.lineWidth = Math.min(w, h) / 60
+        context.lineCap = 'round'
+        const gap = w / (2 * TRLL_NODES)
+        const startX = -gap + gap * state.scales[3], endX = -gap + gap * state.scales[0]
+        context.save()
+        context.translate(this.i * gap + gap, h / 2)
+        context.rotate(Math.PI/2 * (this.state.scales[1] + this.state.scales[2]))
+        context.beginPath()
+        context.moveTo(startX, 0)
+        context.lineTo(endX, 0)
+        context.stroke()
+        context.restore()
+    }
+
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
     }
 }
