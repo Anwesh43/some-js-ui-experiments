@@ -3,15 +3,26 @@ class TRotatingLinkedLineStage extends CanvasStage {
 
     constructor() {
         super()
+        this.trll = new TRotatingLinkedLine()
+        this.animator = new TRLLAnimator()
     }
 
     render() {
         super.render()
+        if (this.trll) {
+            this.trll.draw(this.context)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.trll.startUpdating(() => {
+                this.animator.start(() => {
+                    this.trll.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
