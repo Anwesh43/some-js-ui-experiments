@@ -161,3 +161,9 @@ class TRotatingLinkedLine {
         this.curr.startUpdating(startcb)
     }
 }
+
+const initTRotatingLinkedLineStage = () => {
+    const stage = new TRotatingLinkedLineStage()
+    stage.render()
+    stage.handleTap()
+}
