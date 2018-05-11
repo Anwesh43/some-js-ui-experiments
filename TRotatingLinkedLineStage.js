@@ -10,7 +10,7 @@ class TRotatingLinkedLineStage extends CanvasStage {
     render() {
         super.render()
         if (this.trll) {
-            this.trll.draw(this.context)
+            this.trll.draw(this.context, this.size.w, this.size.h)
         }
     }
 
@@ -18,6 +18,7 @@ class TRotatingLinkedLineStage extends CanvasStage {
         this.canvas.onmousedown = () => {
             this.trll.startUpdating(() => {
                 this.animator.start(() => {
+                    this.render()
                     this.trll.update(() => {
                         this.animator.stop()
                     })
@@ -38,6 +39,7 @@ class TRLLState {
 
     update(stopcb) {
         this.scales[this.j] += 0.1 * this.dir
+        console.log(this.scales)
         if (Math.abs(this.scales[this.j] - this.prevScale) > 1) {
             this.scales[this.j] = this.prevScale + this.dir
             this.j += this.dir
@@ -83,7 +85,7 @@ class TRLLAnimator {
 class TRLLNode {
 
     constructor(i) {
-        this.i = i
+        this.i = 0
         if (i) {
             this.i = i
         }
@@ -105,9 +107,9 @@ class TRLLNode {
         context.lineWidth = Math.min(w, h) / 60
         context.lineCap = 'round'
         const gap = w / (2 * TRLL_NODES)
-        const startX = -gap + gap * state.scales[3], endX = -gap + gap * state.scales[0]
+        const startX = -gap + gap * this.state.scales[0] * (1 - this.state.scales[3]), endX = -gap
         context.save()
-        context.translate(this.i * gap + gap, h / 2)
+        context.translate(this.i * 2 * gap + gap, h / 2)
         context.rotate(Math.PI/2 * (this.state.scales[1] + this.state.scales[2]))
         context.beginPath()
         context.moveTo(startX, 0)
