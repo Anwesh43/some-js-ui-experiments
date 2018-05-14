@@ -2,15 +2,26 @@ const HHL_NODES = 5
 class HalfHexLinkedStage extends CanvasStage {
     constructor() {
         super()
+        this.line = new HalfHexLinkedLine()
+        this.animator = new HHLAnimator()
     }
 
     render() {
         super.render()
+        if (this.line) {
+            this.line.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.line.startUpdating(() => {
+                this.animator.start(() => {
+                    this.line.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
