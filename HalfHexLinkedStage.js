@@ -24,6 +24,12 @@ class HalfHexLinkedStage extends CanvasStage {
             })
         }
     }
+
+    static init() {
+        const stage = new HalfHexLinkedLine()
+        stage.render()
+        stage.handleTap()
+    }
 }
 
 class HHLState {
