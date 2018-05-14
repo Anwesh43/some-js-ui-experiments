@@ -122,4 +122,41 @@ class HHLNode {
     startUpdating(startcb) {
         this.state.startUpdating(startcb)
     }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (dir == -1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
+    }
+}
+
+class HalfHexLinkedLine {
+
+    constructor() {
+        this.curr = new HHLNode()
+        this.dir = 1
+    }
+
+    draw(context, w, h) {
+        this.curr.draw(context, w, h)
+    }
+
+    update(stopcb) {
+        this.curr.update(() => {
+            this.curr = this.curr.getNext(this.dir, () => {
+                this.dir *= -1
+            })
+            stopcb()
+        })
+    }
+
+    startUpdating(startcb) {
+        this.curr.startUpdating(startcb)
+    }
 }
