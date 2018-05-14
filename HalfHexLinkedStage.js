@@ -17,6 +17,7 @@ class HalfHexLinkedStage extends CanvasStage {
         this.canvas.onmousedown = () => {
             this.line.startUpdating(() => {
                 this.animator.start(() => {
+                    this.render()
                     this.line.update(() => {
                         this.animator.stop()
                     })
@@ -26,7 +27,7 @@ class HalfHexLinkedStage extends CanvasStage {
     }
 
     static init() {
-        const stage = new HalfHexLinkedLine()
+        const stage = new HalfHexLinkedStage()
         stage.render()
         stage.handleTap()
     }
@@ -90,7 +91,7 @@ class HHLNode {
     constructor(i) {
         this.state = new HHLState()
         this.i = 0
-        if (this.i) {
+        if (i) {
             this.i = i
         }
         this.addNeighbor()
@@ -105,29 +106,44 @@ class HHLNode {
 
     draw(context, w, h) {
         const gap = (w / HHL_NODES)
-        const deg = 60
         context.strokeStyle = '#673AB7'
         context.lineCap = 'round'
         context.lineWidth = Math.min(w,h) / 60
         context.save()
         context.translate(this.i * gap, h/2)
-        xs.push(-gap/2)
-        ys.push(0)
+        const xs = [], ys = []
         for (var i = 4; i <= 6; i++) {
-            xs.push(gap/2 + (gap/2) * Math.cos((i * deg) * Math.PI/180))
-            ys.push(gap/2 + (gap/2) * Math.sin(i * deg * Math.PI/180))
+            xs.push(gap/2 + (gap/2) * Math.cos(i * Math.PI/3))
+            ys.push((gap/2) * Math.sin(i * Math.PI/3))
         }
+        var sx = 0, sy = 0
+        var mx = 0, my = 0
+        if (this.state.j > 0) {
+            mx = xs[this.state.j - 1]
+            my = ys[this.state.j - 1]
+        }
+        if (this.state.j > 1) {
+            sx = xs[this.state.j - 2]
+            sy = ys[this.state.j - 2]
+        }
+        var dx = gap , dy = 0
+        if (this.state.j  < xs.length) {
+            dx = xs[this.state.j]
+            dy = ys[this.state.j]
+        }
+        var scaleS = 0, scaleE = this.state.scales[this.state.j]
+        if (this.state.j > 0) {
+            scaleS = this.state.scales[this.state.j]
+            console.log(scaleS)
+        }
+        if (this.state.j == xs.length) {
+            scaleE = 0
+        }
+        console.log(`${scaleS}, ${scaleE}, ${this.state.j}`)
         context.beginPath()
-        var moveX = 0, moveY = 0, lineX = 0, lineY = 0
-        for (var i = 0; i < 3; i++) {
-            moveX += xs[i] * this.state.scales[i+1]
-            moveY += ys[i] * this.state.scales[i+1]
-            lineX += xs[i] * this.state.scales[i]
-            lineY += ys[i] * this.state.scales[i]
-        }
-        context.moveTo(moveX, moveY)
-        context.lineTo(xs[this.state.j], ys[this.state.j])
-        context.lineTo(lineX, lineY)
+        context.moveTo(sx + (mx - sx) * scaleS, sy + (my - sy) * scaleS)
+        context.lineTo(mx, my)
+        context.lineTo(mx + (dx - mx) * scaleE, my + (dy - my) * scaleE)
         context.stroke()
         context.restore()
     }
@@ -142,7 +158,7 @@ class HHLNode {
 
     getNext(dir, cb) {
         var curr = this.prev
-        if (dir == -1) {
+        if (dir == 1) {
             curr = this.next
         }
         if (curr) {
