@@ -1,3 +1,4 @@
+const HHL_NODES = 5
 class HalfHexLinkedStage extends CanvasStage {
     constructor() {
         super()
@@ -64,5 +65,61 @@ class HHLAnimator {
             this.animated = false
             clearInterval(this.interval)
         }
+    }
+}
+
+class HHLNode {
+
+    constructor(i) {
+        this.state = new HHLState()
+        this.i = 0
+        if (this.i) {
+            this.i = i
+        }
+        this.addNeighbor()
+    }
+
+    addNeighbor() {
+        if (this.i < HHL_NODES - 1) {
+            this.next = new HHLNode(this.i + 1)
+            this.next.prev = this
+        }
+    }
+
+    draw(context, w, h) {
+        const gap = (w / HHL_NODES)
+        const deg = 60
+        context.strokeStyle = '#673AB7'
+        context.lineCap = 'round'
+        context.lineWidth = Math.min(w,h) / 60
+        context.save()
+        context.translate(this.i * gap, h/2)
+        xs.push(-gap/2)
+        ys.push(0)
+        for (var i = 4; i <= 6; i++) {
+            xs.push(gap/2 + (gap/2) * Math.cos((i * deg) * Math.PI/180))
+            ys.push(gap/2 + (gap/2) * Math.sin(i * deg * Math.PI/180))
+        }
+        context.beginPath()
+        var moveX = 0, moveY = 0, lineX = 0, lineY = 0
+        for (var i = 0; i < 3; i++) {
+            moveX += xs[i] * this.state.scales[i+1]
+            moveY += ys[i] * this.state.scales[i+1]
+            lineX += xs[i] * this.state.scales[i]
+            lineY += ys[i] * this.state.scales[i]
+        }
+        context.moveTo(moveX, moveY)
+        context.lineTo(xs[this.state.j], ys[this.state.j])
+        context.lineTo(lineX, lineY)
+        context.stroke()
+        context.restore()
+    }
+
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
     }
 }
