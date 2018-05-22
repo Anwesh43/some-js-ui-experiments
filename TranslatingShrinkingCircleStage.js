@@ -93,6 +93,7 @@ class TSCNode {
 
     constructor(i) {
         this.state = new TSCState()
+        this.i = 0
         if (i) {
             this.i = i
         }
@@ -100,21 +101,31 @@ class TSCNode {
     }
 
     addNeighbor() {
-        if (this.i < TCS_NODES - 1) {
+        if (this.i < TSC_NODES - 1) {
             this.next = new TSCNode(this.i + 1)
             this.next.prev = this
         }
     }
 
     draw(context, w, h) {
-        const gap = (w/TCS_NODES)
+        context.lineWidth = Math.min(w, h) / 60
+        context.lineCap = 'round'
+        context.strokeStyle = '#c0392b'
+        const gap = (w / TSC_NODES)
         context.fillStyle = '#c0392b'
         context.save()
         context.translate(this.i * gap, h/2)
         context.beginPath()
         context.arc(gap * this.state.scales[1], 0, (gap/10) * (1 - this.state.scales[1]) * (this.state.scales[0]), 0, 2 * Math.PI)
         context.fill()
+        context.beginPath()
+        context.moveTo(0, 0)
+        context.lineTo(gap * this.state.scales[1], 0)
+        context.stroke()
         context.restore()
+        if (this.prev) {
+            this.prev.draw(context, w, h)
+        }
     }
 
     update(stopcb) {
@@ -127,7 +138,7 @@ class TSCNode {
 
     getNext(dir, cb) {
         var curr = this.prev
-        if (this.dir == 1) {
+        if (dir == 1) {
             curr = this.next
         }
         if (curr) {
