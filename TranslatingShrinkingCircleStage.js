@@ -27,6 +27,12 @@ class TranslatingShrinkingCircleStage extends CanvasStage {
             })
         }
     }
+
+    static init() {
+        const stage = new TranslatingShrinkingCircleStage()
+        stage.render()
+        stage.handleTap()
+    }
 }
 
 class TSCState {
