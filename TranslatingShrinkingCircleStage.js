@@ -4,15 +4,27 @@ class TranslatingShrinkingCircleStage extends CanvasStage {
 
     constructor() {
         super()
+        this.tsc = new TranslatingShrinkingCircle()
+        this.animator = new TSCAnimator()
     }
 
     render() {
         super.render()
+        if (this.tsc) {
+            this.tsc.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = (event) => {
-
+            this.tsc.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.tsc.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
@@ -127,8 +139,8 @@ class TranslatingShrinkingCircle {
         this.dir = 1
     }
 
-    draw(context) {
-        this.curr.draw(context)
+    draw(context, w, h) {
+        this.curr.draw(context, w, h)
     }
 
     update(stopcb) {
