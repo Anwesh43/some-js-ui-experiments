@@ -25,6 +25,12 @@ class LinkedAnimBarStage extends CanvasStage {
             })
         }
     }
+
+    static init() {
+        const stage = new LinkedAnimBarStage()
+        stage.render()
+        stage.handleTap()
+    }
 }
 
 class LABState {
