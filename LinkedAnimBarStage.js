@@ -83,7 +83,10 @@ class LABNode {
     }
 
     draw(context, w, h) {
+        context.save()
+        context.translate(w/2, h/2)
         this.cb(context, this.state.scale,w, h)
+        context.restore()
         if (this.prev) {
             this.prev.draw(context , w, h)
         }
@@ -107,5 +110,56 @@ class LABNode {
         }
         cb()
         return this
+    }
+}
+
+class LinkedAnimBar {
+    constructor() {
+        this.init()
+        this.dir = 1
+    }
+
+    init() {
+        const cbs = []
+        cbs.push((context, scale, w, h) => {
+            const size = Math.min(w, h) / 3
+            context.fillStyle = 'gray'
+            context.fillRect(-size * scale, -size * scale, 2 * size * scale, 2 * size * scale)
+
+        })
+        cbs.push((context, scale, w, h) => {
+            const size = Math.min(w, h) / 3
+            context.fillStyle = 'teal'
+            context.fillRect(-0.9 * size, -0.8 * size, 0.9 * size, 1.6 * size * scale)
+        })
+        for (var i = 0; i < 3; i++) {
+            cbs.push((context, scale, w, h) => {
+                const size = Math.min(w, h) / 3, y = -size,  gap = (2 * size) / 6
+                context.lineWidth = Math.min(w, h) / 45
+                context.lineCap = 'round'
+                context.strokeStyle = 'teal'
+                context.beginPath()
+                context.moveTo(0.1 * size, y + i * gap)
+                context.lineTo(0.1 * size + 0.8 * size * scale, y + i * gap)
+                context.stroke()
+            })
+        }
+    }
+
+    draw(context, w, h) {
+        this.curr.draw(context, w, h)
+    }
+
+    update(stopcb) {
+        this.curr.update(() => {
+            this.curr = this.curr.getNext(this.dir, () => {
+                this.dir *= -1
+            })
+            stopcb()
+        })
+    }
+
+    startUpdating(startcb) {
+        this.curr.startUpdating(startcb)
     }
 }
