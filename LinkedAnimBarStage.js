@@ -1,3 +1,4 @@
+const LAB_NODES = 5
 class LinkedAnimBarStage extends CanvasStage {
 
     constructor() {
@@ -61,5 +62,50 @@ class LABAnimator {
             this.animated = false
             clearInterval(this.interval)
         }
+    }
+}
+
+class LABNode {
+
+    constructor(i, cbs) {
+        this.i = i
+        this.cb = cbs[0]
+        this.addNeighbor(cbs)
+
+    }
+
+    addNeighbor(cbs) {
+        cbs.splice(0, 1)
+        if (cbs.length > 0) {
+            this.next = new LABNode(this.i + 1, cbs)
+            this.next.prev = this
+        }
+    }
+
+    draw(context, w, h) {
+        this.cb(context, this.state.scale,w, h)
+        if (this.prev) {
+            this.prev.draw(context , w, h)
+        }
+    }
+
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
+    }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
     }
 }
