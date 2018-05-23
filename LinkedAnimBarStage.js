@@ -3,15 +3,26 @@ class LinkedAnimBarStage extends CanvasStage {
 
     constructor() {
         super()
+        this.linkedAnimBar = new LinkedAnimBar()
+        this.animator = new LABAnimator()
     }
 
     render() {
-
+        if (this.linkedAnimBar) {
+            this.linkedAnimBar.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.linkedAnimBar.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.linkedAnimBar.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
