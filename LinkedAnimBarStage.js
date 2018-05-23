@@ -8,6 +8,7 @@ class LinkedAnimBarStage extends CanvasStage {
     }
 
     render() {
+        super.render()
         if (this.linkedAnimBar) {
             this.linkedAnimBar.draw(this.context, this.size.w, this.size.h)
         }
@@ -20,6 +21,7 @@ class LinkedAnimBarStage extends CanvasStage {
                     this.render()
                     this.linkedAnimBar.update(() => {
                         this.animator.stop()
+                        this.render()
                     })
                 })
             })
@@ -87,6 +89,7 @@ class LABNode {
     constructor(i, cbs) {
         this.i = i
         this.cb = cbs[0]
+        this.state = new LABState()
         this.addNeighbor(cbs)
 
     }
@@ -100,13 +103,14 @@ class LABNode {
     }
 
     draw(context, w, h) {
+        if (this.prev) {
+            this.prev.draw(context , w, h)
+        }
         context.save()
         context.translate(w/2, h/2)
         this.cb(context, this.state.scale,w, h)
         context.restore()
-        if (this.prev) {
-            this.prev.draw(context , w, h)
-        }
+
     }
 
     update(stopcb) {
@@ -149,18 +153,24 @@ class LinkedAnimBar {
             context.fillStyle = 'teal'
             context.fillRect(-0.9 * size, -0.8 * size, 0.9 * size, 1.6 * size * scale)
         })
-        for (var i = 0; i < 3; i++) {
-            cbs.push((context, scale, w, h) => {
-                const size = Math.min(w, h) / 3, y = -size,  gap = (2 * size) / 6
-                context.lineWidth = Math.min(w, h) / 45
-                context.lineCap = 'round'
-                context.strokeStyle = 'teal'
-                context.beginPath()
-                context.moveTo(0.1 * size, y + i * gap)
-                context.lineTo(0.1 * size + 0.8 * size * scale, y + i * gap)
-                context.stroke()
-            })
+        const pushToCbs = (i) => {
+          cbs.push((context, scale, w, h) => {
+              if (scale > 0) {
+                  const size = Math.min(w, h) / 3, y = -size,  gap = ( size) / 2
+                  context.lineWidth = Math.min(w, h) / 45
+                  context.lineCap = 'round'
+                  context.strokeStyle = 'teal'
+                  context.beginPath()
+                  context.moveTo(0.1 * size, y + (i + 1) * gap)
+                  context.lineTo(0.1 * size + 0.8 * size * scale, y + (i + 1) * gap)
+                  context.stroke()
+              }
+          })
         }
+        for (var i = 0; i < 3; i++) {
+            pushToCbs(i)
+        }
+        this.curr = new LABNode(0, cbs)
     }
 
     draw(context, w, h) {
