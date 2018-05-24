@@ -27,7 +27,7 @@ class QuarterCircleStage extends CanvasStage {
         }
     }
 
-    init() {
+    static init() {
         const stage = new QuarterCircleStage()
         stage.render()
         stage.handleTap()
@@ -44,7 +44,7 @@ class QCState {
     }
 
     update(stopcb) {
-        this.scales += 0.1 * this.dir
+        this.scales[this.j] += 0.1 * this.dir
         if (Math.abs(this.scales[this.j] - this.prevScale) > 1) {
             this.scales[this.j] = this.prevScale + this.dir
             this.j += this.dir
@@ -105,11 +105,11 @@ class QCNode {
     draw(context, w , h) {
         const r = Math.min(w, h)/(2 * QC_NODES)
         context.save()
-        context.translate(this.i * r, this.i * r)
+        context.translate(this.i * r, this.i * r + r)
         context.beginPath()
-        const start = 90 * this.state.scales[1], end = 90 * this.state.scales[0]
+        const start = Math.floor(90 * this.state.scales[1]), end = Math.floor(90 * this.state.scales[0])
         for(var i = start; i <= end; i++) {
-            const x = r * Math.cos(i * Math.PI/180), y = r * Math.sin(i * Math.PI/180)
+            const x = r * Math.cos((i-90) * Math.PI/180), y = r * Math.sin((i-90) * Math.PI/180)
             if (i == start) {
                 context.moveTo(x, y)
             } else {
@@ -117,6 +117,15 @@ class QCNode {
             }
         }
         context.stroke()
+        context.fillStyle = '#2ecc71'
+        for(var i = 0; i < 2; i++) {
+            context.save()
+            context.translate( r * i, -r * (1 - i))
+            context.beginPath()
+            context.arc(0, 0, r/3 * (1 - this.state.scales[i]) * (1 - i) + r/3 * (this.state.scales[i]) * (i), 0, 2 * Math.PI)
+            context.fill()
+            context.restore()
+        }
         context.restore()
     }
 
@@ -130,7 +139,7 @@ class QCNode {
 
     getNext(dir, cb) {
         var curr = this.prev
-        if (this.dir == 1) {
+        if (dir == 1) {
             curr = this.next
         }
         if (curr) {
@@ -144,8 +153,8 @@ class QCNode {
 class QuarterLinkedCircle {
 
     constructor() {
-        this.curr = new QCNode()
-        this.dir = 0
+        this.curr = new QCNode(0)
+        this.dir = 1
     }
 
     draw(context, w, h) {
@@ -153,15 +162,14 @@ class QuarterLinkedCircle {
         context.lineWidth = Math.min(w, h) / 60
         context.lineCap = 'round'
         this.curr.draw(context, w, h)
-        context.strokeStyle = '#212121'
     }
 
-    startUpdaing(startcb) {
-        this.state.startUpdating(startcb)
+    startUpdating(startcb) {
+        this.curr.startUpdating(startcb)
     }
 
     update(stopcb) {
-        this.state.update(() => {
+        this.curr.update(() => {
             this.curr = this.curr.getNext(this.dir, () => {
                 this.dir *= -1
             })
