@@ -26,6 +26,12 @@ class QuarterCircleStage extends CanvasStage {
             })
         }
     }
+
+    init() {
+        const stage = new QuarterCircleStage()
+        stage.render()
+        stage.handleTap()
+    }
 }
 
 class QCState {
