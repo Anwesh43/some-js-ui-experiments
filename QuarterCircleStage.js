@@ -109,4 +109,45 @@ class QCNode {
     startUpdating(startcb) {
         this.state.startUpdating(startcb)
     }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (this.dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
+    }
+}
+
+class QuarterLinkedCircle {
+
+    constructor() {
+        this.curr = new QCNode()
+        this.dir = 0
+    }
+
+    draw(context, w, h) {
+        context.strokeStyle = '#2ecc71'
+        context.lineWidth = Math.min(w, h) / 60
+        context.lineCap = 'round'
+        this.curr.draw(context, w, h)
+        context.strokeStyle = '#212121'
+    }
+
+    startUpdaing(startcb) {
+        this.state.startUpdating(startcb)
+    }
+
+    update(stopcb) {
+        this.state.update(() => {
+            this.curr = this.curr.getNext(this.dir, () => {
+                this.dir *= -1
+            })
+            stopcb()
+        })
+    }
 }
