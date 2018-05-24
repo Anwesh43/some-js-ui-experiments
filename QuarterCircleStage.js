@@ -3,15 +3,27 @@ class QuarterCircleStage extends CanvasStage {
 
     constructor() {
         super()
+        this.qc = new QuarterLinkedCircle()
+        this.animator = new QCAnimator()
     }
 
     render() {
         super.render()
+        if (this.qc) {
+            this.qc.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.qc.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.qc.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
