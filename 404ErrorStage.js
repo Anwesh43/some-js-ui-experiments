@@ -21,6 +21,7 @@ class Error404Stage extends CanvasStage {
                     this.render()
                     this.e404.update(() => {
                         this.animator.stop()
+                        this.render()
                     })
                 })
             })
@@ -28,7 +29,7 @@ class Error404Stage extends CanvasStage {
     }
 
     static init() {
-        const stage = new 404ErrotStage()
+        const stage = new Error404Stage()
         stage.render()
         stage.handleTap()
     }
@@ -44,12 +45,13 @@ class E404State {
 
     update(stopcb) {
         this.scale += this.dir * 0.1
+        console.log(this.scale)
         if (Math.abs(this.scale - this.prevScale) > 1) {
             this.scale = this.prevScale + this.dir
             this.dir = 0
             this.prevScale = this.scale
+            stopcb()
         }
-        stopcb()
     }
 
     startUpdating(startcb) {
@@ -85,8 +87,8 @@ class E404Animator {
 
 class E404AnimationNode {
     constructor(cbs) {
-        this.state = new State()
-        this.cb = cb[0]
+        this.state = new E404State()
+        this.cb = cbs[0]
         cbs.splice(0,1)
         this.addNeighbor(cbs)
     }
@@ -99,6 +101,7 @@ class E404AnimationNode {
     }
 
     update(stopcb) {
+        console.log(this.state.scale)
         this.cb(this.state.scale)
         this.state.update(stopcb)
     }
@@ -133,7 +136,7 @@ class E404 {
             this.y_0 = h/2
             const cbs = []
             cbs.push((scale) => {
-                this.gap = Math.min(w, h)/18 * scale
+                this.gap = Math.min(w, h)/7 * scale
             })
             cbs.push((scale) => {
                 this.y_0 = (h / 2) * (1 - scale)
@@ -145,12 +148,12 @@ class E404 {
         }
         context.fillStyle = '#FFEE58'
         context.fillRect(0, 0, w, this.h_screen)
-        context.font = context.font.replace(/\d{2}/, `${h/20}`)
+        context.font = context.font.replace(/\d{2}/, `${h/8}`)
+        context.fillStyle = 'white'
         context.save()
         context.translate(w/2, h/2)
         for (var i = 0; i < 2; i++) {
             context.save()
-            context.fillStyle = 'white'
             context.fillText('4', this.gap * (1 - 2 * i), 0)
             context.restore()
         }
@@ -163,6 +166,7 @@ class E404 {
             this.curr = this.curr.getNext(this.dir, () => {
                 this.dir *= -1
             })
+            stopcb()
         })
     }
 
