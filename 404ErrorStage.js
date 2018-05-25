@@ -26,6 +26,12 @@ class Error404Stage extends CanvasStage {
             })
         }
     }
+
+    static init() {
+        const stage = new 404ErrotStage()
+        stage.render()
+        stage.handleTap()
+    }
 }
 
 class E404State {
