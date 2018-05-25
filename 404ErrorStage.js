@@ -3,15 +3,27 @@ class Error404Stage extends CanvasStage {
 
     constructor() {
         super()
+        this.animator = new E404Animator()
+        this.e404 = new E404()
     }
 
     render() {
         super.render()
+        if (this.e404) {
+            this.e404.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.e404.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.e404.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
