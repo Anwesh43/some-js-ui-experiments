@@ -81,6 +81,7 @@ class E404AnimationNode {
     }
 
     update(stopcb) {
+        this.cb(this.state.scale)
         this.state.update(stopcb)
     }
 
@@ -98,5 +99,53 @@ class E404AnimationNode {
             curr = this
         }
         return curr
+    }
+}
+
+class E404 {
+    constructor(w, h) {
+        this.gap = 0
+        this.y_0 = 0
+        this.h_screen = 0
+        this.dir = 1
+    }
+
+    draw(context,w, h) {
+        if (!this.curr) {
+            const cbs = []
+            cbs.push((scale) => {
+                this.gap = Math.min(w, h)/18 * scale
+            })
+            cbs.push((scale) => {
+                this.y_0 = (h / 2) * (1 - scale)
+            })
+            cbs.push((scale) => {
+                this.h_screen = h * scale
+            })
+            this.curr = new E404AnimationNode(cbs)
+        }
+        context.font = context.font.replace(/\d{2}/, `${h/20}`)
+        context.save()
+        context.translate(w/2, h/2)
+        for (var i = 0; i < 2; i++) {
+            context.save()
+            context.fillStyle = 'white'
+            context.fillText('4', this.gap * (1 - 2 * i), 0)
+            context.restore()
+        }
+        context.fillText('0', 0, this.y_0)
+        context.restore()
+    }
+
+    update(stopcb) {
+        this.curr.update(() => {
+            this.curr = this.curr.getNext(this.dir, () => {
+                this.dir *= -1
+            })
+        })
+    }
+
+    startUpdating(startcb) {
+        this.curr.startUpdating(startcb)
     }
 }
