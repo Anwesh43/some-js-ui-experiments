@@ -124,6 +124,7 @@ class E404 {
 
     draw(context,w, h) {
         if (!this.curr) {
+            this.y_0 = h/2
             const cbs = []
             cbs.push((scale) => {
                 this.gap = Math.min(w, h)/18 * scale
@@ -136,6 +137,8 @@ class E404 {
             })
             this.curr = new E404AnimationNode(cbs)
         }
+        context.fillStyle = '#FFEE58'
+        context.fillRect(0, 0, w, this.h_screen)
         context.font = context.font.replace(/\d{2}/, `${h/20}`)
         context.save()
         context.translate(w/2, h/2)
