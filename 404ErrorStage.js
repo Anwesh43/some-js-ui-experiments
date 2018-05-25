@@ -1,3 +1,4 @@
+
 class Error404Stage extends CanvasStage {
 
     constructor() {
@@ -61,5 +62,41 @@ class E404Animator {
             this.animated = false
             clearInterval(this.interval)
         }
+    }
+}
+
+class E404AnimationNode {
+    constructor(cbs) {
+        this.state = new State()
+        this.cb = cb[0]
+        cbs.splice(0,1)
+        this.addNeighbor(cbs)
+    }
+
+    addNeighbor(cbs) {
+        if (cbs.length > 0) {
+            this.next = new E404AnimationNode(cbs)
+            this.next.prev = this
+        }
+    }
+
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
+    }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (!curr) {
+            cb()
+            curr = this
+        }
+        return curr
     }
 }
