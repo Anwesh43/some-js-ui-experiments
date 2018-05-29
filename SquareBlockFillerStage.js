@@ -25,6 +25,12 @@ class SquareBlockFillerStage extends CanvasStage {
             })
         }
     }
+
+    static init() {
+        const stage = new SquareBlockFillerStage()
+        stage.render()
+        stage.handleTap()
+    }
 }
 
 class SBFState {
