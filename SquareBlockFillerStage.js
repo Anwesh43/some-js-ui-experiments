@@ -43,6 +43,7 @@ class SBFState {
 
     update(stopcb) {
         this.scale += 0.1 * this.dir
+        console.log(this.scale)
         if (Math.abs(this.scale - this.prevScale) > 1) {
             this.scale = this.prevScale + this.dir
             this.dir = 0
@@ -76,7 +77,7 @@ class SBFAnimator {
 
     stop() {
         if (this.animated) {
-            this.animated = true
+            this.animated = false
             clearInterval(this.interval)
         }
     }
@@ -85,7 +86,7 @@ class SBFAnimator {
 class SBFNode {
 
     constructor(cbs) {
-        this.cb = this.cbs[0]
+        this.cb = cbs[0]
         cbs.splice(0, 1)
         this.state = new SBFState()
         this.addNeighbor(cbs)
@@ -99,6 +100,9 @@ class SBFNode {
     }
 
     draw(context, size) {
+        if (this.prev) {
+            this.prev.draw(context, size)
+        }
         this.cb(context, size, this.state.scale)
     }
 
@@ -115,6 +119,7 @@ class SBFNode {
         if (dir == 1) {
              curr = this.next
         }
+        console.log(curr)
         if (curr) {
             return curr
         }
@@ -125,7 +130,8 @@ class SBFNode {
 
 class SquareBlockFiller {
     constructor() {
-
+        this.initNodes()
+        this.dir = 1
     }
 
     initNodes() {
@@ -138,8 +144,8 @@ class SquareBlockFiller {
                 context.save()
                 context.rotate(i * Math.PI/2)
                 context.beginPath()
-                context.moveTo(-size/2, -size/2)
-                context.lineTo(-size/2, size/2)
+                context.moveTo(size/2, -size/2)
+                context.lineTo(size/2, -size/2 + size * scale)
                 context.stroke()
                 context.restore()
             })
@@ -181,14 +187,18 @@ class SquareBlockFiller {
             addFilledSquare(i)
         }
         this.curr = new SBFNode(cbs)
+        console.log(this)
     }
 
     draw(context, w, h) {
+        context.save()
+        context.translate(w/2, h/2)
         this.curr.draw(context, Math.min(w, h)/3)
+        context.restore()
     }
 
     update(stopcb) {
-        this.state.update(() => {
+        this.curr.update(() => {
             this.curr = this.curr.getNext(this.dir, () => {
                 this.dir *= -1
             })
@@ -196,7 +206,7 @@ class SquareBlockFiller {
         })
     }
 
-    startUdpating(startcb) {
-        this.state.startUpdating(startcb)
+    startUpdating(startcb) {
+        this.curr.startUpdating(startcb)
     }
 }
