@@ -80,8 +80,8 @@ class SBFNode {
         }
     }
 
-    draw(context) {
-        this.cb(context, this.state.scale)
+    draw(context, size) {
+        this.cb(context, size, this.state.scale)
     }
 
     update(stopcb) {
@@ -102,5 +102,83 @@ class SBFNode {
         }
         cb()
         return this
+    }
+}
+
+class SquareBlockFiller {
+    constructor() {
+
+    }
+
+    initNodes() {
+        const cbs = []
+        const addLine = (i) => {
+            cbs.push((context, size, scale) => {
+                context.strokeStyle = '#4CAF50'
+                context.lineWidth = 6
+                context.lineCap = 'round'
+                context.save()
+                context.rotate(i * Math.PI/2)
+                context.beginPath()
+                context.moveTo(-size/2, -size/2)
+                context.lineTo(-size/2, size/2)
+                context.stroke()
+                context.restore()
+            })
+        }
+
+        const addSquare = (i) => {
+            cbs.push((context, size, scale) => {
+                const position = size * 0.45 - 0.05 * size * scale
+                const dimension = 0.1 * size * scale
+                context.save()
+                context.rotate(Math.PI/2 * i)
+                context.fillStyle = '#f44336'
+                context.fillRect(position, position, dimension, dimension)
+                context.restore()
+            })
+        }
+
+        const addFilledSquare = (i) => {
+            cbs.push((context, size, scale) => {
+                const position = 0.4 * size * (1 - scale)
+                const dimension = size * 0.1 * (1 + 4 * scale)
+                context.save()
+                context.rotate(Math.PI/2 * i)
+                context.fillStyle = '#f44336'
+                context.fillRect(position, position, dimension, dimension)
+                context.restore()
+            })
+        }
+
+        for (var i = 0; i < 4; i++) {
+            addLine(i)
+        }
+
+        for (var i = 0; i < 4; i++) {
+            addSquare(i)
+        }
+
+        for (var i = 0; i < 4; i++) {
+            addFilledSquare(i)
+        }
+        this.curr = new SBFNode(cbs)
+    }
+
+    draw(context, w, h) {
+        this.curr.draw(context, Math.min(w, h)/3)
+    }
+
+    update(stopcb) {
+        this.state.update(() => {
+            this.curr = this.curr.getNext(this.dir, () => {
+                this.dir *= -1
+            })
+            stopcb()
+        })
+    }
+
+    startUdpating(startcb) {
+        this.state.startUpdating(startcb)
     }
 }
