@@ -63,3 +63,44 @@ class SBFAnimator {
         }
     }
 }
+
+class SBFNode {
+
+    constructor(cbs) {
+        this.cb = this.cbs[0]
+        cbs.splice(0, 1)
+        this.state = new SBFState()
+        this.addNeighbor(cbs)
+    }
+
+    addNeighbor(cbs) {
+        if (cbs.length > 0) {
+            this.next = new SBFNode(cbs)
+            this.next.prev = this
+        }
+    }
+
+    draw(context) {
+        this.cb(context, this.state.scale)
+    }
+
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
+    }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (dir == 1) {
+             curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
+    }
+}
