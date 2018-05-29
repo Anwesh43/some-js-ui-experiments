@@ -2,15 +2,27 @@ class SquareBlockFillerStage extends CanvasStage {
 
     constructor() {
         super()
+        this.squareBlockFiller = new SquareBlockFiller()
+        this.animator = new SBFAnimator()
     }
 
     render() {
         super.render()
+        if (this.squareBlockFiller) {
+            this.squareBlockFiller.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = (event) => {
-
+            this.squareBlockFiller.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.squareBlockFiller.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
