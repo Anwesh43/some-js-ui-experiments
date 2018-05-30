@@ -1,3 +1,4 @@
+const LSW_NODES = 5
 class LinkedSineWaveStage extends CanvasStage {
 
     constructor() {
@@ -60,5 +61,53 @@ class LSWAnimator {
             this.animated = false
             clearInterval(this.interval)
         }
+    }
+}
+
+class LSWNode {
+    constructor(i) {
+        this.i = i
+        this.addNeighbor()
+        this.state = new LSWState()
+    }
+
+    addNeighbor() {
+        if (this.i < LSW_NODES) {
+            this.next = new LSWNode(this.i + 1)
+            this.next.prev = this
+        }
+    }
+
+    draw(context, w, h) {
+        const gap = w / LSW_NODES
+        context.save()
+        context.translate(gap * this.i, h/2)
+        context.beginPath()
+        context.moveTo(0, 0)
+        for (var i = 0; i <= 360; i++) {
+            context.lineTo(gap * (i / 360), gap * 0.5 * Math.sin(i * Math.PI/180))
+        }
+        context.stroke()
+        context.restore()
+    }
+
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
+    }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
     }
 }
