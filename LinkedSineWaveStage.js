@@ -3,15 +3,27 @@ class LinkedSineWaveStage extends CanvasStage {
 
     constructor() {
         super()
+        this.lsw = new LinkedSineWave()
+        this.animator = new LSWAnimator()
     }
 
     render() {
         super.render()
+        if (this.lsw) {
+            this.lsw.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = (event) => {
-
+            this.lsw.startUpdating(() => {
+                this.animator.start(() => {
+                    this.lsw.update(() => {
+                        this.render()
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
