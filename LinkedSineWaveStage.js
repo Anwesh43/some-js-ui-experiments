@@ -26,6 +26,12 @@ class LinkedSineWaveStage extends CanvasStage {
             })
         }
     }
+
+    static init() {
+        const stage = new LinkedSineWaveStage()
+        stage.render()
+        stage.handleTap()
+    }
 }
 
 class LSWState {
