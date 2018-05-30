@@ -80,6 +80,9 @@ class LSWNode {
 
     draw(context, w, h) {
         const gap = w / LSW_NODES
+        if (this.prev) {
+            this.prev.draw(context, w, h)
+        }
         context.save()
         context.translate(gap * this.i, h/2)
         context.beginPath()
@@ -109,5 +112,30 @@ class LSWNode {
         }
         cb()
         return this
+    }
+}
+
+class LinkedSineWave {
+
+    constructor() {
+        this.curr = new LSWNode()
+        this.dir = 1
+    }
+
+    draw(context, w, h) {
+        this.curr.draw(context, w, h)
+    }
+
+    update(stopcb) {
+        this.curr.update(() => {
+            this.curr = this.curr.getNext(this.dir, () => {
+                this.dir *= -1
+            })
+            stopcb()
+        })
+    }
+
+    startUpdating(startcb) {
+        this.curr.starUpdating(startcb)
     }
 }
