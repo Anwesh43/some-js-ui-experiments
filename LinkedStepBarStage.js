@@ -35,7 +35,7 @@ class LinkedStepBarStage extends CanvasStage{
 
 class LSBState {
     constructor() {
-        this.scales = [0, 0]
+        this.scales = [0, 0, 0]
         this.dir = 0
         this.prevScale = 0
         this.j = 0
@@ -89,6 +89,7 @@ class LSBAnimator {
 class LSBNode {
     constructor(i) {
         this.i = i
+        this.state = new LSBState()
         this.addNeighbor()
     }
 
@@ -101,15 +102,26 @@ class LSBNode {
 
     draw(context, w, h) {
         context.fillStyle = '#e67e22'
-        const w_gap = (w / LSB_NODES), h_gap = (h / LSB_NODES)
+        context.strokeStyle = context.fillStyle
+        context.lineWidth = Math.min(w, h) / 60
+        context.lineCap = 'round'
+        const w_gap = (w / LSB_NODES), h_gap = (h / LSB_NODES), size = Math.min(w_gap, h_gap)
         context.save()
-        context.translate(w_gap * i, h_gap * i)
-        context.fillRect(w_gap * this.state.scales[0], h_gap * this.state.scales[1], Math.min(w_gap, h_gap), Math.min(w_gap, h_gap))
+        context.translate(-w_gap/2 + w_gap * this.i, -h_gap/2 + h_gap * this.i)
+        context.beginPath()
+        context.moveTo(size/2 + (w_gap) * this.state.scales[1], size/2)
+        context.lineTo(size/2 + (w_gap) * this.state.scales[0], size/2)
+        context.stroke()
+        context.beginPath()
+        context.moveTo(size/2 + w_gap, size/2 + (h_gap) * this.state.scales[2])
+        context.lineTo(size/2 + w_gap, size/2 + (h_gap) * this.state.scales[1])
+        context.stroke()
+        context.fillRect(w_gap * this.state.scales[0], h_gap * this.state.scales[1], size, size)
         context.restore()
     }
 
     update(stopcb) {
-        this.state.update()
+        this.state.update(stopcb)
     }
 
     startUpdating(startcb) {
