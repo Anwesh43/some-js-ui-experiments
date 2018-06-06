@@ -1,3 +1,4 @@
+const LSB_NODES = 5
 class LinkedStepBarStage extends CanvasStage{
     constructor() {
         super()
@@ -64,5 +65,48 @@ class LSBAnimator {
           this.animated = false
           clearInterval(this.interval)
       }
+    }
+}
+
+class LSBNode {
+    constructor(i) {
+        this.i = i
+        this.addNeighbor()
+    }
+
+    addNeighbor() {
+        if (this.i < LSB_NODES - 1) {
+            this.next = new LSBNode(this.i+1)
+            this.next.prev = this
+        }
+    }
+
+    draw(context, w, h) {
+        context.fillStyle = '#e67e22'
+        const w_gap = (w / LSB_NODES), h_gap = (h / LSB_NODES)
+        context.save()
+        context.translate(w_gap * i, h_gap * i)
+        context.fillRect(w_gap * this.state.scales[0], h_gap * this.state.scales[1], Math.min(w_gap, h_gap), Math.min(w_gap, h_gap))
+        context.restore()
+    }
+
+    update(stopcb) {
+        this.state.update()
+    }
+
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
+    }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
     }
 }
