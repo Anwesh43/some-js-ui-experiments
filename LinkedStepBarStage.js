@@ -2,15 +2,27 @@ const LSB_NODES = 5
 class LinkedStepBarStage extends CanvasStage{
     constructor() {
         super()
+        this.linkedStepBar = new LinkedStepBar()
+        this.animator = new LSBAnimator()
     }
 
     render() {
         super.render()
+        if (this.linkedStepBar) {
+            this.linkedStepBar.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.linkedStepBar.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.linkedStepBar.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
