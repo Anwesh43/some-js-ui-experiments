@@ -25,6 +25,12 @@ class LinkedStepBarStage extends CanvasStage{
             })
         }
     }
+
+    static init() {
+        const stage = new LinkedStepBarStage()
+        stage.render()
+        stage.handleTap()
+    }
 }
 
 class LSBState {
