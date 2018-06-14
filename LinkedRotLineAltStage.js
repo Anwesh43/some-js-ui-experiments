@@ -20,6 +20,12 @@ class LinkedRotLineAltStage extends CanvasStage {
             })
         }
     }
+
+    static init() {
+        const stage = new LinkedRotLineAltStage()
+        stage.render()
+        stage.handleTap()
+    }
 }
 
 class LRLState {
