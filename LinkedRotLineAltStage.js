@@ -3,15 +3,21 @@ class LinkedRotLineAltStage extends CanvasStage {
 
     constructor() {
         super()
+        this.renderer = new LRLRenderer()
     }
 
     render() {
         super.render()
+        if (this.renderer) {
+            this.renderer.draw(this.context, this.stage.w, this.stage.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.renderer.handleTap(() => {
+                this.render()
+            })
         }
     }
 }
