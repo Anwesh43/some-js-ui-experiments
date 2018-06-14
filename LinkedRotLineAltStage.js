@@ -120,3 +120,27 @@ class LRLNode {
         this.state.startUpdating(startcb)
     }
 }
+
+class LinkedRotLineAlt {
+    constructor() {
+        this.curr = new LRLNode(0)
+        this.dir = 1
+    }
+
+    draw(context, w, h) {
+        this.curr.draw(context, w, h)
+    }
+
+    update(stopcb) {
+        this.curr.update(() => {
+            this.curr = this.curr.getNext(this.dir, () => {
+                this.dir *= -1
+            })
+            stopcb()
+        })
+    }
+
+    startUpdating(startcb) {
+        this.curr.startUpdating(startcb)
+    }
+}
