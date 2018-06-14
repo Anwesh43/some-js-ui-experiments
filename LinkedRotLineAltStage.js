@@ -144,3 +144,25 @@ class LinkedRotLineAlt {
         this.curr.startUpdating(startcb)
     }
 }
+
+class LRLRenderer {
+    constructor() {
+        this.lrl = new LinkedRotLineAlt()
+        this.animator = new LRLAnimator()
+    }
+
+    draw(context, w, h) {
+        this.lrl.draw(context, w, h)
+    }
+
+    handleTap(cb) {
+        this.lrl.startUpdating(() => {
+            this.animator.start(() => {
+                cb()
+                this.lrl.update(() => {
+                    this.animator.stop()
+                })
+            })
+        })
+    }
+}
