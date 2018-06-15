@@ -22,6 +22,7 @@ class LinkedDotRectExpanderStage extends CanvasStage {
                     this.render()
                     this.ldr.update(() => {
                         this.animator.stop()
+                        this.render()
                     })
                 })
             })
@@ -47,17 +48,17 @@ class LDRState {
         this.deg += Math.PI/10
         this.scale = Math.sin(this.deg)
         if (Math.abs(this.deg - this.prevDeg) > Math.PI/2) {
-            this.deg = this.prevDeg + this.dir * this.Math.PI/2
+            this.deg = this.prevDeg + this.dir * Math.PI/2
             this.scale = Math.sin(this.deg)
             this.dir = 0
-            this.prevDeg = 0
-            stopcb)
+            this.prevDeg = this.deg
+            stopcb()
         }
     }
 
     startUpdating(startcb) {
         if (this.dir == 0) {
-            this.dir = 1 - 2 * Math.floor(prevDeg / (Math.PI/2))
+            this.dir = 1 - 2 * Math.floor(this.prevDeg / (Math.PI/2))
             startcb()
         }
     }
@@ -89,7 +90,7 @@ class LDRNode {
     constructor(i) {
         this.i = i
         this.state = new LDRState()
-        this.addNeighbor
+        this.addNeighbor()
     }
 
     addNeighbor() {
@@ -104,13 +105,16 @@ class LDRNode {
         const index = this.i % 2
         const scale = index + (1 - 2 * index) * this.state.scale
         context.fillStyle = 'white'
+        if (this.prev) {
+            this.prev.draw(context, w, h)
+        }
         context.save()
         context.translate(this.i * gap + (gap/2), h/2)
         for (var i = 0; i < 9; i++) {
-            const x = gap/2 + (i%3 * (gap/2) + gap/10), y = (gap/2) + (Math.floor(i/3)) * gap/2 + gap/10
+            const x = -gap/2 + (i%3 * (gap/2) + gap/10), y = -(gap/2) + (Math.floor(i/3)) * gap/2 + gap/10
             context.save()
-            context.translate((gap/2) + (x - gap/2) * scale, (gap/2) - (y - gap/2) * scale)
-            context.fillRect(-gap/10, -gap/10, gap/5)
+            context.translate(x * scale, y * scale)
+            context.fillRect(-gap/10, -gap/10, gap/5, gap/5)
             context.restore()
         }
         context.restore()
@@ -121,7 +125,7 @@ class LDRNode {
     }
 
     startUpdating(startcb) {
-        this.state.update(startcb)
+        this.state.startUpdating(startcb)
     }
 
     getNext(dir, cb) {
@@ -149,9 +153,10 @@ class LinkedDotRect {
 
     update(stopcb) {
         this.ldrNode.update(() => {
-            this.curr = this.curr.getNext(this.dir, () => {
+            this.ldrNode = this.ldrNode.getNext(this.dir, () => {
                 this.dir*=-1
             })
+            console.log(this.ldrNode)
             stopcb()
         })
     }
