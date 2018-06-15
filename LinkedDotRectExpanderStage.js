@@ -118,3 +118,27 @@ class LDRNode {
         return this
     }
 }
+
+class LinkedDotRect {
+    constructor() {
+        this.ldrNode = new LDRNode(0)
+        this.dir = 1
+    }
+
+    draw(context, w, h) {
+        this.ldrNode.draw(context, w, h)
+    }
+
+    update(stopcb) {
+        this.ldrNode.update(() => {
+            this.curr = this.curr.getNext(this.dir, () => {
+                this.dir*=-1
+            })
+            stopcb()
+        })
+    }
+
+    startUpdating(startcb) {
+        this.ldrNode.startUpdating(startcb)
+    }
+}
