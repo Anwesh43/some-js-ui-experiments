@@ -64,6 +64,38 @@ class LDRState {
     }
 }
 
+class LDRStateContainer {
+    constructor() {
+        this.states = [new LDRState(), new LDRState()]
+        this.j = 0
+        this.dir = 0
+    }
+
+    update(stopcb) {
+        if (this.j < this.states.length && this.j >= 0) {
+            this.states[this.j].upate(() => {
+                this.j += this.dir
+                if (this.j == this.states.lenth || this.j == -1) {
+                    this.dir *=-1
+                    this.j += this.dir
+                    stopcb()
+                } else {
+                    this.states[this.j].startUpdating(() => {
+
+                    })
+                }
+            })
+        }
+    }
+
+    startUpdating(startcb) {
+        if (this.j == 0 || this.j == this.states.length-1) {
+            this.states[this.j].startUpdating(startcb)
+        }
+    }
+
+}
+
 class LDRAnimator {
     constructor() {
         this.animated = false
