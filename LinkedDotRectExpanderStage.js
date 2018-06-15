@@ -4,15 +4,27 @@ class LinkedDotRectExpanderStage extends CanvasStage {
 
     constructor() {
         super()
+        this.ldr = new LinkedDotRect()
+        this.animator = new LDRAnimator()
     }
 
     render() {
         super.render()
+        if (this.ldr) {
+            this.ldr.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.ldr.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.ldr.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
