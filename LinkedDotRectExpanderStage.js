@@ -1,3 +1,5 @@
+const LDR_NODES = 5
+
 class LinkedDotRectExpanderStage extends CanvasStage {
 
     constructor() {
@@ -62,5 +64,57 @@ class LDRAnimator {
             this.animated = false
             clearInterval(this.interval)
         }
+    }
+}
+
+class LDRNode {
+    constructor(i) {
+        this.i = i
+        this.state = new LDRState()
+        this.addNeighbor
+    }
+
+    addNeighbor() {
+        if (this.i < LDR_NODES - 1) {
+            this.next = new LDRNode(this.i + 1)
+            this.next.prev = this
+        }
+    }
+
+    draw(context, w, h) {
+        const gap = w / LDR_NODES
+        const index = this.i % 2
+        const scale = index + (1 - 2 * index) * this.state.scale
+        context.fillStyle = 'white'
+        context.save()
+        context.translate(this.i * gap + (gap/2), h/2)
+        for (var i = 0; i < 9; i++) {
+            const x = gap/2 + (i%3 * (gap/2) + gap/10), y = (gap/2) + (Math.floor(i/3)) * gap/2 + gap/10
+            context.save()
+            context.translate((gap/2) + (x - gap/2) * scale, (gap/2) - (y - gap/2) * scale)
+            context.fillRect(-gap/10, -gap/10, gap/5)
+            context.restore()
+        }
+        context.restore()
+    }
+
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+
+    startUpdating(startcb) {
+        this.state.update(startcb)
+    }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
     }
 }
