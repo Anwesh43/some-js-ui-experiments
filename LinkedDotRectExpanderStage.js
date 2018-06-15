@@ -69,15 +69,18 @@ class LDRStateContainer {
         this.states = [new LDRState(), new LDRState()]
         this.j = 0
         this.dir = 0
+        this.kDir = 1
     }
 
     update(stopcb) {
         if (this.j < this.states.length && this.j >= 0) {
-            this.states[this.j].upate(() => {
+            this.states[this.j].update(() => {
                 this.j += this.dir
-                if (this.j == this.states.lenth || this.j == -1) {
-                    this.dir *=-1
-                    this.j += this.dir
+                if (this.j == this.states.length || this.j == -1) {
+                    this.kDir *= -1
+                    this.j += this.kDir
+                    this.dir = 0
+                    this.dir = 0
                     stopcb()
                 } else {
                     this.states[this.j].startUpdating(() => {
@@ -87,9 +90,12 @@ class LDRStateContainer {
             })
         }
     }
-
+    get(index) {
+        return this.states[index]
+    }
     startUpdating(startcb) {
-        if (this.j == 0 || this.j == this.states.length-1) {
+        if ((this.j == 0 || this.j == this.states.length-1) && this.dir == 0) {
+            this.dir = this.kDir
             this.states[this.j].startUpdating(startcb)
         }
     }
@@ -121,7 +127,7 @@ class LDRAnimator {
 class LDRNode {
     constructor(i) {
         this.i = i
-        this.state = new LDRState()
+        this.state = new LDRStateContainer()
         this.addNeighbor()
     }
 
@@ -135,13 +141,13 @@ class LDRNode {
     draw(context, w, h) {
         const gap = w / LDR_NODES
         const index = this.i % 2
-        const scale = index + (1 - 2 * index) * this.state.scale
+        const scale = index + (1 - 2 * index) * this.state.get(1).scale
         context.fillStyle = 'white'
         if (this.prev) {
             this.prev.draw(context, w, h)
         }
         context.save()
-        context.translate(this.i * gap + (gap/2), h/2)
+        context.translate(this.i * gap  - gap/2 + (gap) * this.state.get(0).scale, h/2)
         for (var i = 0; i < 9; i++) {
             const x = -gap/2 + (i%3 * (gap/2) + gap/10), y = -(gap/2) + (Math.floor(i/3)) * gap/2 + gap/10
             context.save()
