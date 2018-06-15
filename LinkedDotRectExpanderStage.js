@@ -27,6 +27,12 @@ class LinkedDotRectExpanderStage extends CanvasStage {
             })
         }
     }
+
+    static init() {
+        const stage = new LinkedDotRectExpanderStage()
+        stage.render()
+        stage.handleTap()
+    }
 }
 
 class LDRState {
