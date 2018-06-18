@@ -24,6 +24,12 @@ class LinkedAltBiRotLineStage extends CanvasStage {
             })
         }
     }
+
+    static init() {
+        const stage = new LinkedAltBiRotLineStage()
+        stage.render()
+        stage.handleTap()
+    }
 }
 
 class LARBSstate {
