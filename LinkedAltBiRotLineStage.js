@@ -86,6 +86,9 @@ class LARBNode {
         context.lineCap = 'round'
         context.lineWidth = Math.min(w, h) / 60
         const gap = w / LARB_NODES
+        if (this.prev) {
+            this.prev.draw(context, w, h)
+        }
         context.save()
         context.translate(-gap/120 + gap * i + gap * this.state.scales[0], h/2)
         for (var i = 0; i < 2; i++) {
@@ -106,5 +109,39 @@ class LARBNode {
 
     startUpdating(startcb) {
         this.state.startUpdating(startcb)
+    }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
+    }
+ }
+
+class LARB {
+    constructor() {
+        this.curr = new LARBNode(0)
+        this.dir = 1
+    }
+
+    update(stopcb) {
+        this.curr.update(() => {
+            this.curr = this.curr.getNext()
+        })
+        stopcb()
+    }
+
+    startUpdating(startcb) {
+        this.curr.startUpdating(startcb)
+    }
+
+    draw(context, w, h) {
+        this.curr.draw(context, w, h)
     }
 }
