@@ -3,12 +3,13 @@ class LinkedAltBiRotLineStage extends CanvasStage {
     constructor() {
         super()
         this.larb = new LARB()
+        this.animator = new LARBAnimator()
     }
 
     render() {
         super.render()
         if (this.larb) {
-            this.larb.draw(this.context, this.w, this.h)
+            this.larb.draw(this.context, this.size.w, this.size.h)
         }
     }
 
@@ -32,7 +33,7 @@ class LinkedAltBiRotLineStage extends CanvasStage {
     }
 }
 
-class LARBSstate {
+class LARBState {
     constructor() {
         this.scales = [0, 0]
         this.dir = 0
@@ -42,7 +43,9 @@ class LARBSstate {
 
     update(stopcb) {
         this.scales[this.j] += 0.1 * this.dir
+        console.log(this.scales)
         if (Math.abs(this.scales[this.j] - this.prevScale) > 1) {
+            console.log("stopping")
             this.scales[this.j] = this.prevScale + this.dir
             this.j += this.dir
             if (this.j == this.scales.length || this.j == -1) {
@@ -87,8 +90,9 @@ class LARBAnimator {
 class LARBNode {
 
     constructor(i) {
-        this.state = new LABRState
+        this.state = new LARBState
         this.i = i
+        this.addNeighbor()
     }
 
     addNeighbor() {
@@ -102,16 +106,19 @@ class LARBNode {
         context.strokeStyle = 'white'
         context.lineCap = 'round'
         context.lineWidth = Math.min(w, h) / 60
+        console.log(w)
+        console.log(h)
         const gap = w / LARB_NODES
         if (this.prev) {
             this.prev.draw(context, w, h)
         }
         context.save()
-        context.translate(-gap/120 + gap * i + gap * this.state.scales[0], h/2)
+        context.translate(-gap/120 + gap * this.i + gap * this.state.scales[0], h/2)
         for (var i = 0; i < 2; i++) {
             context.save()
             context.translate(0, (gap / 4) * (1 - 2 * i))
-            context.rotate(Math.PI/2 * (i + (1 - 2 * i)) * this.state.scales[1])
+            context.rotate(Math.PI/2 * (this.i%2) + Math.PI/2 * (1 - 2 * (this.i%2)) * this.state.scales[1])
+            context.beginPath()
             context.moveTo(0, -gap/4)
             context.lineTo(0, gap/4)
             context.stroke()
@@ -149,9 +156,12 @@ class LARB {
 
     update(stopcb) {
         this.curr.update(() => {
-            this.curr = this.curr.getNext()
+            this.curr = this.curr.getNext(this.dir, () => {
+                this.dir *= -1
+            })
+            stopcb()
         })
-        stopcb()
+
     }
 
     startUpdating(startcb) {
