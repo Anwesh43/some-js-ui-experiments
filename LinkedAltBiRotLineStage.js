@@ -2,15 +2,26 @@ const LARB_NODES = 5
 class LinkedAltBiRotLineStage extends CanvasStage {
     constructor() {
         super()
+        this.larb = new LARB()
     }
 
     render() {
         super.render()
+        if (this.larb) {
+            this.larb.draw(this.context, this.w, this.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.larb.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.larb.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
