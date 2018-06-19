@@ -3,15 +3,27 @@ const LPR_NODES = 5
 class LinkedPRStage extends CanvasStage {
     constructor() {
         super()
+        this.linkedPR = new LinkedPR()
+        this.animator = new LPRAnimator()
     }
 
     render() {
         super.render()
+        if (this.linkedPR) {
+            this.linkedPR.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = (event) => {
-
+            this.linkedPR.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.linkedPR.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
