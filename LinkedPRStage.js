@@ -1,3 +1,5 @@
+const LPR_NODES = 5
+
 class LinkedPRStage extends CanvasStage {
     constructor() {
         super()
@@ -63,5 +65,66 @@ class LPRAnimator {
             this.animated = false
             clearInterval(this.interval)
         }
+    }
+}
+
+class LPRNode {
+
+    constructor(i) {
+        this.i = i
+        this.addNeighbor()
+    }
+
+    addNeighbor() {
+        if (this.i < LPR_NODES - 1) {
+            this.next = new LPRNode(this.i + 1)
+            this.next.prev = this
+        }
+    }
+
+    draw(context, w, h) {
+        context.fillStyle = 'white'
+        const gap = w / LPR_NODES
+        context.save()
+        context.translate(this.i * gap - gap/6, h/2 - gap/6)
+        context.beginPath()
+        context.moveTo(0, 0)
+        context.lineTo(0, gap/3)
+        context.stroke()
+        context.beginPath()
+        for(var i = -90 ; i <= 90; i++) {
+            const x = (gap / 6) * Math.cos(i * Math.PI/180), y = (gap/6) * Math.sin(i * Math.PI/180)
+            if (i == -90) {
+                context.moveTo(x, y)
+            }
+            else {
+                context.lineTo(x, y)
+            }
+        }
+        context.stroke()
+        context.moveTo(0, gap/6)
+        context.lineTo(gap/6, gap/6)
+        context.stroke()
+        context.restore()
+    }
+
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
+    }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
     }
 }
