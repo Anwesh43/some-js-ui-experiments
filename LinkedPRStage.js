@@ -101,7 +101,9 @@ class LPRNode {
     }
 
     draw(context, w, h) {
-        context.fillStyle = 'white'
+        context.strokeStyle = 'white'
+        context.lineCap = 'round'
+        context.lineWidth = Math.min(w, h) / 60
         const gap = w / LPR_NODES
         context.save()
         context.translate(this.i * gap - gap/6, h/2 - gap/6)
