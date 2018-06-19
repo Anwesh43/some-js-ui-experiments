@@ -90,6 +90,7 @@ class LPRNode {
 
     constructor(i) {
         this.i = i
+        this.state = new LPRState()
         this.addNeighbor()
     }
 
@@ -105,15 +106,18 @@ class LPRNode {
         context.lineCap = 'round'
         context.lineWidth = Math.min(w, h) / 60
         const gap = w / LPR_NODES
+        if (this.prev) {
+            this.prev.draw(context, w, h)
+        }
         context.save()
-        context.translate(this.i * gap - gap/6, h/2 - gap/6)
+        context.translate(this.i * gap - gap/3 + gap * this.state.scales[0], h/2 - gap/3)
         context.beginPath()
         context.moveTo(0, 0)
-        context.lineTo(0, gap/3)
+        context.lineTo(0, 2 * gap/3)
         context.stroke()
         context.beginPath()
         for(var i = -90 ; i <= 90; i++) {
-            const x = (gap / 6) * Math.cos(i * Math.PI/180), y = (gap/6) * Math.sin(i * Math.PI/180)
+            const x = (gap / 3) * Math.cos(i * Math.PI/180), y = gap/6  + (gap / 6) * Math.sin(i * Math.PI/180)
             if (i == -90) {
                 context.moveTo(x, y)
             }
@@ -122,8 +126,10 @@ class LPRNode {
             }
         }
         context.stroke()
-        context.moveTo(0, gap/6)
-        context.lineTo(gap/6, gap/6)
+        const index = this.i % 2
+        const scale = this.state.scales[1] * (1 - 2 * index)
+        context.moveTo(0, gap/3)
+        context.lineTo((gap/3) * index + gap/3 * scale, gap/3 + gap/3 * (index) + gap/3 * scale)
         context.stroke()
         context.restore()
     }
