@@ -26,6 +26,12 @@ class LinkedPRStage extends CanvasStage {
             })
         }
     }
+
+    static init() {
+        const stage = new LinkedPRStage()
+        stage.render()
+        stage.handleTap()
+    }
 }
 
 class LPRState {
