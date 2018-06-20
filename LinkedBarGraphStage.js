@@ -2,15 +2,27 @@ const LBG_NODES = 5
 class LinkedBarGraphStage extends CanvasStage {
     constructor() {
         super()
+        this.lbg = new LinkedBarGraph()
+        this.animator = new LBGAnimator()
     }
 
     render() {
         super.render()
+        if (this.lbg) {
+            this.lbg.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = (event) => {
-
+            this.lbg.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.lbg.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
