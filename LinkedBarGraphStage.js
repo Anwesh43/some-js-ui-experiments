@@ -25,6 +25,12 @@ class LinkedBarGraphStage extends CanvasStage {
             })
         }
     }
+
+    static init() {
+        const stage = new LinkedBarGraphStage()
+        stage.render()
+        stage.handleTap()
+    }
 }
 
 class LBGState {
