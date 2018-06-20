@@ -95,7 +95,10 @@ class LBGNode {
     }
 
     draw(context, w, h) {
-        const gap = (w/2)/(LBG_NODES), hGap = (h/2)/(LBG_NODES), hBar = (this.i * hGap) * this.state.scale
+        if (this.prev) {
+            this.prev.draw(context, w, h)
+        }
+        const gap = (w/4)/(LBG_NODES), hGap = (h/2)/(LBG_NODES), hBar = (this.i * hGap + hGap) * this.state.scale
         context.fillStyle = '#3498db'
         context.save()
         context.translate(w/2 + this.i * gap, h/2)
