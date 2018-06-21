@@ -26,6 +26,12 @@ class LinkedLineRotationStage extends CanvasStage {
             })
         }
     }
+
+    static init() {
+        const stage = new LinkedLineRotationStage()
+        stage.render()
+        stage.handleTap()
+    }
   }
 
   class LRState {
