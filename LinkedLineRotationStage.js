@@ -46,6 +46,8 @@ class LinkedLineRotationStage extends CanvasStage {
           if (Math.abs(this.scale - this.prevScale) > 1) {
               this.scale = this.prevScale + this.dir
               this.dir = 0
+              this.prevScale = this.scale
+              stopcb()
           }
       }
 
@@ -99,7 +101,10 @@ class LinkedLineRotationStage extends CanvasStage {
           const size = Math.min(w, h) / 3
           context.lineWidth = size/18
           context.lineCap = 'round'
-          context.strokeStyle = ''
+          context.strokeStyle = '#E1E1E1'
+          if (this.prev) {
+              this.prev.draw(context, w, h)
+          }
           context.save()
           context.translate(w/2, h/2)
           context.rotate(deg * this.i + deg * this.state.scale)
@@ -134,7 +139,7 @@ class LinkedLineRotationStage extends CanvasStage {
   class LinkedRotationLine {
 
       constructor() {
-          this.curr = new LRNode()
+          this.curr = new LRNode(0)
           this.dir = 1
       }
 
