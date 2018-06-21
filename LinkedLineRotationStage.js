@@ -61,3 +61,42 @@ class LinkedLineRotationStage extends CanvasStage {
           }
       }
   }
+
+  class LRNode {
+      constructor(i) {
+          this.i = i
+          this.state = new LRState()
+          this.addNeighbor()
+      }
+
+      addNeighbor() {
+          if (this.i < LR_NODES - 1) {
+              this.next = new LRNode(this.i + 1)
+              this.next.prev = this
+          }
+      }
+
+      draw(context, w, h) {
+
+      }
+
+      update(stopcb) {
+          this.state.update(stopcb)
+      }
+
+      startUpdating(startcb) {
+          this.state.startUpdating(startcb)
+      }
+
+      getNext(dir, cb) {
+          var curr = this.prev
+          if (dir == 1) {
+              curr = this.next
+          }
+          if (curr) {
+              return curr
+          }
+          cb()
+          return this
+      }
+  }
