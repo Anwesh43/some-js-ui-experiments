@@ -3,15 +3,27 @@ const LR_NODES = 5
 class LinkedLineRotationStage extends CanvasStage {
     constructor() {
         super()
+        this.animator = new LRAnimator()
+        this.lrl = new LinkedRotationLine()
     }
 
     render() {
         super.render()
+        if (this.lrl) {
+            this.lrl.draw(this.context, this.w, this.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.lrl.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.lrl.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
   }
