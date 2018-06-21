@@ -77,7 +77,19 @@ class LinkedLineRotationStage extends CanvasStage {
       }
 
       draw(context, w, h) {
-
+          const deg = (2 * Math.PI) / LR_NODES
+          const size = Math.min(w, h) / 3
+          context.lineWidth = size/18
+          context.lineCap = 'round'
+          context.strokeStyle = ''
+          context.save()
+          context.translate(w/2, h/2)
+          context.rotate(deg * i + deg * this.state.scale)
+          context.beginPath()
+          context.moveTo(0, 0)
+          context.lineTo(size, 0)
+          context.stroke()
+          context.restore()
       }
 
       update(stopcb) {
