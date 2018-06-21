@@ -107,11 +107,21 @@ class LinkedLineRotationStage extends CanvasStage {
           }
           context.save()
           context.translate(w/2, h/2)
+          context.save()
           context.rotate(deg * this.i + deg * this.state.scale)
           context.beginPath()
           context.moveTo(0, 0)
           context.lineTo(size, 0)
           context.stroke()
+          context.restore()
+          context.fillStyle = '#E1E1E1'
+          context.beginPath()
+          context.moveTo(0, 0)
+          const startDeg = this.i * deg, endDeg = startDeg + deg * this.state.scale
+          for(var i = startDeg; i <= endDeg; i+=Math.PI/180) {
+              context.lineTo((size/4) * Math.cos(i), (size/4) * Math.sin(i))
+          }
+          context.fill()
           context.restore()
       }
 
