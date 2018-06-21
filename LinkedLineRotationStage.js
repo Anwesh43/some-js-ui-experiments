@@ -10,7 +10,7 @@ class LinkedLineRotationStage extends CanvasStage {
     render() {
         super.render()
         if (this.lrl) {
-            this.lrl.draw(this.context, this.w, this.h)
+            this.lrl.draw(this.context, this.size.w, this.size.h)
         }
     }
 
@@ -102,7 +102,7 @@ class LinkedLineRotationStage extends CanvasStage {
           context.strokeStyle = ''
           context.save()
           context.translate(w/2, h/2)
-          context.rotate(deg * i + deg * this.state.scale)
+          context.rotate(deg * this.i + deg * this.state.scale)
           context.beginPath()
           context.moveTo(0, 0)
           context.lineTo(size, 0)
