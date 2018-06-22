@@ -27,6 +27,12 @@ class LinkedStepRotLineStage extends CanvasStage {
             })
         }
     }
+
+    static init() {
+        const stage = new LinkedStepRotLineStage()
+        stage.render()
+        stage.handleTap()
+    }
 }
 
 class SRState {
