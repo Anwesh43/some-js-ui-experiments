@@ -114,3 +114,29 @@ class SRNode {
         return this
     }
 }
+
+class LinkedStepRotLine {
+    constructor() {
+        this.curr = new SRNode()
+        this.dir = 1
+    }
+
+    draw(context, w, h) {
+        context.strokeStyle = '#283593'
+        context.lineCap = 'round'
+        context.lineWidth = Math.min(w, h) / 60
+        this.curr.draw(context, w, h)
+    }
+
+    update(stopcb) {
+        this.curr.update(()= >{
+            this.curr = this.curr.getNext(this.dir, () => {
+                this.dir *= -1
+            })
+        })
+    }
+
+    startUpdating(startcb) {
+        this.curr.startUpdating(startcb)
+    }
+}
