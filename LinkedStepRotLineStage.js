@@ -4,15 +4,27 @@ class LinkedStepRotLineStage extends CanvasStage {
 
     constructor() {
         super()
+        this.lsr = new LinkedStepRotLine()
+        this.animator = new SRAnimator()
     }
 
     render() {
         super.render()
+        if (this.lsr) {
+            this.lsr.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = (event) => {
-
+            this.lsr.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.lsr.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
