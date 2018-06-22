@@ -83,7 +83,10 @@ class SRNode {
     draw(context, w, h) {
         const index = (this.i % 2), factor = 2 * index - 1
         const size = Math.min(w, h) / SR_NODES
-        const x = size * Math.floor((this.i + 1)/2), y = h - size * (Math.floor(this.i / 2))
+        const x = size + size * Math.floor((this.i + 1)/2), y = size + h - size * (Math.floor(this.i / 2))
+        if (this.prev) {
+            this.prev.draw(context, w, h)
+        }
         context.save()
         context.translate(x, y)
         context.rotate(0.5 * Math.PI * factor * this.state.scale)
