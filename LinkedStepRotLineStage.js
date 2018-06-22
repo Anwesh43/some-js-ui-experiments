@@ -88,11 +88,11 @@ class SRNode {
     constructor(i) {
         this.i = i
         this.state = new SRState()
-
+        this.addNeighbor()
     }
 
     addNeighbor() {
-        if (this.i < SR_NODES - 1) {
+        if (this.i < Math.floor(1.6 * SR_NODES) - 1) {
             this.next = new SRNode(this.i + 1)
             this.next.prev = this
         }
@@ -101,7 +101,8 @@ class SRNode {
     draw(context, w, h) {
         const index = (this.i % 2), factor = 2 * index - 1
         const size = Math.min(w, h) / SR_NODES
-        const x = size + size * Math.floor((this.i + 1)/2), y = size + h - size * (Math.floor(this.i / 2))
+        const x = size + size * Math.floor((this.i + 1)/2), y = h - size - size * (Math.floor(this.i / 2))
+        console.log(`${x}, ${y}, ${size}, ${this.state.scale}`)
         if (this.prev) {
             this.prev.draw(context, w, h)
         }
@@ -138,7 +139,7 @@ class SRNode {
 
 class LinkedStepRotLine {
     constructor() {
-        this.curr = new SRNode()
+        this.curr = new SRNode(0)
         this.dir = 1
     }
 
@@ -150,10 +151,11 @@ class LinkedStepRotLine {
     }
 
     update(stopcb) {
-        this.curr.update(()= >{
+        this.curr.update(() => {
             this.curr = this.curr.getNext(this.dir, () => {
                 this.dir *= -1
             })
+            stopcb()
         })
     }
 
