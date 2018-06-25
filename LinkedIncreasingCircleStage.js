@@ -2,15 +2,27 @@ class LinkedIncreasingCircleStage extends CanvasStage {
 
     constructor() {
         super()
+        this.lic = new LinkedIncreasingCircle()
+        this.animator = new ICAnimator()
     }
 
     render() {
         super.render()
+        if (this.lic) {
+            this.lic.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.lic.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.lic.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
