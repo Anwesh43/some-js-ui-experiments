@@ -1,0 +1,15 @@
+<body>
+  <script src="DimensionController.js">
+  </script>
+  <script src="Stage.js">
+  </script>
+  <script>
+      const testFile = window.prompt("enter file name to test?")
+      const script = document.createElement('script')
+      script.src = `${testFile}.js`
+      document.body.appendChild(script)
+      script.onload = () => {
+          eval(`${testFile}.init()`)
+      }
+  </script>
+</body>
