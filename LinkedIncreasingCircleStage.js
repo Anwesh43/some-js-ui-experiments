@@ -44,3 +44,27 @@ class LICState {
         }
     }
  }
+
+ class ICAnimator {
+
+    constructor() {
+        this.animated = false
+    }
+
+    start(cb) {
+        if (!this.animated) {
+            this.animated = true
+            this.interval = setInterval(() => {
+                cb()
+            }, 50)
+        }
+    }
+
+    stop() {
+        if (this.animated) {
+            this.animated = false
+            clearInterval(this.interval)
+        }
+    }
+
+ }
