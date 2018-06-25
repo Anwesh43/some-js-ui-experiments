@@ -9,13 +9,14 @@ class LinkedRotLineAltStage extends CanvasStage {
     render() {
         super.render()
         if (this.renderer) {
-            this.renderer.draw(this.context, this.stage.w, this.stage.h)
+            this.renderer.draw(this.context, this.size.w, this.size.h)
         }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
             this.renderer.handleTap(() => {
+                super.render()
                 this.render()
             })
         }
@@ -102,10 +103,12 @@ class LRLNode {
         if (this.prev) {
             this.prev.draw(context, w, h)
         }
-        const index = 1 - 2 * (i % 2)
+        const index = 1 - (this.i % 2)
+        const factor = 1 - 2 * index
         context.save()
         context.translate(this.i * gap + w/20 + gap * this.state.scales[1], h/2)
-        context.rotate(-Math.PI * index + Math.PI * this.state.scales[0] * index)
+        context.rotate(Math.PI * index + Math.PI * this.state.scales[0] * factor)
+        context.beginPath()
         context.moveTo(0, 0)
         context.lineTo(0, gap)
         context.stroke()
