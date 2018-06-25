@@ -25,6 +25,12 @@ class LinkedIncreasingCircleStage extends CanvasStage {
             })
         }
     }
+
+    static init() {
+        const stage = new LinkedIncreasingCircleStage()
+        stage.render()
+        stage.handleTap()
+    }
 }
 
 class LICState {
