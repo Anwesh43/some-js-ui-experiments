@@ -33,7 +33,7 @@ class LinkedIncreasingCircleStage extends CanvasStage {
     }
 }
 
-class LICState {
+class ICState {
     constructor() {
         this.j = 0
         this.dir = 0
@@ -42,7 +42,8 @@ class LICState {
     }
 
     update(stopcb) {
-        this.scales[this.j] = this.dir * 0.1
+        this.scales[this.j] += this.dir * 0.1
+        console.log(this.scales)
         if (Math.abs(this.scales[this.j] - this.prevScale) > 1) {
             this.scales[this.j] = this.prevScale + this.dir
             this.j += this.dir
@@ -113,12 +114,16 @@ const IC_NODES = 5
 
     draw(context, w, h) {
         const size = w / (IC_NODES * IC_NODES)
-        const gap = w / IC_NODES
+        const gap = (w - (w/ IC_NODES))/ IC_NODES
         context.strokeStyle = '#4CAF50'
+        context.lineWidth = Math.min(w, h) / 80
+        if (this.prev) {
+            this.prev.draw(context,w, h)
+        }
         context.save()
-        context.translate(gap * i + (gap) * this.state.scales[0], h/2)
+        context.translate(gap * this.i + (gap) * this.state.scales[0], h/2)
         context.beginPath()
-        context.arc(0, 0, (i * size/2) + (size/2) * this.state.scales[1], 0, 2 * Math.PI)
+        context.arc(size/2, 0, (this.i * size/2 + size/4) + (size/4) * this.state.scales[1], 0, 2 * Math.PI)
         context.stroke()
         context.restore()
     }
