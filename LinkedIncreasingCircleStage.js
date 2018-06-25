@@ -66,5 +66,54 @@ class LICState {
             clearInterval(this.interval)
         }
     }
+ }
 
+const IC_NODES = 5
+
+ class ICNode {
+
+    constructor(i) {
+        this.i = i
+        this.state = new ICState()
+        this.addNeighbor()
+    }
+
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
+    }
+
+    addNeighbor() {
+        if (this.i < IC_NODES - 1) {
+            this.next = new ICNode(this.i + 1)
+            this.next.prev = this
+        }
+    }
+
+    draw(context, w, h) {
+        const size = w / (IC_NODES * IC_NODES)
+        const gap = w / IC_NODES
+        context.strokeStyle = '#4CAF50'
+        context.save()
+        context.translate(gap * i + (gap) * this.state.scales[0], h/2)
+        context.beginPath()
+        context.arc(0, 0, (i * size/2) + (size/2) * this.state.scales[1], 0, 2 * Math.PI)
+        context.stroke()
+        context.restore()
+    }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
+    }
  }
