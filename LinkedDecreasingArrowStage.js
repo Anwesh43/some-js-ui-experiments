@@ -24,6 +24,12 @@ class LinkedDecreasingArrowStage extends CanvasStage {
             })
         }
     }
+
+    static init() {
+        const stage = new LinkedDecreasingArrowStage()
+        stage.render()
+        stage.handleTap()
+    }
 }
 
 class DAState {
