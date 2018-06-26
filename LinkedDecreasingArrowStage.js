@@ -79,6 +79,9 @@ class DANode {
     }
 
     draw(context, w, h) {
+        if (this.prev) {
+            this.prev.draw(context)
+        }
         const wGap = w / DA_NODES
         const size = (wGap / DA_NODES)
         const sizeUpdated = size * this.i + size * this.state.scale
@@ -86,6 +89,7 @@ class DANode {
         context.translate(this.i * wGap + wGap * this.state.scale, h/2)
         context.beginPath()
         context.moveTo(-sizeUpdated, -sizeUpdated)
+        context.lineTo(0, 0)
         context.lineTo(-sizeUpdated, sizeUpdated)
         context.stroke()
         context.restore()
@@ -109,5 +113,31 @@ class DANode {
         }
         cb()
         return this
+    }
+}
+
+class DecreasingArrow {
+    constructor() {
+        this.curr = new DANode(0)
+        this.dir = 1
+    }
+
+    draw(context, w, h) {
+        if (this.curr) {
+            this.curr.draw(context, w, h)
+        }
+    }
+
+    update(stopcb) {
+        this.curr.update(() => {
+            this.curr = this.curr.getNext(this.dir, () => {
+                this.dir *= -1
+            })
+            stopcb()
+        })
+    }
+
+    startUpdating(startcb) {
+        this.curr.startUpdating(startcb)
     }
 }
