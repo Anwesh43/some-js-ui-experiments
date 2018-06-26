@@ -68,6 +68,14 @@ class DANode {
     constructor(i) {
         this.i = i
         this.state = new DAState()
+        this.addNeighbor()
+    }
+
+    addNeighbor() {
+        if (this.i < DA_NODES - 1) {
+            this.next = new DANode(this.i + 1)
+            this.next.prev = this
+        }
     }
 
     draw(context, w, h) {
