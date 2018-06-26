@@ -60,3 +60,46 @@ class DAAnimator {
         }
     }
 }
+
+const DA_NODES = 5
+
+class DANode {
+
+    constructor(i) {
+        this.i = i
+        this.state = new DAState()
+    }
+
+    draw(context, w, h) {
+        const wGap = w / DA_NODES
+        const size = (wGap / DA_NODES)
+        const sizeUpdated = size * this.i + size * this.state.scale
+        context.save()
+        context.translate(this.i * wGap + wGap * this.state.scale, h/2)
+        context.beginPath()
+        context.moveTo(-sizeUpdated, -sizeUpdated)
+        context.lineTo(-sizeUpdated, sizeUpdated)
+        context.stroke()
+        context.restore()
+    }
+
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
+    }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return this
+        }
+        cb()
+        return this
+    }
+}
