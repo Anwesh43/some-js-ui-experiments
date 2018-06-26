@@ -98,7 +98,7 @@ class DANode {
 
     draw(context, w, h) {
         if (this.prev) {
-            this.prev.draw(context)
+            this.prev.draw(context, w, h)
         }
         const wGap = w / DA_NODES
         const size = (wGap / DA_NODES)
@@ -127,7 +127,7 @@ class DANode {
             curr = this.next
         }
         if (curr) {
-            return this
+            return curr
         }
         cb()
         return this
@@ -154,6 +154,7 @@ class DecreasingArrow {
             this.curr = this.curr.getNext(this.dir, () => {
                 this.dir *= -1
             })
+            console.log(this.curr)
             stopcb()
         })
     }
