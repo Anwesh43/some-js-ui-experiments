@@ -136,6 +136,9 @@ class DecreasingArrow {
 
     draw(context, w, h) {
         if (this.curr) {
+            context.strokeStyle = '#4A148C'
+            context.lineCap = 'round'
+            context.lineWidth = Math.min(w, h) / 60
             this.curr.draw(context, w, h)
         }
     }
