@@ -1,15 +1,27 @@
 class LinkedDecreasingArrowStage extends CanvasStage {
     constructor() {
         super()
+        this.da = new DecreasingArrow()
+        this.animator = new DAAnimator()
     }
 
     render() {
         super.render()
+        if (this.da) {
+            this.da.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = (event) => {
-
+            this.da.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.da.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
