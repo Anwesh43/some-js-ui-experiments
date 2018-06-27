@@ -1,3 +1,4 @@
+const MCL_NODES = 5
 class LinkedMultiCircleStage extends CanvasStage {
     constructor() {
         super()
@@ -58,5 +59,59 @@ class MCLAnimator {
             this.animated = false
             clearInterval(this.interval)
         }
+    }
+}
+
+class MCLNode {
+    constructor(i) {
+        this.i = i
+        this.state = new MCLState()
+        this.addNeighbor()
+    }
+
+    addNeighbor() {
+        if (this.i < MCL_NODES - 1) {
+            this.next = new MCLNode(this.i + 1)
+            this.next.prev = this
+        }
+    }
+
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
+    }
+
+    draw(context, w, h) {
+        const hGap = h / Math.pow(2, this.i)
+        const wGap = w / MCL_NODES
+        const r = Math.min(w, h) / (MCL_NODES * MCL_NODES)
+        var y = hGap
+        context.lineWidth = Math.min(w, h) / 60
+        context.lineCap = 'round'
+        context.strokeStyle = '#f44336'
+        for(var i = 0;  i < Math.pow(2, this.i); i++) {
+            context.save()
+            context.translate(this.i * wGap + wGap * this.state.scale, (h/2) + (y - h/2) * this.state.scale)
+            context.beginPath()
+            context.arc(0, 0, r, 0, 2 * Math.PI)
+            context.stroke()
+            context.restore()
+            y += hGap
+        }
+    }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
     }
 }
