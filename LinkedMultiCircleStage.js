@@ -26,8 +26,10 @@ class LinkedMultiCircleStage extends CanvasStage {
         }
     }
 
-    init() {
-
+    static init() {
+        const stage = new LinkedMultiCircleStage()
+        stage.render()
+        stage.handleTap()
     }
 }
 
