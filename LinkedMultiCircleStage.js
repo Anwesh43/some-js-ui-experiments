@@ -2,16 +2,32 @@ const MCL_NODES = 5
 class LinkedMultiCircleStage extends CanvasStage {
     constructor() {
         super()
+        this.mcl = new LinkedMultiCircle()
+        this.animator = new MCLAnimator()
     }
 
     render() {
         super.render()
+        if (this.mcl) {
+            this.mcl.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = (event) => {
-
+            this.mcl.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.mcl.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
+    }
+
+    init() {
+
     }
 }
 
