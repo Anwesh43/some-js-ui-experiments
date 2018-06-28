@@ -1,3 +1,4 @@
+const RAML_NODES = 5
 class LinkedRotAltMutiLineStage extends CanvasStage {
 
     constructor() {
@@ -64,5 +65,63 @@ class RAMLAnimator {
             this.animated = false
             clearInterval(this.interval)
         }
+    }
+}
+
+class RAMLNode {
+    constructor(i) {
+        this.i = i
+        this.state = new RAMLState()
+        this.addNeighbor()
+    }
+
+    addNeighbor() {
+        if (this.i < RAML_NODES) {
+            this.next = new RAMLNode()
+            this.prev.next = this
+        }
+    }
+
+    draw(context, w, h) {
+        context.strokeStyle = '#f44336'
+        context.lineWidth = Math.min(w, h) / 60
+        context.lineCap = 'round'
+        const gap = (w / RAML_NODES
+        const deg = Math.PI / 3
+        const size = w / (RAML_NODES - 1)
+        const index = this.i % 2
+        const scale = index + (1 - 2 * index) * this.state.scales[1]
+        context.save()
+        context.translate(gap * this.i + gap * this.state.scales[0], h/2)
+        for (var i = 0; i < 6; i++) {
+            context.save()
+            context.rotate(i * deg * scale)
+            context.beginPath()
+            context.moveTo(0, 0)
+            context.lineTo(size, 0)
+            context.stroke()
+            context.restore()
+        }
+        context.restore()
+    }
+
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
+    }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
     }
 }
