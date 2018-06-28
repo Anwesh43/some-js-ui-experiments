@@ -3,15 +3,25 @@ class LinkedRotAltMutiLineStage extends CanvasStage {
 
     constructor() {
         super()
+        this.lraml = new LinkedRotAltMultiLine()
+        this.animator = new RAMLAnimator()
     }
 
     render() {
         super.render()
+        this.lraml.draw(this.context, this.size.w, this.size.h)
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.lraml.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.lraml.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
