@@ -83,6 +83,9 @@ class RAMLNode {
     }
 
     draw(context, w, h) {
+        if (this.prev) {
+            this.prev.draw(context, w, h)
+        }
         context.strokeStyle = '#f44336'
         context.lineWidth = Math.min(w, h) / 60
         context.lineCap = 'round'
@@ -93,6 +96,8 @@ class RAMLNode {
         const scale = index + (1 - 2 * index) * this.state.scales[1]
         context.save()
         context.translate(gap * this.i + gap * this.state.scales[0], h/2)
+        context.beginPath()
+        context.arc(0, 0, size, 0, 2 * Math.PI)
         for (var i = 0; i < 6; i++) {
             context.save()
             context.rotate(i * deg * scale)
