@@ -44,3 +44,25 @@ class RAMLState {
         }
     }
 }
+
+class RAMLAnimator {
+    constructor() {
+        this.animated = false
+    }
+
+    start(cb) {
+        if (!this.animated) {
+            this.animated = true
+            this.interval = setIntervak(() => {
+                cb()
+            }, 50)
+        }
+    }
+
+    stop() {
+        if (this.animated) {
+            this.animated = false
+            clearInterval(this.interval)
+        }
+    }
+}
