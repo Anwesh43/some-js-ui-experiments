@@ -40,6 +40,12 @@ class LinkedBiPathStage extends CanvasStage {
             })
         }
     }
+
+    static init() {
+        const stage = new LinkedBiPathStage()
+        stage.render()
+        stage.handleTap()
+    }
 }
 
 class LBPState {
