@@ -9,7 +9,9 @@ class LinkedRotAltMutiLineStage extends CanvasStage {
 
     render() {
         super.render()
-        this.lraml.draw(this.context, this.size.w, this.size.h)
+        if (this.lraml) {
+            this.lraml.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
@@ -24,6 +26,12 @@ class LinkedRotAltMutiLineStage extends CanvasStage {
             })
         }
     }
+
+    static init() {
+        const stage = new LinkedRotAltMutiLineStage()
+        stage.render()
+        stage.handleTap()
+    }
 }
 
 class RAMLState {
@@ -35,7 +43,8 @@ class RAMLState {
     }
 
     update(stopcb) {
-        this.scales[this.j] += this.dir
+        this.scales[this.j] += this.dir * 0.1
+        console.log(this.scales)
         if (Math.abs(this.scales[this.j] - this.prevScale) > 1) {
             this.scales[this.j] = this.prevScale + this.dir
             this.j += this.dir
@@ -64,7 +73,7 @@ class RAMLAnimator {
     start(cb) {
         if (!this.animated) {
             this.animated = true
-            this.interval = setIntervak(() => {
+            this.interval = setInterval(() => {
                 cb()
             }, 50)
         }
@@ -87,8 +96,8 @@ class RAMLNode {
 
     addNeighbor() {
         if (this.i < RAML_NODES) {
-            this.next = new RAMLNode()
-            this.prev.next = this
+            this.next = new RAMLNode(this.i + 1)
+            this.next.prev = this
         }
     }
 
@@ -99,15 +108,16 @@ class RAMLNode {
         context.strokeStyle = '#f44336'
         context.lineWidth = Math.min(w, h) / 60
         context.lineCap = 'round'
-        const gap = (w / RAML_NODES
+        const gap = (w / RAML_NODES)
         const deg = Math.PI / 3
-        const size = w / (RAML_NODES - 1)
+        const size = gap / (RAML_NODES - 1)
         const index = this.i % 2
         const scale = index + (1 - 2 * index) * this.state.scales[1]
         context.save()
         context.translate(gap * this.i + gap * this.state.scales[0], h/2)
         context.beginPath()
         context.arc(0, 0, size, 0, 2 * Math.PI)
+        context.stroke()
         for (var i = 0; i < 6; i++) {
             context.save()
             context.rotate(i * deg * scale)
