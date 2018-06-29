@@ -1,3 +1,19 @@
+const LBP_NODES = 5
+
+const drawSemiCircle = (context, r, start) {
+    context.beginPath()
+    for (var i = start; i <= start + 180; i++) {
+        const x = r * Math.cos(i * Math.PI/180), y = r * Math.sin(i * Math.PI/180)
+        if (i == start) {
+            context.moveTo(x, y)
+        }
+        else {
+            context.lineTo(x, y)
+        }
+    }
+    context.fill()
+}
+
 class LinkedBiPathStage extends CanvasStage {
     constructor() {
         super()
@@ -63,5 +79,63 @@ class LBPAnimator {
             this.animated = false
             clearInterval(this.interval)
         }
+    }
+}
+
+class LBPNode {
+    constructor(i) {
+        this.i = i
+        this.state = new LBPState()
+        this.addNeighbor()
+    }
+
+    addNeighbor() {
+        if (this.i < LBP_NODES) {
+            this.next = new LBPNode(this.i + 1)
+            this.prev.next = this
+        }
+    }
+
+    draw(context, w, h) {
+        const gap = w / LBP_NODES
+        const r = gap / LBP_NODES
+        context.save()
+        context.translate(this.i * gap + r, h/2)
+        for(var i = 0; i < 2; i++) {
+            context.save()
+            context.translate((gap - r) * this.state.scales[i], 0)
+            drawSemiCircle(context, r, -90 * (1 - 2 * i))
+            context.restore()
+        }
+        context.beginPath()
+        for (var i = 0; i < 2; i++) {
+            if (i == 0) {
+                context.moveTo((gap - r) * this.state.scales[i], 0)
+            } else {
+                context.lineTo((gap - r) * this.state.scales[i], 0)
+            }
+        }
+        context.stroke()
+        context.restore()
+    }
+
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
+    }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
     }
 }
