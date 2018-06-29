@@ -17,15 +17,27 @@ const drawSemiCircle = (context, r, start) {
 class LinkedBiPathStage extends CanvasStage {
     constructor() {
         super()
+        this.lbp = new LinkedBiPath()
+        this.animator = new LBPAnimator()
     }
 
     render() {
         super.render()
+        if (this.lbp) {
+            this.lbp.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.lbp.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.lbp.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
