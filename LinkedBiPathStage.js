@@ -1,6 +1,6 @@
-const LBP_NODES = 5
+const LBP_NODES = 5, LBP_COLOR = '#00C853'
 
-const drawSemiCircle = (context, r, start) {
+const drawSemiCircle = (context, r, start) => {
     context.beginPath()
     for (var i = start; i <= start + 180; i++) {
         const x = r * Math.cos(i * Math.PI/180), y = r * Math.sin(i * Math.PI/180)
@@ -12,6 +12,7 @@ const drawSemiCircle = (context, r, start) {
         }
     }
     context.fill()
+    context.stroke()
 }
 
 class LinkedBiPathStage extends CanvasStage {
@@ -108,9 +109,9 @@ class LBPNode {
     }
 
     addNeighbor() {
-        if (this.i < LBP_NODES) {
+        if (this.i < LBP_NODES - 1) {
             this.next = new LBPNode(this.i + 1)
-            this.prev.next = this
+            this.next.prev = this
         }
     }
 
@@ -121,16 +122,16 @@ class LBPNode {
         context.translate(this.i * gap + r, h/2)
         for(var i = 0; i < 2; i++) {
             context.save()
-            context.translate((gap - r) * this.state.scales[i], 0)
+            context.translate((gap) * this.state.scales[i], 0)
             drawSemiCircle(context, r, -90 * (1 - 2 * i))
             context.restore()
         }
         context.beginPath()
         for (var i = 0; i < 2; i++) {
             if (i == 0) {
-                context.moveTo((gap - r) * this.state.scales[i], 0)
+                context.moveTo((gap) * this.state.scales[i], 0)
             } else {
-                context.lineTo((gap - r) * this.state.scales[i], 0)
+                context.lineTo((gap) * this.state.scales[i], 0)
             }
         }
         context.stroke()
@@ -165,6 +166,10 @@ class LinkedBiPath {
     }
 
     draw(context, w , h) {
+      context.strokeStyle = LBP_COLOR
+      context.lineWidth = Math.min(w, h) / 60
+      context.lineCap = 'round'
+      context.fillStyle = LBP_COLOR
         this.curr.draw(context, w, h)
     }
 
