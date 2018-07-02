@@ -120,3 +120,28 @@ class PyramidNode {
         return this
     }
 }
+
+class LinkedPyramid {
+    constructor() {
+        this.curr = new PyramidNode(0)
+        this.dir = 1
+    }
+
+    draw(context, w, h) {
+        this.curr.draw(context, w, h)
+    }
+
+    update(stopcb) {
+        this.state.update(() => {
+            this.curr = this.curr.getNext(this.dir, () => {
+                this.dir *= -1
+            })
+            stopcb()
+        })
+    }
+
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
+    }
+
+}
