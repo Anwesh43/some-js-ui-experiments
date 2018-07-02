@@ -63,3 +63,60 @@ class PyramidAnimator {
         }
     }
 }
+
+class PyramidNode {
+    constructor(i) {
+        this.i = i
+        this.state = new PyramidState()
+        this.addNeighbor()
+    }
+
+    addNeighbor() {
+        if (this.i < PYRAMID_NODES - 1) {
+            this.next = new PyramidNode(this.i + 1)
+            this.next.prev = this
+        }
+    }
+
+    draw(context, w, h) {
+        const gap = Math.min(w, h) / (2 * PYRAMID_NODES)
+        context.strokeStyle = '#673AB7'
+        context.lineCap = 'round'
+        context.lineWidth = Math.min(w, h) / 60
+        for(var i = 0; i < 2; i++) {
+            const factor = 1 - 2 * i
+            const x = -this.i * gap * factor, y = this.i * gap
+            context.save()
+            context.translate(x, y)
+            context.beginPath()
+            context.moveTo(0, 0)
+            context.lineTo(this.state.scales[0] * -gap * factor, this.state.scales[0] * gap)
+            context.stroke()
+            context.beginPath()
+            context.moveTo(-gap, gap)
+            context.lineTo(-gap + 2 * gap * this.state.scales[1], gap)
+            context.stroke()
+            context.restore()
+        }
+    }
+
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
+    }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
+    }
+}
