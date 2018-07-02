@@ -25,6 +25,12 @@ class LinkedPyramidStage extends CanvasStage {
             })
         }
     }
+
+    static init() {
+        const stage = new LinkedPyramidStage()
+        stage.render()
+        stage.handleTap()
+    }
 }
 
 class PyramidState {
