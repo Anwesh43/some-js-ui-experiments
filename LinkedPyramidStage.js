@@ -2,15 +2,27 @@ const PYRAMID_NODES = 5
 class LinkedPyramidStage extends CanvasStage {
     constructor() {
         super()
+        this.animator = new PyramidAnimator()
+        this.linkedPyramid = new LinkedPyramid()
     }
 
     render() {
         super.render()
+        if (this.linkedPyramid) {
+            this.linkedPyramid.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.linkedPyramid.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.linkedPyramid.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
@@ -143,5 +155,4 @@ class LinkedPyramid {
     startUpdating(startcb) {
         this.state.startUpdating(startcb)
     }
-
 }
