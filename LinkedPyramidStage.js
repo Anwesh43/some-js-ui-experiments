@@ -47,7 +47,10 @@ class PyramidState {
             this.scales[this.j] = this.prevScale + this.dir
             this.j += this.dir
             if (this.j == this.scales.length || this.j == -1) {
-                this.
+                this.j -= this.dir
+                this.dir = 0
+                this.prevScale = this.scales[this.j]
+                stopcb()
             }
         }
     }
@@ -97,23 +100,28 @@ class PyramidNode {
     }
 
     draw(context, w, h) {
+        if (this.prev) {
+            this.prev.draw(context, w, h)
+        }
         const gap = Math.min(w, h) / (2 * PYRAMID_NODES)
         context.strokeStyle = '#673AB7'
         context.lineCap = 'round'
         context.lineWidth = Math.min(w, h) / 60
         for(var i = 0; i < 2; i++) {
             const factor = 1 - 2 * i
-            const x = -this.i * gap * factor, y = this.i * gap
+            const x = w/2 - this.i * gap * factor, y = gap / 5 + this.i * gap
             context.save()
             context.translate(x, y)
             context.beginPath()
             context.moveTo(0, 0)
             context.lineTo(this.state.scales[0] * -gap * factor, this.state.scales[0] * gap)
             context.stroke()
-            context.beginPath()
-            context.moveTo(-gap, gap)
-            context.lineTo(-gap + 2 * gap * this.state.scales[1], gap)
-            context.stroke()
+            if (i == 0) {
+                context.beginPath()
+                context.moveTo(-gap, gap)
+                context.lineTo(-gap + (2 * gap +  (2 * this.i) * gap) * this.state.scales[1], gap)
+                context.stroke()
+            }
             context.restore()
         }
     }
@@ -150,7 +158,7 @@ class LinkedPyramid {
     }
 
     update(stopcb) {
-        this.state.update(() => {
+        this.curr.update(() => {
             this.curr = this.curr.getNext(this.dir, () => {
                 this.dir *= -1
             })
@@ -159,6 +167,6 @@ class LinkedPyramid {
     }
 
     startUpdating(startcb) {
-        this.state.startUpdating(startcb)
+        this.curr.startUpdating(startcb)
     }
 }
