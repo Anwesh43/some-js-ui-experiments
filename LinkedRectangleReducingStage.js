@@ -25,6 +25,12 @@ class LinkedRectangleReducingStage extends CanvasStage {
             })
         }
     }
+
+    static init() {
+        const stage = new LinkedRectangleReducingStage()
+        stage.render()
+        stage.handleTap()
+    }
 }
 
 class RRState {
