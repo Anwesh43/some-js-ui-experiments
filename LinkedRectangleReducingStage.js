@@ -2,15 +2,27 @@ const RR_NODES = 10
 class LinkedRectangleReducingStage extends CanvasStage {
     constructor() {
         super()
+        this.rr = new ReducingRectangle()
+        this.animator = new RRAnimator()
     }
 
     render() {
         super.render()
+        if (this.rr) {
+            this.rr.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.rr.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.rr.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
