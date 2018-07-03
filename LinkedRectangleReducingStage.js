@@ -15,7 +15,7 @@ class LinkedRectangleReducingStage extends CanvasStage {
     }
 }
 
-class SRState {
+class RRState {
     constructor() {
         this.scale = 0
         this.dir = 0
@@ -36,6 +36,28 @@ class SRState {
         if (this.dir == 0) {
             this.dir = 1 - 2 * this.prevScale
             startcb()
+        }
+    }
+}
+
+class RRAnimator {
+    constructor() {
+        this.animated = false
+    }
+
+    start(cb) {
+        if (!this.animated) {
+            this.animated = true
+            this.interval = setInterval(() => {
+                cb()
+            }, 50)
+        }
+    }
+
+    stop() {
+        if (this.animated) {
+            this.animated = false
+            clearInterval(this.interval)
         }
     }
 }
