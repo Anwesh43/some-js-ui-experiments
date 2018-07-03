@@ -85,7 +85,7 @@ class RRNode {
     draw(context, w, h) {
         const gap = Math.min(w,h)/3 / RR_NODES
         context.save()
-        context.translate(gap * this.i, h - gap/20 - this.i * context.strokeWidth)
+        context.translate(gap * this.i, h - gap/20 - this.i * context.lineWidth)
         context.beginPath()
         context.moveTo((this.i) * gap * this.state.scale, 0)
         context.lineTo((this.i + 1) * gap * this.state.scale, 0)
@@ -106,5 +106,28 @@ class RRNode {
         }
         cb()
         return this
+    }
+}
+
+class ReducingRectangle {
+    constructor() {
+        this.curr = new RRNode(0)
+        this.dir = 1
+    }
+
+    draw(context, w, h) {
+        context.strokeStyle = '#BF360C'
+        context.lineCap = 'round'
+        context.lineWidth = Math.min(w, h) / 15
+        this.curr.draw(context, w, h)
+    }
+
+    update(stopcb) {
+        this.state.update(() => {
+            this.curr = this.curr.getNext(this.dir, () => {
+                this.dir *= -1
+            })
+            stopcb()
+        })
     }
 }
