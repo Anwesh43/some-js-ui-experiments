@@ -66,3 +66,53 @@ class UPArcAnimator {
         }
     }
 }
+
+class UPArcNode {
+    constructor(i) {
+        this.i = i
+        this.state = new UPArcState()
+    }
+
+    draw(context, w, h) {
+        const gap = 0.9 * h / UP_ARC_NODES
+        if (this.prev) {
+            this.prev.draw(context, w, h)
+        }
+        const deg = 18 * this.i + 18 * this.state.scales[0]
+        const r = gap / 5, k = 0
+        context.save()
+        context.translate(w/2, 0.9 * h - gap * this.i - gap * this.state.scales[1])
+        context.beginPath()
+        for(var j = 270 - deg; j <= 270 + deg; j++) {
+            const x = r * Math.cos(j * Math.PI/180), y = r * Math.sin(j * Math.PI/180)
+            if (k == 0) {
+                context.moveTo(x, y)
+            } else {
+                context.lineTo(x, y)
+            }
+            k++
+        }
+        context.stroke()
+        context.restore()
+    }
+
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
+    }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
+    }
+}
