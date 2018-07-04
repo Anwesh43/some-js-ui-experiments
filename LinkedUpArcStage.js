@@ -3,15 +3,27 @@ const UP_ARC_NODES = 5
 class LinkedUpArcStage extends CanvasStage {
     constructor() {
         super()
+        this.upArc = new UpArc()
+        this.animator = new UpArcAnimator()
     }
 
     render() {
         super.render()
+        if (this.upArc) {
+            this.upArc.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.upArc.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.upArc.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
