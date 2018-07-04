@@ -26,6 +26,12 @@ class LinkedUpArcStage extends CanvasStage {
             })
         }
     }
+
+    static init() {
+        const stage = new LinkedUpArcStage()
+        stage.render()
+        stage.handleTap()
+    }
 }
 
 class UPArcState {
