@@ -4,7 +4,7 @@ class LinkedUpArcStage extends CanvasStage {
     constructor() {
         super()
         this.upArc = new UpArc()
-        this.animator = new UpArcAnimator()
+        this.animator = new UPArcAnimator()
     }
 
     render() {
@@ -44,13 +44,14 @@ class UPArcState {
 
     update(stopcb) {
         this.scales[this.j] += 0.1 * this.dir
-        if (Math.abs(this.scale - this.prevScale) > 1) {
+        if (Math.abs(this.scales[this.j] - this.prevScale) > 1) {
             this.scales[this.j] = this.prevScale + this.dir
             this.j += this.dir
             if (this.j == this.scales.length || this.j == -1) {
                 this.j -= this.dir
                 this.dir = 0
                 this.prevScale = this.scales[this.j]
+                stopcb()
             }
         }
     }
@@ -89,6 +90,7 @@ class UPArcNode {
     constructor(i) {
         this.i = i
         this.state = new UPArcState()
+        this.addNeighbor()
     }
 
     draw(context, w, h) {
@@ -96,8 +98,13 @@ class UPArcNode {
         if (this.prev) {
             this.prev.draw(context, w, h)
         }
-        const deg = 18 * this.i + 18 * this.state.scales[0]
-        const r = gap / 5, k = 0
+        const gap_deg = 180 / UP_ARC_NODES
+        const deg = gap_deg * this.i + gap_deg * this.state.scales[0]
+        const r = gap / 5
+        var k = 0
+        context.strokeStyle = '#673AB7'
+        context.lineWidth = Math.min(w, h) / 60
+        context.lineCap = 'round'
         context.save()
         context.translate(w/2, 0.9 * h - gap * this.i - gap * this.state.scales[1])
         context.beginPath()
@@ -112,6 +119,13 @@ class UPArcNode {
         }
         context.stroke()
         context.restore()
+    }
+
+    addNeighbor() {
+        if (this.i < UP_ARC_NODES - 1) {
+            this.next = new UPArcNode(this.i + 1)
+            this.next.prev = this
+        }
     }
 
     update(stopcb) {
@@ -138,7 +152,7 @@ class UPArcNode {
 class UpArc {
 
     constructor() {
-        this.curr = new UpArcNode(0)
+        this.curr = new UPArcNode(0)
         this.dir = 1
     }
 
@@ -151,6 +165,7 @@ class UpArc {
             this.curr = this.curr.getNext(this.dir, () => {
                 this.dir *= -1
             })
+            console.log(this.curr)
             stopcb()
         })
     }
