@@ -3,14 +3,28 @@ const CY_NODES = 5
 class LinkedCurvedYStage extends CanvasStage {
     constructor() {
         super()
+        this.lcy = new LinkedCurvedY()
+        this.animator = new CYAnimator()
     }
 
     render() {
         super.render()
+        if (this.lcy) {
+            this.lcy.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
-
+        this.canvas.onmousedown = () => {
+            this.lcy.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.lcy.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
+        }
     }
 }
 
