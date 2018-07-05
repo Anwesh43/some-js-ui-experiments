@@ -26,6 +26,12 @@ class LinkedCurvedYStage extends CanvasStage {
             })
         }
     }
+
+    static init() {
+        const stage = new LinkedCurvedYStage()
+        stage.render()
+        stage.handleTap()
+    }
 }
 
 class CYState {
