@@ -25,6 +25,12 @@ class LinkedDecLineCircStage extends CanvasStage {
             })
         }
     }
+
+    static init() {
+        const stage = new LinkedDecLineCircStage()
+        stage.render()
+        stage.handleTap()
+    }
 }
 
 class DLCState {
