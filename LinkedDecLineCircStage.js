@@ -126,3 +126,23 @@ class DLCNode {
         }
     }
 }
+
+class LinkedDecLineCirc {
+    constructor() {
+        this.curr = new DLCNode(0)
+        this.dir = 1
+    }
+
+    udpate(stopcb) {
+        this.curr.update(() => {
+            this.curr = this.curr.update(() => {
+                this.dir *= -1
+            })
+            stopcb()
+        })
+    }
+
+    startUpdating(startcb) {
+        this.curr.startUpdating(startcb)
+    }
+}
