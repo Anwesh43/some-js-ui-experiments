@@ -2,15 +2,27 @@ const DLC_NODES = 5
 class LinkedDecLineCircStage extends CanvasStage {
     constructor() {
         super()
+        this.ldc = new LinkedDecLineCirc()
+        this.animator = new DLCAnimator()
     }
 
     render() {
         super.render()
+        if (this.ldc) {
+            this.ldc.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.ldc.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.ldc.update(() => {
+                        tis.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
