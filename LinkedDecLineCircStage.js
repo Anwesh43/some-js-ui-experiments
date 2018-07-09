@@ -19,7 +19,7 @@ class LinkedDecLineCircStage extends CanvasStage {
                 this.animator.start(() => {
                     this.render()
                     this.ldc.update(() => {
-                        tis.animator.stop()
+                        this.animator.stop()
                     })
                 })
             })
@@ -63,12 +63,12 @@ class DLCAnimator {
         this.animated = false
     }
 
-    start() {
+    start(cb) {
         if (!this.animated) {
             this.animated = true
             this.interval = setInterval(() => {
                 cb()
-            }, 50)
+            }, 70)
         }
     }
 
@@ -84,6 +84,7 @@ class DLCNode {
     constructor(i) {
         this.i = i
         this.state = new DLCState()
+        this.addNeighbor()
     }
 
     addNeighbor() {
@@ -106,6 +107,7 @@ class DLCNode {
         if (dir == 1) {
             curr = this.next
         }
+        console.log(curr)
         if (curr) {
             return curr
         }
@@ -116,20 +118,22 @@ class DLCNode {
     draw(context, w, h) {
         const gap = w / DLC_NODES
         const r = gap /4
-        const sc1 = Math.min(0.5, this.state.scale), sc2 = Math.min(0.5, Math.max(this.state.scale - 0.5, 0))
+        const sc1 = Math.min(0.5, this.state.scale) * 2, sc2 = Math.min(0.5, Math.max(this.state.scale - 0.5, 0)) * 2
         context.lineWidth = Math.min(w, h) / 60
         context.lineCap = 'round'
-        context.strokeStyle = 'teal'
+        context.strokeStyle = '#2E7D32'
         context.save()
-        context.translate(i * gap, h/2)
-        context.beginPath()
-        context.moveTo(0, 0)
-        context.lineTo(gap * 0.5 * sc1, 0)
-        context.stroke()
+        context.translate(this.i * gap, h/2)
+        if (sc1 < 1) {
+            context.beginPath()
+            context.moveTo(gap * 0.5 * sc1, 0)
+            context.lineTo(gap * 0.5, 0)
+            context.stroke()
+        }
         var k = 0
         context.beginPath()
-        for (var i = 180 + 180 * sc2; i <=  + ; i++) {
-            const x = gap/2 +  r * Math.cos(i * Math.PI/180), y = r * Math.sin(i * Math.PI/180)
+        for (var i = 180 + 180 * sc2; i <=  360; i++) {
+            const x = gap/2 + r +  r * Math.cos(i * Math.PI/180), y = r * Math.sin(i * Math.PI/180)
             if (k == 0) {
                 context.moveTo(x, y)
             } else {
@@ -151,9 +155,9 @@ class LinkedDecLineCirc {
         this.dir = 1
     }
 
-    udpate(stopcb) {
+    update(stopcb) {
         this.curr.update(() => {
-            this.curr = this.curr.update(() => {
+            this.curr = this.curr.getNext(this.dir, () => {
                 this.dir *= -1
             })
             stopcb()
@@ -162,5 +166,9 @@ class LinkedDecLineCirc {
 
     startUpdating(startcb) {
         this.curr.startUpdating(startcb)
+    }
+
+    draw(context, w, h) {
+        this.curr.draw(context, w, h)
     }
 }
