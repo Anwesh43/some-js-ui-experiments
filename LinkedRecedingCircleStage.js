@@ -125,3 +125,27 @@ class RCLNode {
         return this
     }
 }
+
+class LinkedRecedingCircle {
+    constructor() {
+        this.curr = new RCLNode(0)
+        this.dir = 1
+    }
+
+    update(stopcb) {
+        this.state.update(() => {
+            this.curr = this.curr.getNext(this.dir, () => {
+                this.dir *= -1
+            })
+            stopcb()
+        })
+    }
+
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
+    }
+
+    draw(context, w, h) {
+        this.curr.draw(context, w, h)
+    }
+}
