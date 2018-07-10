@@ -3,15 +3,27 @@ class LinkedRecedingCircleStage extends CanvasStage {
 
     constructor() {
         super()
+        this.lrc = new LinkedRecedingCircle()
+        this.animator = new RCLAnimator()
     }
 
     render() {
         super.render()
+        if (this.lrc) {
+            this.lrc.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.lrc.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.lrc.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
