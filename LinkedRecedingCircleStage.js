@@ -89,7 +89,7 @@ class RCLNode {
     }
 
     addNeighbor() {
-        if (this.i < NODES - 1) {
+        if (this.i < RCL_NODES - 1) {
             this.next = new RCLNode(this.i + 1)
             this.next.prev = this
         }
@@ -129,6 +129,9 @@ class RCLNode {
             context.restore()
         }
         context.restore()
+        if (this.next) {
+            this.next.draw(context, w, h)
+        }
     }
 
     getNext(dir, cb) {
@@ -151,7 +154,7 @@ class LinkedRecedingCircle {
     }
 
     update(stopcb) {
-        this.state.update(() => {
+        this.curr.update(() => {
             this.curr = this.curr.getNext(this.dir, () => {
                 this.dir *= -1
             })
@@ -160,7 +163,7 @@ class LinkedRecedingCircle {
     }
 
     startUpdating(startcb) {
-        this.state.startUpdating(startcb)
+        this.curr.startUpdating(startcb)
     }
 
     draw(context, w, h) {
