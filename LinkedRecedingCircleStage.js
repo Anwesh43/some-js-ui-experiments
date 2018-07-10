@@ -1,3 +1,4 @@
+const RCL_NODES = 5
 class LinkedRecedingCircleStage extends CanvasStage {
 
     constructor() {
@@ -59,5 +60,68 @@ class RCLAnimator {
             this.animated = false
             clearInterval(this.interval)
         }
+    }
+}
+
+class RCLNode {
+    constructor(i) {
+        this.i = i
+        this.state = new RCLState()
+        this.addNeighbor()
+    }
+
+    addNeighbor() {
+        if (this.i < NODES - 1) {
+            this.next = new RCLNode(this.i + 1)
+            this.next.prev = this
+        }
+    }
+
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
+    }
+
+    draw(context, w, h) {
+        const gap = w / RCL_NODES
+        context.lineWidth = Math.min(w, h) / 60
+        context.lineCap = 'round'
+        context.strokeStyle = 'teal'
+        const r = gap / 2
+        context.save()
+        context.translate(this.i * gap + r, h/2)
+        for(var i = 0; i < 2; i++) {
+            context.save()
+            context.scale(1, 1 - 2 * i)
+            context.beginPath()
+            var k = 0
+            for (var j = 180 + 180 * this.state.scale; j <= 360; j++) {
+                const x = r * Math.cos(j * Math.PI/180), y = r * Math.sin(j * Math.PI/180)
+                if (k == 0) {
+                    context.moveTo(x, y)
+                } else {
+                    context.lineTo(x, y)
+                }
+                k++
+            }
+            context.stroke()
+            context.restore()
+        }
+        context.restore()
+    }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
     }
 }
