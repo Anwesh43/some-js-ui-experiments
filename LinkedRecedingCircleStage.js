@@ -26,6 +26,12 @@ class LinkedRecedingCircleStage extends CanvasStage {
             })
         }
     }
+
+    static init() {
+        const stage = new LinkedRecedingCircleStage()
+        stage.render()
+        stage.handleTap()
+    }
 }
 
 class RCLState {
