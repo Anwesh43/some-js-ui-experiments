@@ -66,6 +66,7 @@ class DRLNode {
     constructor(i) {
         this.i = i
         this.state = new DRLState()
+        this.addNeighbor()
     }
 
     addNeighbor() {
@@ -107,6 +108,30 @@ class DRLNode {
             return curr
         }
         cb()
-        return this 
+        return this
+    }
+}
+
+class LinkedDecreasingRotatingLine {
+    constructor() {
+        this.curr = new DRLNode(0)
+        this.dir = 1
+    }
+
+    update(stopcb) {
+        this.curr.update(() => {
+            this.curr = this.curr.getNext(this.dir, () => {
+                this.dir *= -1
+            })
+            stopcb()
+        })
+    }
+
+    startUpdating(startcb) {
+        this.curr.startUpdating(startcb)
+    }
+
+    draw(context, w, h) {
+        this.curr.draw(context, w, h)
     }
 }
