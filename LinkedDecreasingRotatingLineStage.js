@@ -3,14 +3,28 @@ const DRL_NODES = 5
 class LinkedDecreasingRotateingLineStage extends CanvasStage {
     constructor() {
         super()
+        this.drl = new LinkedDecreasingRotatingLine()
+        this.animator = new DRLAnimator()
     }
 
     render() {
         super.render()
+        if (this.drl) {
+            this.drl.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
-
+        this.canvas.onmousedown = () => {
+            this.drl.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.drl.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
+        }
     }
 }
 
