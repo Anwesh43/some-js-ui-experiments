@@ -1,6 +1,6 @@
 const DRL_NODES = 5
 
-class LinkedDecreasingRotateingLineStage extends CanvasStage {
+class LinkedDecreasingRotatingLineStage extends CanvasStage {
     constructor() {
         super()
         this.drl = new LinkedDecreasingRotatingLine()
@@ -28,7 +28,7 @@ class LinkedDecreasingRotateingLineStage extends CanvasStage {
     }
 
     static init() {
-        const stage = new LinkedDecreasingRotateingLineStage()
+        const stage = new LinkedDecreasingRotatingLineStage()
         stage.render()
         stage.handleTap()
     }
@@ -98,17 +98,21 @@ class DRLNode {
 
     draw(context, w, h) {
         const gap = 2 * Math.PI / DRL_NODES
-        const size = (Math.min(w, h) / 3) / (DRL_NODES + 1)
+        const size = (Math.min(w, h) / 3) / (DRL_NODES)
         context.strokeStyle = '#43A047'
         context.lineCap = 'round'
         context.lineWidth = Math.min(w, h) / 60
         context.save()
         context.translate(w/2, h/2)
         context.rotate(this.i * gap + gap * this.state.scale)
+        context.beginPath()
         context.moveTo(0, 0)
-        context.lineTo((i + 1) * size + size * this.state.scale, 0)
+        context.lineTo((this.i + 1) * size + size * this.state.scale, 0)
         context.stroke()
         context.restore()
+        if (this.next) {
+            this.next.draw(context, w, h)
+        }
     }
 
     update(stopcb) {
