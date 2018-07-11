@@ -56,8 +56,57 @@ class DRLAnimator {
     stop() {
         if (this.animated) {
             this.animated = false
-            clearInterval(this.interval) 
+            clearInterval(this.interval)
 
         }
+    }
+}
+
+class DRLNode {
+    constructor(i) {
+        this.i = i
+        this.state = new DRLState()
+    }
+
+    addNeighbor() {
+        if (this.i < DRL_NODES - 1) {
+            this.next = new DRLNode(this.i + 1)
+            this.next.prev = this
+        }
+    }
+
+    draw(context, w, h) {
+        const gap = 2 * Math.PI / DRL_NODES
+        const size = (Math.min(w, h) / 3) / (DRL_NODES + 1)
+        context.strokeStyle = '#43A047'
+        context.lineCap = 'round'
+        context.lineWidth = Math.min(w, h) / 60
+        context.save()
+        context.translate(w/2, h/2)
+        context.rotate(this.i * gap + gap * this.state.scale)
+        context.moveTo(0, 0)
+        context.lineTo((i + 1) * size + size * this.state.scale, 0)
+        context.stroke()
+        context.restore()
+    }
+
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
+    }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this 
     }
 }
