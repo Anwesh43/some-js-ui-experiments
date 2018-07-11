@@ -26,6 +26,12 @@ class LinkedDecreasingRotateingLineStage extends CanvasStage {
             })
         }
     }
+
+    static init() {
+        const stage = new LinkedDecreasingRotateingLineStage()
+        stage.render()
+        stage.handleTap()
+    }
 }
 
 class DRLState {
