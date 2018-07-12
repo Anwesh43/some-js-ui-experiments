@@ -60,3 +60,54 @@ class SARAnimator {
         }
     }
 }
+
+class SARNode {
+    constructor(i) {
+        this.i = i
+        this.state = new SARState()
+        this.addNeighbor()
+    }
+
+    update(cb) {
+        this.state.update(cb)
+    }
+
+    startUpdating(cb) {
+        this.state.startUpdating()
+    }
+
+    addNeighbor() {
+        if (this.i < SAR_NODES) {
+            this.next = new SARNode(this.i + 1)
+            this.next.prev = this
+        }
+    }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
+    }
+
+    draw(context, w, h) {
+        const index = 1 - 2 * (this.i % 2)
+        context.strokeStyle = 'teal'
+        context.lineCap = 'round'
+        context.lineWidth = Math.min(w, h) / 60
+        const sc1 = Math.min(0.5, this.state.scale) * 2, sc2 = Math.min(0.5, Math.max(0, this.state.scale - 0.5))
+        context.save()
+        context.translate(i * gap + gap * sc1, h/2)
+        context.rotate(Math.PI/4 * index + Math.PI/2 * index * sc2 )
+        context.beginPath()
+        context.moveTo(0, 0)
+        context.lineTo(0, -gap/3 * index)
+        context.stroke()
+        context.restore()
+    }
+}
