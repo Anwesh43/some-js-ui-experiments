@@ -111,3 +111,26 @@ class SARNode {
         context.restore()
     }
 }
+
+class SideRotArrow {
+    constructor() {
+        this.curr = new SARNode()
+        this.dir = 1
+    }
+
+    update(stopcb) {
+        this.curr.update(() => {
+            this.curr = this.curr.getNext(this.dir, () => {
+                this.dir *= -1
+            })
+        })
+    }
+
+    startUpdating(startcb) {
+        this.curr.startUpdating(startcb)
+    }
+
+    draw(context, w, h) {
+        this.curr.draw(context, w, h)
+    }
+}
