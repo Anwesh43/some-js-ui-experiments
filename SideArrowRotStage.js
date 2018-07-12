@@ -46,6 +46,7 @@ class SARState {
             this.scale = this.prevScale + this.dir
             this.dir = 0
             this.prevScale = this.scale
+            stopcb()
         }
     }
 
@@ -67,7 +68,7 @@ class SARAnimator {
             this.animated = true
             this.interval = setInterval(() => {
                 cb()
-            }, 50)
+            }, 80)
         }
     }
 
@@ -91,7 +92,7 @@ class SARNode {
     }
 
     startUpdating(cb) {
-        this.state.startUpdating()
+        this.state.startUpdating(cb)
     }
 
     addNeighbor() {
@@ -118,21 +119,26 @@ class SARNode {
         context.strokeStyle = 'teal'
         context.lineCap = 'round'
         context.lineWidth = Math.min(w, h) / 60
-        const sc1 = Math.min(0.5, this.state.scale) * 2, sc2 = Math.min(0.5, Math.max(0, this.state.scale - 0.5))
+        const gap = w / SAR_NODES
+        const sc1 = Math.min(0.5, this.state.scale) * 2, sc2 = Math.min(0.5, Math.max(0, this.state.scale - 0.5)) * 2
         context.save()
-        context.translate(i * gap + gap * sc1, h/2)
+        context.translate(this.i * gap + gap * sc1, h/2)
+        console.log(`${this.i} ${gap} ${this.i * gap + gap * sc1}`)
         context.rotate(Math.PI/4 * index + Math.PI/2 * index * sc2 )
         context.beginPath()
         context.moveTo(0, 0)
-        context.lineTo(0, -gap/3 * index)
+        context.lineTo(0, gap/5 * index)
         context.stroke()
         context.restore()
+        if (this.next) {
+            this.next.draw(context, w, h)
+        }
     }
 }
 
 class SideRotArrow {
     constructor() {
-        this.curr = new SARNode()
+        this.curr = new SARNode(0)
         this.dir = 1
     }
 
