@@ -2,15 +2,27 @@ const SAR_NODES = 5
 class SideArrowRotStage extends CanvasStage {
     constructor() {
         super()
+        this.sar = new SideRotArrow()
+        this.animator = new SARAnimator()
     }
 
     render() {
         super.render()
+        if (this.sar) {
+            this.sar.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.sar.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.sar.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
