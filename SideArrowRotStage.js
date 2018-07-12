@@ -25,6 +25,12 @@ class SideArrowRotStage extends CanvasStage {
             })
         }
     }
+
+    static init() {
+        const stage = new SideArrowRotStage()
+        stage.render()
+        stage.handleTap()
+    }
 }
 
 class SARState {
