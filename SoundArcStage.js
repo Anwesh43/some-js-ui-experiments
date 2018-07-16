@@ -16,15 +16,27 @@ const drawArc = (context, r, startDeg, endDeg) => {
 class SoundArcStage extends CanvasStage {
     constructor() {
         super()
+        this.lsa = new LinkedSA()
+        this.animator = new SAAnimator()
     }
 
     render() {
         super.render()
+        if (this.lsa) {
+            this.lsa.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.lsa.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.lsa.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
