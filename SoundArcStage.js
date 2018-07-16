@@ -39,6 +39,12 @@ class SoundArcStage extends CanvasStage {
             })
         }
     }
+
+    static init() {
+        const stage = new SoundArcStage()
+        stage.render()
+        stage.handleTap()
+    }
 }
 
 class SAState {
