@@ -98,6 +98,7 @@ class SANode {
     constructor(i) {
         this.i = i
         this.state = new SAState()
+        this.addNeighbor()
     }
 
     update(cb) {
@@ -117,6 +118,9 @@ class SANode {
         drawArc(context, r * (this.i + 1), -30, 30)
         context.strokeStyle = '#FAFAFA'
         drawArc(context, r * (this.i + 1), -deg, deg)
+        if (this.next) {
+            this.next.draw(context, w, h)
+        }
     }
 
     getNext(dir, cb) {
@@ -129,6 +133,13 @@ class SANode {
         }
         cb()
         return this
+    }
+
+    addNeighbor() {
+        if (this.i < SA_NODES - 1) {
+            this.next = new SANode(this.i + 1)
+            this.next.prev = this
+        }
     }
 }
 
