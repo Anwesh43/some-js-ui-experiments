@@ -1,4 +1,5 @@
 const SA_NODES = 5
+
 const drawArc = (context, r, startDeg, endDeg) => {
     context.beginPath()
     for (var i = startDeg; i <= endDeg; i++) {
@@ -11,6 +12,7 @@ const drawArc = (context, r, startDeg, endDeg) => {
     }
     context.stroke()
 }
+
 class SoundArcStage extends CanvasStage {
     constructor() {
         super()
@@ -109,5 +111,32 @@ class SANode {
         }
         cb()
         return this
+    }
+}
+
+class LinkedSA {
+    constructor() {
+        this.curr = new SANode(0)
+        this.dir = 1
+    }
+
+    update(cb) {
+        this.curr.update(() => {
+            this.curr = this.curr.getNext(this.dir, () => {
+                this.dir *= -1
+            })
+            cb()
+        })
+    }
+
+    startUpdating(cb) {
+        this.curr.startUpdating(cb)
+    }
+
+    draw(context, w, h) {
+        context.save()
+        context.translate(w/2, h/2)
+        this.curr.draw(context, w, h)
+        context.restore()
     }
 }
