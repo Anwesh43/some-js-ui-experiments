@@ -145,7 +145,8 @@ class SANode {
 
 class LinkedSA {
     constructor() {
-        this.curr = new SANode(0)
+        this.root = new SANode(0)
+        this.curr = this.root
         this.dir = 1
     }
 
@@ -165,7 +166,7 @@ class LinkedSA {
     draw(context, w, h) {
         context.save()
         context.translate(w/2, h/2)
-        this.curr.draw(context, w, h)
+        this.root.draw(context, w, h)
         context.restore()
     }
 }
