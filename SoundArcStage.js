@@ -1,3 +1,16 @@
+const SA_NODES = 5
+const drawArc = (context, r, startDeg, endDeg) => {
+    context.beginPath()
+    for (var i = startDeg; i <= endDeg; i++) {
+        const x = r * Math.cos(i * Math.PI/180), y = r * Math.sin(i * Math.PI/180)
+        if (i == startDeg) {
+            context.moveTo(x, y)
+        } else {
+            context.lineTo(x, y)
+        }
+    }
+    context.stroke()
+}
 class SoundArcStage extends CanvasStage {
     constructor() {
         super()
@@ -58,5 +71,43 @@ class SAAnimator {
             this.animated = false
             clearInterval(this.interval)
         }
+    }
+}
+
+class SANode {
+    constructor(i) {
+        this.i = i
+        this.state = new SAState()
+    }
+
+    update(cb) {
+        this.state.update(cb)
+    }
+
+    startUpdating(cb) {
+        this.state.startUpdating(cb)
+    }
+
+    draw(context, w, h) {
+        const r = (Math.min(w, h) / 3) / SA_NODES
+        context.lineWidth = Math.min(w, h) / 60
+        context.lineCap = 'round'
+        context.strokeStyle = '#9E9E9E'
+        const deg = 30 * this.state.scale
+        drawArc(context, r * (this.i + 1), -30, 30)
+        context.strokeStyle = '#FAFAFA'
+        drawArc(context, r * (this.i + 1), -deg, deg)
+    }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
     }
 }
