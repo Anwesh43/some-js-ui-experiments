@@ -32,6 +32,12 @@ class LinkedLineIncreasingStage extends CanvasStage {
             })
         }
     }
+
+    static init() {
+        const stage = new LinkedLineIncreasingStage()
+        stage.render()
+        stage.handleTap()
+    }
 }
 
 class LIState {
