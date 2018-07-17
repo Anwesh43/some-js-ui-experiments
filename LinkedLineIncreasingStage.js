@@ -1,5 +1,5 @@
 const LI_NODES = 5
-const drawLine = (context, size, color) {
+const drawLine = (context, size, color) => {
     context.strokeStyle = color
     context.beginPath()
     context.moveTo(0, 0)
@@ -110,15 +110,18 @@ class LINode {
     }
 
     draw(context, w, h) {
-        const gap = w / LI_NODES
+        const gap = (w/3) / LI_NODES
         const hSize = (h/3)/LI_NODES
         context.save()
-        context.translate(w/2 - gap/2 * this.i * gap, h/2 - hSize/2)
+        context.translate(w/2 - gap/2 + this.i * gap, h/2 - hSize/2)
         context.lineCap = 'round'
         context.lineWidth = Math.min(w, h) / 60
         drawLine(context, hSize * (this.i + 1), '#BDBDBD')
         drawLine(context, hSize * (this.i + 1) * this.state.scale, 'white')
         context.restore()
+        if (this.next) {
+            this.next.draw(context, w, h)
+        }
     }
 
     getNext(dir, cb) {
@@ -136,7 +139,7 @@ class LINode {
 
 class LinkedIncreasingLine {
     constructor() {
-        this.root = new LInode(0)
+        this.root = new LINode(0)
         this.curr = this.root
         this.dir = 1
     }
