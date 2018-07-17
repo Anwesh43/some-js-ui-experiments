@@ -9,15 +9,27 @@ const drawLine = (context, size, color) {
 class LinkedLineIncreasingStage extends CanvasStage {
     constructor() {
         super()
+        this.lil = new LinkedIncreasingLine()
+        this.animator = new LIAnimator()
     }
 
     render() {
         super.render()
+        if (this.lil) {
+            this.lil.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.lil.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.lil.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
