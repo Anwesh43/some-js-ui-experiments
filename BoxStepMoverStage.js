@@ -2,16 +2,34 @@ const BSM_NODES = 5
 class BoxStepMoverStage extends CanvasStage {
     constructor() {
         super()
+        this.linkedBSM = new LinkedBSM()
+        this.animator = new BSMAnimator()
     }
 
     render() {
         super.render()
+        if (this.linkedBSM) {
+            this.linkedBSM.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.linkedBSM.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.linkedBSM.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
+    }
+
+    static init() {
+        const stage = new BoxStepMoverStage()
+        stage.render()
+        stage.handleTap()
     }
 }
 
