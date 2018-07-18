@@ -60,3 +60,57 @@ class BSMAnimator {
         }
     }
 }
+
+class BSMNode {
+    constructor(i) {
+        this.i = i
+        this.state = new BSMState()
+    }
+
+    addNeighbor() {
+        if (this.i < BSM_NODES - 1) {
+            this.next = new BSMNode(this.i + 1)
+            this.next.prev = this
+        }
+    }
+
+    draw(context, w, h) {
+        const color = '#2E7D32'
+        context.fillStyle = color
+        context.strokeStyle = color
+        context.lineWidth = Math.min(w, h) / 60
+        context.lineCap = 'round'
+        const size =(Math.min(w,h)/3)
+        const gap = size / BSM_NODES
+        const sc1 = Math.min(0.5, this.state.scale - 0.5) * 2
+        const sc2 = Math.min(0.5, Math.max(0, this.state.scale - 0.5)) * 2
+        context.save()
+        context.translate(w/2 - (size/2), h/2 - (size/2) - gap * sc1)
+        context.beginPath()
+        context.moveTo(0, 0)
+        context.lineTo(gap, 0)
+        context.stroke()
+        context.fillRect(-gap/20 + gap * sc2, -gap/10, gap/10, gap/10)
+        context.restore()
+    }
+
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
+    }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
+    }
+}
