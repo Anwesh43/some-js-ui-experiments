@@ -26,6 +26,12 @@ class BrowserTabStage extends CanvasStage {
             })
         }
     }
+
+    static init() {
+        const stage = new BrowserTabStage()
+        stage.render()
+        stage.handleTap()
+    }
 }
 
 class BTState {
