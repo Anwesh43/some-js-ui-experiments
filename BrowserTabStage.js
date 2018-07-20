@@ -78,11 +78,17 @@ class BTNode {
     }
 
     draw(context, w, h, cb) {
+        if (this.prev) {
+            this.prev.draw(context, w, h)
+        }
         const gap = w / TAB_NODES
-        const hSize = 0.1 * gap
+        const hSize = 0.2 * gap
         context.fillStyle = TAB_COLOR
         context.save()
         context.translate((this.i - 1) * gap + gap * this.state.scale, 0)
+        if (cb) {
+            cb(context, this.i, gap, hSize)
+        }
         context.beginPath()
         context.rect(0, 0, gap, hSize)
         context.clipPath()
@@ -112,5 +118,35 @@ class BTNode {
         }
         cb()
         return this
+    }
+}
+
+class TabExpander {
+    constructor() {
+        this.x = 0
+    }
+
+    draw(context, i, gap, hSize) {
+        if (!this.size) {
+            this.size = hSize
+        }
+        context.fillStyle = TAB_COLOR
+        this.x = i * gap + gap
+        context.save()
+        context.translate(this.x, 0)
+        context.beginPath()
+        context.moveTo(0.05 * gap, hSize)
+        context.lineTo(0.05 * gap + hSize, hSize)
+        context.lineTo(hSize, 0)
+        context.lineTo(0, 0)
+        context.lineTo(0.05 * gap, hSize)
+        context.fill()
+        context.restore()
+    }
+
+    handleTap(x, y, cb) {
+        if (x > this.x && x < this.x + this.size && y > this.y && y < this.y + this.size) {
+            cb()
+        }
     }
 }
