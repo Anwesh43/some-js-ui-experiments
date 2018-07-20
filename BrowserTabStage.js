@@ -62,7 +62,7 @@ class BTAnimator {
     }
 }
 
-class BTNode {
+class TabNode {
     constructor(i) {
         this.i = i
         this.state = new BTState
@@ -148,5 +148,34 @@ class TabExpander {
         if (x > this.x && x < this.x + this.size && y > this.y && y < this.y + this.size) {
             cb()
         }
+    }
+}
+
+class BrowserTabContainer {
+    constructor() {
+        this.curr = new TabNode(0)
+        this.dir = 1
+        this.expander = new TabExpander()
+    }
+
+    draw(context, w , h) {
+        this.curr.draw(context, w, h, (c, i, gap, size) => {
+            this.expander.draw(c, i, gap, size)
+        })
+    }
+
+    update(stopcb) {
+        this.curr.update(() => {
+            this.curr = this.curr.getNext(this.dir, () => {
+                this.dir *= -1
+            })
+            stopcb()
+        })
+    }
+
+    startUpdating(x, y, startcb) {
+        this.expander.handleTap(x, y, () => {
+            this.curr.startUpdating(startcb)
+        })
     }
 }
