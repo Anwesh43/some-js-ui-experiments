@@ -1,4 +1,4 @@
-const TAB_NODES = 5
+const TAB_NODES = 5, TAB_COLOR = '#607D8B'
 class BrowserTabStage extends CanvasStage {
     constructor() {
         super()
@@ -59,5 +59,58 @@ class BTAnimator {
             this.animated = false
             clearInterval(this.interval)
         }
+    }
+}
+
+class BTNode {
+    constructor(i) {
+        this.i = i
+        this.state = new BTState
+        this.addNeighbor()
+    }
+
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
+    }
+
+    draw(context, w, h, cb) {
+        const gap = w / TAB_NODES
+        const hSize = 0.1 * gap
+        context.fillStyle = TAB_COLOR
+        context.save()
+        context.translate((this.i - 1) * gap + gap * this.state.scale, 0)
+        context.beginPath()
+        context.rect(0, 0, gap, hSize)
+        context.clipPath()
+        context.beginPath()
+        context.moveTo(0, hSize)
+        context.lineTo(gap/2, hSize - gap)
+        context.lineTo(gap, hSize)
+        context.lineTo(0, hSize)
+        context.fill()
+        context.restore()
+    }
+
+    addNeighbor() {
+        if (this.i < TAB_NODES - 1) {
+            this.next = new BTNode(this.i + 1)
+            this.next.prev = this
+        }
+    }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
     }
 }
