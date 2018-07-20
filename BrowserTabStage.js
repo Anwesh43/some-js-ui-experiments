@@ -2,15 +2,28 @@ const TAB_NODES = 5, TAB_COLOR = '#607D8B'
 class BrowserTabStage extends CanvasStage {
     constructor() {
         super()
+        this.container = new BrowserTabContainer()
+        this.animator = new BTAnimator()
     }
 
     render() {
         super.render()
+        if (this.container) {
+            this.container.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
-        this.canvas.onmousedown = () => {
-
+        this.canvas.onmousedown = (event) => {
+            const x = event.offsetX, y = event.offsetY
+            this.container.startUpdating(x, y, () => {
+                this.animator.start(() => {
+                    this.render()
+                    this.container.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
