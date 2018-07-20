@@ -15,6 +15,7 @@ class BrowserTabStage extends CanvasStage {
 
     handleTap() {
         this.canvas.onmousedown = (event) => {
+            console.log(event)
             const x = event.offsetX, y = event.offsetY
             this.container.startUpdating(x, y, () => {
                 this.animator.start(() => {
@@ -64,7 +65,7 @@ class BTAnimator {
         this.animated = false
     }
 
-    start() {
+    start(cb) {
         if (!this.animated) {
             this.animated = true
             this.interval = setInterval(() => {
@@ -100,17 +101,18 @@ class TabNode {
         if (this.prev) {
             this.prev.draw(context, w, h)
         }
-        const gap = w / TAB_NODES
+        const gap = (0.8 * w) / TAB_NODES
         const hSize = 0.2 * gap
+        const x = (this.i - 1) * gap + gap * this.state.scale
         context.fillStyle = TAB_COLOR
-        context.save()
-        context.translate((this.i - 1) * gap + gap * this.state.scale, 0)
         if (cb) {
-            cb(context, this.i, gap, hSize)
+            cb(context, x, gap, hSize)
         }
+        context.save()
+        context.translate(x, 0)
         context.beginPath()
         context.rect(0, 0, gap, hSize)
-        context.clipPath()
+        context.clip()
         context.beginPath()
         context.moveTo(0, hSize)
         context.lineTo(gap/2, hSize - gap)
@@ -122,7 +124,7 @@ class TabNode {
 
     addNeighbor() {
         if (this.i < TAB_NODES - 1) {
-            this.next = new BTNode(this.i + 1)
+            this.next = new TabNode(this.i + 1)
             this.next.prev = this
         }
     }
@@ -145,12 +147,12 @@ class TabExpander {
         this.x = 0
     }
 
-    draw(context, i, gap, hSize) {
+    draw(context, x, gap, hSize) {
         if (!this.size) {
             this.size = hSize
         }
         context.fillStyle = TAB_COLOR
-        this.x = i * gap + gap
+        this.x = x + gap
         context.save()
         context.translate(this.x, 0)
         context.beginPath()
@@ -164,7 +166,10 @@ class TabExpander {
     }
 
     handleTap(x, y, cb) {
-        if (x > this.x && x < this.x + this.size && y > this.y && y < this.y + this.size) {
+        const ax = this.x, size = this.size
+        console.log(`${x}, ${y}, ${ax}, ${size}`)
+        if (x > this.x && x < this.x + this.size && y > 0 && y < this.size) {
+            console.log("coming here")
             cb()
         }
     }
