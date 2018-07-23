@@ -42,6 +42,7 @@ class LPLState {
 
     update(stopcb) {
         this.scale += this.dir * 0.1
+        console.log(this.scale)
         if (Math.abs(this.scale - this.prevScale) > 1) {
             this.scale = this.prevScale + this.dir
             this.dir = 0
@@ -53,6 +54,7 @@ class LPLState {
     startUpdating(startcb) {
         if (this.dir == 0) {
             this.dir = 1 - 2 * this.prevScale
+            console.log(this.dir)
             startcb()
         }
     }
@@ -97,7 +99,7 @@ class LPLNode {
 
     getNext(dir, cb) {
         var curr = this.prev
-        if (this.dir == 1) {
+        if (dir == 1) {
             curr = this.next
         }
         if (curr) {
@@ -121,10 +123,14 @@ class LPLNode {
         const gap = (Math.min(w, h) * 0.4) / LPL_NODES
         context.save()
         context.translate(this.i * gap, 0)
+        context.beginPath()
         context.moveTo(gap * this.state.scale, 0)
         context.lineTo(gap, 0)
         context.stroke()
         context.restore()
+        if (this.next) {
+            this.next.draw(context, w, h)
+        }
     }
 }
 
@@ -135,7 +141,15 @@ class LinkedPlusLine {
     }
 
     draw(context, w, h) {
-        this.curr.draw(context, w, h)
+        context.save()
+        context.translate(w/2, h/2)
+        for (var i = 0; i < 4; i++) {
+            context.save()
+            context.rotate(Math.PI/2 * i)
+            this.curr.draw(context, w, h)
+            context.restore()
+        }
+        context.restore()
     }
 
     update(stopcb) {
@@ -143,6 +157,7 @@ class LinkedPlusLine {
             this.curr = this.curr.getNext(this.dir, () => {
                 this.dir *= -1
             })
+            console.log(this.curr)
             stopcb()
         })
     }
