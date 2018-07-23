@@ -2,15 +2,27 @@ const LPL_NODES = 5
 class LinkedPlusLineStage extends CanvasStage {
     constructor() {
         super()
+        this.lpl = new LinkedPlusLine()
+        this.animator = new LPLAnimator()
     }
 
     render() {
         super.render()
+        if (this.lpl) {
+            this.lpl.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.lpl.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.lpl.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 
