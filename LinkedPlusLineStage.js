@@ -1,3 +1,4 @@
+const LPL_NODES = 5
 class LinkedPlusLineStage extends CanvasStage {
     constructor() {
         super()
@@ -64,5 +65,53 @@ class LPLAnimator {
             this.animated = false
             clearInterval(this.interval)
         }
+    }
+}
+
+class LPLNode {
+    constructor(i) {
+        this.i = i
+        this.state = new LPLState()
+        this.addNeighbor()
+    }
+
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
+    }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (this.dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
+    }
+
+    addNeighbor() {
+        if (this.i < LPL_NODES - 1) {
+            this.next = new LPLNode(this.i + 1)
+            this.next.prev = this
+        }
+    }
+
+    draw(context, w, h) {
+        context.lineWidth = Math.min(w, h) / 60
+        context.lineCap = 'round'
+        context.strokeStyle = '#00BCD4'
+        const gap = (Math.min(w, h) * 0.4) / LPL_NODES
+        context.save()
+        context.translate(this.i * gap, 0)
+        context.moveTo(gap * this.state.scale, 0)
+        context.lineTo(gap, 0)
+        context.stroke()
+        context.restore()
     }
 }
