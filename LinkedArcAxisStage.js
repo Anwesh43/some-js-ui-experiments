@@ -67,3 +67,57 @@ class LAAAnimator {
         }
     }
 }
+
+class LAANode {
+    constructor(i) {
+        this.i = i
+        this.state = new LAAState()
+        this.addNeighbor()
+    }
+
+    addNeighbor() {
+        if (this.i < AANODES - 1) {
+            this.next = new LAANode(this.i + 1)
+            this.next.prev = this
+        }
+    }
+
+    update(cb) {
+        this.state.update(cb)
+    }
+
+    startUpdating(cb) {
+        this.state.startUpdating(cb)
+    }
+
+    draw(context, w, h) {
+        const gap = Math.min(w, h)/(3 * AANODES)
+        const r = gap/2
+        context.save()
+        context.translsate(this.i * gap + gap/2, 0)
+        context.beginPath()
+        for (var i = -60; i<=60; i++) {
+            const x = r * Math.cos(i * Math.PI/180), y = r * Math.cos(i * Math.PI/180)
+            if (i == -60) {
+                context.moveTo(x, y)
+            } else {
+                context.lineTo(x, y)
+            }
+        }
+        context.stroke()
+        context.restore()
+        this.next.draw(context, w, h)
+    }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
+    }
+}
