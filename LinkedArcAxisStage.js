@@ -121,3 +121,30 @@ class LAANode {
         return this
     }
 }
+
+class LinkedArcAxis {
+    constructor() {
+        this.curr = new LAANode(0)
+        this.dir = 1
+    }
+
+    draw(context, w, h) {
+        context.lineWidth = Math.min(w, h) / 60
+        context.lineCap = 'round'
+        context.strokeStyle = '#006064'
+        this.curr.draw(context, w, h)
+    }
+
+    update(cb) {
+        this.curr.update(() => {
+            this.curr = this.curr.getNext(this.dir, () => {
+                this.dir *= -1
+            })
+            cb()
+        })
+    }
+
+    startUpdating(cb) {
+        this.curr.startUpdating(cb)
+    }
+}
