@@ -2,15 +2,27 @@ const AANODES = 5
 class LinkedArcAxisStage extends CanvasStage {
     constructor() {
         super()
+        this.linkedArcAxis = new LinkedArcAxis()
+        this.animator = new LAAAnimator()
     }
 
     render() {
         super.render()
+        if (this.linkedArcAxis) {
+            this.linkedArcAxis.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.linkedArcAxis.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.linkedArcAxis.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 
