@@ -1,3 +1,4 @@
+const AANODES = 5
 class LinkedArcAxisStage extends CanvasStage {
     constructor() {
         super()
