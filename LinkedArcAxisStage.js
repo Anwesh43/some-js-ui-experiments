@@ -63,7 +63,7 @@ class LAAAnimator {
         this.animated = false
     }
 
-    start() {
+    start(cb) {
         if (!this.animated) {
             this.animated = true
             this.interval = setInterval(() => {
@@ -105,11 +105,12 @@ class LAANode {
     draw(context, w, h) {
         const gap = Math.min(w, h)/(3 * AANODES)
         const r = gap/2
+        const deg = 60 * (1 - this.state.scale)
         context.save()
-        context.translsate(this.i * gap + gap/2, 0)
+        context.translate(this.i * gap + gap/2, 0)
         context.beginPath()
-        for (var i = -60; i<=60; i++) {
-            const x = r * Math.cos(i * Math.PI/180), y = r * Math.cos(i * Math.PI/180)
+        for (var i = -deg; i <= deg; i++) {
+            const x = r * Math.cos(i * Math.PI/180), y = r * Math.sin(i * Math.PI/180)
             if (i == -60) {
                 context.moveTo(x, y)
             } else {
@@ -118,7 +119,9 @@ class LAANode {
         }
         context.stroke()
         context.restore()
-        this.next.draw(context, w, h)
+        if (this.next) {
+            this.next.draw(context, w, h)
+        }
     }
 
     getNext(dir, cb) {
@@ -144,7 +147,13 @@ class LinkedArcAxis {
         context.lineWidth = Math.min(w, h) / 60
         context.lineCap = 'round'
         context.strokeStyle = '#006064'
-        this.curr.draw(context, w, h)
+        for(var i = 0; i < 4; i++) {
+            context.save()
+            context.translate(w/2, h/2)
+            context.rotate(Math.PI/2 * i)
+            this.curr.draw(context, w, h)
+            context.restore()
+        }
     }
 
     update(cb) {
