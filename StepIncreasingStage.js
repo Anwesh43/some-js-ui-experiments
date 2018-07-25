@@ -90,6 +90,9 @@ class SISNode {
         context.translate(this.i * gap + gap * this.state.scale,  h - hGap * this.i - hGap - hGap * this.state.scale)
         context.fillRect(0, 0, gap, hGap * this.i + hGap + hGap * this.state.scale)
         context.restore()
+        if (this.next) {
+            this.next.draw(context, w, h)
+        }
     }
 
     update(stopcb) {
@@ -110,5 +113,30 @@ class SISNode {
         }
         cb()
         return this
+    }
+}
+
+class LinkedSIS {
+
+    constructor() {
+        this.curr = new SISNode(0)
+        this.dir = 1
+    }
+
+    update(stopcb) {
+        this.curr.update(() => {
+            this.curr = this.curr.getNext(this.dir, () => {
+                this.dir *= -1
+            })
+            stopcb()
+        })
+    }
+
+    startUpdating(startcb) {
+        this.curr.startUpdating(startcb)
+    }
+
+    draw(context, w, h) {
+        this.curr.draw(context, w, h)
     }
 }
