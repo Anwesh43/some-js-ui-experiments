@@ -1,3 +1,4 @@
+const SIS_NODES = 5
 class StepIncreasingStage extends CanvasStage {
     constructor() {
         super()
@@ -64,5 +65,50 @@ class SISAnimator {
             this.animated = false
             clearInterval(this.interval)
         }
+    }
+}
+
+class SISNode {
+    constructor(i) {
+        this.i = i
+        this.state = new SISState()
+        this.addNeighbor()
+    }
+
+    addNeighbor() {
+        if (this.i < SIS_NODES - 1) {
+            this.next = new SISNode()
+            this.next.prev = this
+        }
+    }
+
+    draw(context, w, h) {
+        const gap = w / SIS_NODES
+        const hGap = h / SIS_NODES
+        context.fillStyle = 'white'
+        context.save()
+        context.translate(this.i * gap + gap * this.state.scale,  h - hGap * this.i - hGap - hGap * this.state.scale)
+        context.fillRect(0, 0, gap, hGap * this.i + hGap + hGap * this.state.scale)
+        context.restore()
+    }
+
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
+    }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
     }
 }
