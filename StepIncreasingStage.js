@@ -2,15 +2,27 @@ const SIS_NODES = 5
 class StepIncreasingStage extends CanvasStage {
     constructor() {
         super()
+        this.linkedSIS = new LinkedSIS()
+        this.animator = new SISAnimator()
     }
 
     render() {
         super.render()
+        if (this.linkedSIS) {
+            this.linkedSIS.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.linkedSIS.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.linkedSIS.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 
