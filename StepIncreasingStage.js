@@ -89,7 +89,7 @@ class SISNode {
 
     addNeighbor() {
         if (this.i < SIS_NODES - 1) {
-            this.next = new SISNode()
+            this.next = new SISNode(this.i + 1)
             this.next.prev = this
         }
     }
