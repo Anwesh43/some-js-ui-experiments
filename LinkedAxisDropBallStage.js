@@ -90,19 +90,23 @@ class LADNode {
     addNeighbor() {
         if (this.i < LAD_NODES - 1) {
             this.next = new LADNode(this.i + 1)
-            this.prev.next = this
+            this.next.prev = this
         }
     }
 
     draw(context, w, h) {
         context.fillStyle = 'yellow'
-        const gap = w / LAD_NODES
+        const gap = (0.4 * w) / LAD_NODES
+        const r = gap / 10
         context.save()
-        context.translate(this.i * gap + gap, h/2 * this.state.scale)
+        context.translate(this.i * gap + gap, (h/2 + r) * this.state.scale)
         context.beginPath()
-        context.arc(0, 0, gap/5, 0, 2 * Math.PI)
+        context.arc(0, 0, r, 0, 2 * Math.PI)
         context.fill()
         context.restore()
+        if (this.next) {
+            this.next.draw(context, w, h)
+        }
     }
 
     update(stopcb) {
@@ -133,7 +137,15 @@ class LinkedAxisDropBall {
     }
 
     draw(context, w, h) {
-        this.curr.draw(context, w, h)
+        context.save()
+        context.translate(w/2, h/2)
+        for(var i = 0; i < 2; i++) {
+            context.save()
+            context.scale(1 - 2 * i, 1)
+            this.curr.draw(context, w, h)
+            context.restore()
+        }
+        context.restore()
     }
 
     update(stopcb) {
