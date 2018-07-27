@@ -1,3 +1,4 @@
+const LAD_NODES = 5
 class LinkedAxisDropBallStage extends CanvasStage {
     constructor() {
         super()
@@ -64,5 +65,51 @@ class LADAnimator {
             this.animated = false
             clearInterval(this.interval)
         }
+    }
+}
+
+class LADNode {
+    constructor(i) {
+        this.i = i
+        this.state = new LADState()
+        this.addNeighbor()
+    }
+
+    addNeighbor() {
+        if (this.i < LAD_NODES - 1) {
+            this.next = new LADNode(this.i + 1)
+            this.prev.next = this
+        }
+    }
+
+    draw(context, w, h) {
+        context.fillStyle = 'yellow'
+        const gap = w / LAD_NODES
+        context.save()
+        context.translate(this.i * gap + gap, h/2 * this.state.scale)
+        context.beginPath()
+        context.arc(0, 0, gap/5, 0, 2 * Math.PI)
+        context.fill()
+        context.restore()
+    }
+
+    update(stopcb) {
+        this.state.update(stopcb)
+    }
+
+    startUpdating(startcb) {
+        this.state.startUpdating(startcb)
+    }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
     }
 }
