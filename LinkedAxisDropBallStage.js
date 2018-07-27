@@ -2,15 +2,27 @@ const LAD_NODES = 5
 class LinkedAxisDropBallStage extends CanvasStage {
     constructor() {
         super()
+        this.animator = new LADAnimator()
+        this.linkedAxisDrop = new LinkedAxisDropBall()
     }
 
     render() {
         super.render()
+        if (this.linkedAxisDrop) {
+            this.linkedAxisDrop.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.linkedAxisDrop.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.linkedAxisDrop.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 
