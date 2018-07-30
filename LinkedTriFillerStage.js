@@ -2,15 +2,27 @@ const TF_NODES = 4, TF_SPEED = 0.025
 class LinkedTriFillerStage extends CanvasStage {
     constructor() {
         super()
+        this.ltf = new LinkedTriFiller()
+        this.animator = new TFAnimator()
     }
 
     render() {
         super.render()
+        if (this.ltf) {
+            this.ltf.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.lft.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.ltf.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 
