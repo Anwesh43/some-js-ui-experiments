@@ -1,4 +1,4 @@
-const TF_NODES = 5, TF_SPEED = 0.025
+const TF_NODES = 4, TF_SPEED = 0.025
 class LinkedTriFillerStage extends CanvasStage {
     constructor() {
         super()
@@ -65,5 +65,63 @@ class TFAnimator {
             this.animated = false
             clearInterval(this.interval)
         }
+    }
+}
+
+class TFNode {
+    constructor(i) {
+        this.i = i
+        this.state = new TFState()
+        this.addNeighbor()
+    }
+
+    addNeighbor() {
+        if (this.i < TF_NODES - 1) {
+            this.next = new TFNode(this.i + 1)
+            this.next.prev = this
+        }
+    }
+
+    draw(context, w, h) {
+        const gap = w / TF_NODES, deg = (2 * Math.PI) / TF_NODES
+        const sc1 = Math.min(0.5, this.state.scale) * 2
+        const sc2 = Math.min(0.5, Math.max(0.5, this.state.scale - 0.5)) * 2
+        const size = gap / 3
+        context.fillStyle = '#BDBDBD'
+        context.save()
+        context.translate(gap * sc2, 0)
+        if (this.prev) {
+            this.prev.draw(context)
+        }
+        context.save()
+        context.translate(this.i * gap + gap/2, h/2)
+        context.rotate(this.i * deg)
+        context.beginPath()
+        context.moveTo(size * (1 - sc1), 0)
+        context.lineTo(size, 0)
+        context.lineTo(size * (1 - sc1), size * sc1)
+        context.fill()
+        context.restore()
+        context.restore()
+    }
+
+    update(cb) {
+        this.state.update(cb)
+    }
+
+    startUpdating(cb) {
+        this.state.startUpdating(cb)
+    }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
     }
 }
