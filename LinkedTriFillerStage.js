@@ -15,7 +15,7 @@ class LinkedTriFillerStage extends CanvasStage {
 
     handleTap() {
         this.canvas.onmousedown = () => {
-            this.lft.startUpdating(() => {
+            this.ltf.startUpdating(() => {
                 this.animator.start(() => {
                     this.render()
                     this.ltf.update(() => {
@@ -97,13 +97,13 @@ class TFNode {
     draw(context, w, h) {
         const gap = w / TF_NODES, deg = (2 * Math.PI) / TF_NODES
         const sc1 = Math.min(0.5, this.state.scale) * 2
-        const sc2 = Math.min(0.5, Math.max(0.5, this.state.scale - 0.5)) * 2
+        const sc2 = Math.min(0.5, Math.max(0, this.state.scale - 0.5)) * 2
         const size = gap / 3
         context.fillStyle = '#BDBDBD'
         context.save()
         context.translate(gap * sc2, 0)
         if (this.prev) {
-            this.prev.draw(context)
+            this.prev.draw(context, w, h)
         }
         context.save()
         context.translate(this.i * gap + gap/2, h/2)
@@ -158,6 +158,6 @@ class LinkedTriFiller {
     }
 
     startUpdating(cb) {
-        this.state.startUpdating(cb)
+        this.curr.startUpdating(cb)
     }
 }
