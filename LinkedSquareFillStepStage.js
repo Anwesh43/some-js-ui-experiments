@@ -27,7 +27,9 @@ class LinkedSquareFillStepStage extends CanvasStage {
     }
 
     static init() {
-
+        const stage = new LinkedSquareFillStepStage()
+        stage.render()
+        stage.handleTap()
     }
 }
 
