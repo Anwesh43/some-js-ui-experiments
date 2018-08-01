@@ -25,6 +25,12 @@ class LinkedCircleUndoMoverStage extends CanvasStage {
             })
         }
     }
+
+    static init() {
+        const stage = new LinkedCircleUndoMoverStage()
+        stage.render()
+        stage.handleTap()
+    }
 }
 
 class CMUState {
