@@ -2,15 +2,27 @@ const CMU_NODES = 5
 class LinkedCircleUndoMoverStage extends CanvasStage {
     constructor() {
         super()
+        this.lcmu = new LinkedCMU()
+        this.animator = new CMUAnimator()
     }
 
     render() {
         super.render()
+        if (this.lcmu) {
+            this.lcmu.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.lcmu.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.lcmu.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
