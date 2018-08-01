@@ -73,7 +73,7 @@ class CMUNode {
     }
 
     draw(context, w, h) {
-        const gap = w / CMU_NODES
+        const gap = (0.9 * w) / CMU_NODES
         const sc1 = Math.min(0.5, this.state.scale) * 2
         const sc2 = Math.min(0.5, Math.max(0, this.state.scale - 0.5)) * 2
         context.strokeStyle = '#0097A7'
@@ -82,13 +82,13 @@ class CMUNode {
         const deg = (2 * Math.PI) / CMU_NODES
         const r = gap /3
         context.save()
-        context.translate(gap * sc1, 0)
+        context.translate(gap * sc2, 0)
         context.save()
         if (this.prev) {
             this.prev.draw(context, w, h)
         }
         context.translate(this.i * gap + gap / 2, h/2)
-        context.rotate()
+        context.rotate(this.i * deg)
         context.beginPath()
         for (var i = 0; i <= deg * sc1; i += deg/10) {
             const x = r * Math.cos(i), y = r * Math.sin(i)
@@ -144,7 +144,7 @@ class LinkedCMU {
     }
 
     startUpdating(cb) {
-        this.state.startUpdating(cb)
+        this.curr.startUpdating(cb)
     }
 }
 
