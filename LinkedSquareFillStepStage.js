@@ -1,4 +1,4 @@
-const SFS_SPEED = 0.05, SFS_NODE = 3
+const SFS_SPEED = 0.05, SFS_NODE = 4
 class LinkedSquareFillStepStage extends CanvasStage {
     constructor() {
         super()
@@ -8,7 +8,7 @@ class LinkedSquareFillStepStage extends CanvasStage {
 
     render() {
         super.render()
-        if (!this.lsfs) {
+        if (this.lsfs) {
             this.lsfs.draw(this.context, this.size.w, this.size.h)
         }
     }
@@ -101,10 +101,13 @@ class SFSNode {
         const gap = (0.8 * w) / SFS_NODE
         const size = gap / 2
         context.save()
-        context.translate(gap * sc2)
+        context.translate(gap * sc2, 0)
+        if (this.prev) {
+            this.prev.draw(context, w, h)
+        }
         context.save()
         context.translate(0.1 * w + this.i * gap + gap / 2, h / 2)
-        context.rotate(i * Math.PI/2)
+        context.rotate(this.i * Math.PI/2)
         context.scale(sc1, sc1)
         context.fillStyle = 'white'
         context.fillRect(0, 0, size/2, size/2)
