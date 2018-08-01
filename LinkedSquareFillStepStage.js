@@ -2,14 +2,28 @@ const SFS_SPEED = 0.05, SFS_NODE = 3
 class LinkedSquareFillStepStage extends CanvasStage {
     constructor() {
         super()
+        this.lsfs = new LinkedSquareFiller()
+        this.animator = new SFSAnimator()
     }
 
     render() {
         super.render()
+        if (!this.lsfs) {
+            this.lsfs.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
-
+        this.canvas.onmousedown = () => {
+            this.lsfs.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.lsfs.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
+        }
     }
 
     static init() {
