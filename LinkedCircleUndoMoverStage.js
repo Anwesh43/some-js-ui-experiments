@@ -1,3 +1,4 @@
+const CMU_NODES = 5
 class LinkedCircleUndoMoverStage extends CanvasStage {
     constructor() {
         super()
@@ -36,5 +37,71 @@ class CMUState {
             this.dir = 1 - 2 * this.prevScale
             cb()
         }
+    }
+}
+
+class CMUNode {
+    constructor(i) {
+        this.i = i
+        this.state = new CMUState()
+        this.addNeighbor()
+    }
+
+    addNeighbor() {
+        if (this.i < CMU_NODES - 1) {
+            this.next = new CMUNode(this.i + 1)
+            this.next.prev = this
+        }
+    }
+
+    draw(context, w, h) {
+        const gap = w / CMU_NODES
+        const sc1 = Math.min(0.5, this.state.scale) * 2
+        const sc2 = Math.min(0.5, Math.max(0, this.state.scale - 0.5)) * 2
+        context.strokeStyle = '#0097A7'
+        context.lineWidth = Math.min(w, h) / 60
+        context.lineCap = 'round'
+        const deg = (2 * Math.PI) / CMU_NODES
+        const r = gap /3
+        context.save()
+        context.translate(gap * sc1, 0)
+        context.save()
+        if (this.prev) {
+            this.prev.draw(context, w, h)
+        }
+        context.translate(this.i * gap + gap / 2, h/2)
+        context.rotate()
+        context.beginPath()
+        for (var i = 0; i <= deg * sc1; i += deg/10) {
+            const x = r * Math.cos(i), y = r * Math.sin(i)
+            if (i == 0) {
+                context.moveTo(x, y)
+            } else {
+                context.lineTo(x, y)
+            }
+        }
+        context.stroke()
+        context.restore()
+        context.restore()
+    }
+
+    update(cb) {
+        this.state.update(cb)
+    }
+
+    startUpdating(cb) {
+        this.state.startUpdating(cb)
+    }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
     }
 }
