@@ -25,6 +25,12 @@ class LinkedClockCircleMoverStage extends CanvasStage {
             })
         }
     }
+
+    static init() {
+        const stage = new LinkedClockCircleMoverStage()
+        stage.render()
+        stage.handleTap()
+    }
 }
 
 class CCMState {
