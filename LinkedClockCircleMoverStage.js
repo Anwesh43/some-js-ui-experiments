@@ -2,15 +2,27 @@ const CCM_NODES = 5
 class LinkedClockCircleMoverStage extends CanvasStage {
     constructor() {
         super()
+        this.linkedCCM = new LinkedCCM()
+        this.animator = new CCMAnimator()
     }
 
     render() {
         super.render()
+        if (this.linkedCCM) {
+            this.linkedCCM.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.linkedCCM.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.linkedCCM.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 }
