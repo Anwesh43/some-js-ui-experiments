@@ -116,7 +116,7 @@ class CCMNode {
 
     draw(context, w, h) {
         const gap = (Math.min(w, h) * 0.9) / CCM_NODES
-        const deg = (2 * Math.PI)
+        const deg = (2 * Math.PI) / CCM_NODES
         const sc1 = Math.min(0.5, this.state.scale) * 2
         const sc2 = Math.min(0.5, Math.max(0, this.state.scale - 0.5)) * 2
         const m = this.i * gap + gap / 2 + gap * sc2
@@ -134,6 +134,9 @@ class CCMNode {
         context.lineTo(0, -gap/4)
         context.stroke()
         context.restore()
+        if (this.next) {
+            this.next.draw(context, w, h)
+        }
     }
 }
 
