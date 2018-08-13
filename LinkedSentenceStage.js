@@ -2,15 +2,27 @@ const node_sentence = "Hello World! Good Morning Fellas"
 class LinkedSentenceStage extends CanvasStage {
     constructor() {
         super()
+        this.lsl = new LinkedSentence()
+        this.animator = new LSSAnimator()
     }
 
     render() {
         super.render()
+        if (this.lsl) {
+            this.lsl.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.lsl.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.lsl.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 
