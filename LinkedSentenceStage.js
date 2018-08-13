@@ -1,4 +1,13 @@
 const node_sentence = "Hello World! Good Morning Fellas"
+const adjustFonts = (context, word, fontSize, gap) => {
+    context.font = context.font.replace(/\d{2}/, fontSize)
+    const tw = context.measureText(word).width
+    if (tw < 0.9 * gap) {
+        return adjustFonts(context, word, fontSize + 1, gap)
+    }
+    return fontSize
+
+}
 class LinkedSentenceStage extends CanvasStage {
     constructor() {
         super()
@@ -20,6 +29,7 @@ class LinkedSentenceStage extends CanvasStage {
                     this.render()
                     this.lsl.update(() => {
                         this.animator.stop()
+                        this.render()
                     })
                 })
             })
@@ -28,6 +38,10 @@ class LinkedSentenceStage extends CanvasStage {
 
     static init() {
         const stage = new LinkedSentenceStage()
+        if (stage.context) {
+            console.log(stage.context.font)
+            stage.context.font = '20px cursive'
+        }
         stage.render()
         stage.handleTap()
     }
@@ -81,7 +95,7 @@ class LSSAnimator {
 class LSSNode {
     constructor(i) {
         this.i = i
-        this.state = new LSSState()
+        this.state = new LSState()
         this.addNeighbor()
     }
 
@@ -99,7 +113,7 @@ class LSSNode {
             this.word = words[this.i]
         }
         if (this.i < words.length - 1) {
-            this.next = new LLSNode(this.i + 1)
+            this.next = new LSSNode(this.i + 1)
             this.next.prev = this
         }
     }
@@ -107,14 +121,15 @@ class LSSNode {
     draw(context, w, h) {
         const n = node_sentence.split(" ").length
         const gap = w / n
-        context.font = context.font.replace(/\d{2}/, Math.min(w, h) / 20)
+        var fontSize = Math.min(w, h) / 20
         context.fillStyle = 'white'
+        fontSize = adjustFonts(context, this.word, fontSize, gap)
         const tw = context.measureText(this.word).width
         context.save()
         context.translate(this.i * gap + gap/2, h/2)
         context.rotate(2 * Math.PI * this.state.scale)
         context.scale(this.state.scale, this.state.scale)
-        context.fillText(this.word, -tw/2, Math.min(w, h) / 40)
+        context.fillText(this.word, -tw/2, fontSize / 2)
         context.restore()
         if (this.prev) {
             this.prev.draw(context, w, h)
