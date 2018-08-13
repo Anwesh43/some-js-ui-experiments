@@ -104,6 +104,9 @@ class LSSNode {
         context.scale(this.state.scale, this.state.scale)
         context.fillText(this.word, -tw/2, Math.min(w, h) / 40)
         context.restore()
+        if (this.prev) {
+            this.prev.draw(context, w, h)
+        }
     }
 
     getNext(dir, cb) {
@@ -136,5 +139,9 @@ class LinkedSentence {
 
     startUpdating(cb) {
         this.curr.startUpdating(cb)
+    }
+
+    draw(context, w , h) {
+        this.curr.draw(context, w, h)
     }
 }
