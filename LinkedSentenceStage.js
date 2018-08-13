@@ -1,3 +1,4 @@
+const node_sentence = "Hello World! Good Morning Fellas"
 class LinkedSentenceStage extends CanvasStage {
     constructor() {
         super()
@@ -41,6 +42,26 @@ class LSState {
         if (this.dir == 0) {
             this.dir = 1 - 2 * this.prevScale
             cb()
+        }
+    }
+}
+
+class LSSAnimator {
+    constructor() {
+        this.animated = false
+    }
+
+    start(cb) {
+        if (!this.animated) {
+            this.animated = true
+            this.interval = setInterval(cb, 50)
+        }
+    }
+
+    stop() {
+        if (this.animated) {
+            this.animated = false
+            clearInterval(this.interval)
         }
     }
 }
