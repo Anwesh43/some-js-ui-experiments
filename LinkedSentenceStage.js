@@ -118,3 +118,23 @@ class LSSNode {
         return this
     }
 }
+
+class LinkedSentence {
+    constructor() {
+        this.curr = new LSSNode(0)
+        this.dir = 1
+    }
+
+    update(cb) {
+        this.curr.update(() => {
+            this.curr = this.curr.getNext(this.dir, () => {
+                this.dir *= -1
+            })
+            cb()
+        })
+    }
+
+    startUpdating(cb) {
+        this.curr.startUpdating(cb)
+    }
+}
