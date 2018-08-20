@@ -27,15 +27,27 @@ const drawArcToLineNode = (context, i, scale, w, h) => {
 class LinkedArcToLineStage extends CanvasStage {
     constructor() {
         super()
+        this.animator = new ATLAnimator()
+        this.lalt = new LinkedALT()
     }
 
     render() {
         super.render()
+        if (this.lalt) {
+            this.lalt.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.lalt.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.lalt.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 
