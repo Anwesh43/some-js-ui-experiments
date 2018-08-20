@@ -1,5 +1,5 @@
 const ATL_NODES = 5
-const drawArcToLineNode = (i, scale, w, h) => {
+const drawArcToLineNode = (context, i, scale, w, h) => {
     const sc1 = Math.min(0.5, scale) * 2
     const sc2 = Math.min(0.5, Math.max(0.5, scale - 0.5)) * 2
     const gap = w / (ATL_NODES + 1)
@@ -88,5 +88,47 @@ class ATLAnimator {
             this.animated = false
             clearInterval(this.interval)
         }
+    }
+}
+
+class ATLNode {
+    constructor(i) {
+        this.i = i
+        this.state = new ATLState()
+        this.addNeighbor()
+    }
+
+    addNeighbor() {
+        if (this.i < ATL_NODES - 1) {
+            this.next = new ATLNode(this.i + 1)
+            this.next.prev = this
+        }
+    }
+
+    update(cb) {
+        this.state.update(cb)
+    }
+
+    startUpdating(cb) {
+        this.state.startUpdating(cb)
+    }
+
+    draw(context, w, h) {
+        drawArcToLineNode(context, this.i, this.state.scale, w, h)
+        if (this.next) {
+            this.next.draw(context, w, h)
+        }
+    }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
     }
 }
