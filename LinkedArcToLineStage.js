@@ -23,3 +23,25 @@ const drawArcToLineNode = (i, scale, w, h) => {
     context.stroke()
     context.restore()
 }
+
+class LinkedArcToLineStage extends CanvasStage {
+    constructor() {
+        super()
+    }
+
+    render() {
+        super.render()
+    }
+
+    handleTap() {
+        this.canvas.onmousedown = () => {
+
+        }
+    }
+
+    static init() {
+        const stage = new LinkedArcToLineStage()
+        stage.render()
+        stage.handleTap()
+    }
+}
