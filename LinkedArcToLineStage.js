@@ -1,9 +1,12 @@
 const ATL_NODES = 5
 const drawArcToLineNode = (context, i, scale, w, h) => {
-    const sc1 = Math.min(0.5, scale) * 2
-    const sc2 = Math.min(0.5, Math.max(0.5, scale - 0.5)) * 2
+    var sc1 = Math.min(0.5, scale) * 2
+    const sc2 = Math.min(0.5, Math.max(0, scale - 0.5)) * 2
     const gap = w / (ATL_NODES + 1)
     const r = gap / 4
+    const b =  (Math.PI * r) / 2 - r
+    const index = i % 2
+    sc1 = sc1 * (1 - index) + index * (1 - sc1)
     const a = r * (1 - sc1)
     context.lineCap = 'round'
     context.lineWidth = Math.min(w, h) / 60
@@ -11,9 +14,9 @@ const drawArcToLineNode = (context, i, scale, w, h) => {
     context.save()
     context.translate(gap * i + gap / 2 + gap * sc2, h / 2)
     context.beginPath()
-    for (var i = 90; i < = 270; i++) {
+    for (var i = 90; i <= 270; i++) {
         const x = a + a * Math.cos(i * Math.PI/180)
-        const y = r * Math.sin(i * Math.PI/180)
+        const y = (r + b * sc1) * Math.sin(i * Math.PI/180)
         if (i == 0) {
             context.moveTo(x, y)
         } else {
@@ -45,6 +48,7 @@ class LinkedArcToLineStage extends CanvasStage {
                     this.render()
                     this.lalt.update(() => {
                         this.animator.stop()
+                        this.render()
                     })
                 })
             })
@@ -67,6 +71,7 @@ class ATLState {
 
     update(cb) {
         this.scale += 0.05 * this.dir
+        console.log(this.scale)
         if (Math.abs(this.scale - this.prevScale) > 1) {
             this.scale = this.prevScale + this.dir
             this.dir = 0
@@ -91,7 +96,7 @@ class ATLAnimator {
     start(cb) {
         if (!this.animated) {
             this.animated = true
-            this.interval = setInterval(50, cb)
+            this.interval = setInterval(cb, 50)
         }
     }
 
@@ -148,7 +153,7 @@ class ATLNode {
 class LinkedALT {
     constructor() {
         this.dir = 1
-        this.curr = new ALTNode(0)
+        this.curr = new ATLNode(0)
     }
 
     draw(context, w, h) {
