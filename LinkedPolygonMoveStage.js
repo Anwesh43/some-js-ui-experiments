@@ -6,7 +6,7 @@ const drawPMNode = (context, i, scale, w, h, cb, useI) => {
     const a = size / Math.cos(deg / 2)
     var location = gap * i + gap / 2 + gap * scale
     if (!useI) {
-        location = 0 
+        location = 0
     }
     context.lineWidth = Math.min(w, h)
     context.lineCap = 'round'
@@ -86,5 +86,38 @@ class PMAnimator {
             this.animated = false
             clearInterval(this.interval)
         }
+    }
+}
+
+class PMNode {
+    constructor(i) {
+        this.i = i
+        this.state = new PMState()
+    }
+
+    addNeighbor() {
+        if (this.i < PM_NODES - 1) {
+            this.next = new PMNode(this.i + 1)
+            this.next.prev = this
+        }
+    }
+
+    draw(context, useI, nextDraw, prevDraw, w, h) {
+        drawPMNode(context, i, this.state.scale, w, h, () => {
+            if (prevDraw && this.prev) {
+                this.prev.draw(context, false, false, true, w, h)
+            }
+        }, useI)
+        if (this.next && nextDraw) {
+            this.next.draw(context, false, true, false, w, h)
+        }
+    }
+
+    update(cb) {
+        this.state.update(cb)
+    }
+
+    startUpdating(cb) {
+        this.state.startUpdating(cb)
     }
 }
