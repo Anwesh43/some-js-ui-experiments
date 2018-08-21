@@ -1,4 +1,30 @@
 const PM_NODES = 5
+const drawPMNode = (context, i, scale, w, h, cb, useI) => {
+    const gap = Math.min(w, h) / (PM_NODES + 1)
+    const deg = (2 * Math.PI) / PM_NODES
+    const size = gap / 2
+    const a = size / Math.cos(deg / 2)
+    var location = gap * i + gap / 2 + gap * scale
+    if (!useI) {
+        location = 0 
+    }
+    context.lineWidth = Math.min(w, h)
+    context.lineCap = 'round'
+    context.strokeStyle = '#388E3C'
+    context.save()
+    context.translate(location, location)
+    if (cb) {
+        cb()
+    }
+    context.save()
+    context.rotate(deg * i)
+    context.beginPath()
+    context.moveTo(-size / 2, a)
+    context.lineTo(size / 2, a)
+    context.stroke()
+    context.restore()
+    context.restore()
+}
 class LinkedPolygonMoveStage {
     constructor() {
         super()
