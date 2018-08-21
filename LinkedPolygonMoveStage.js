@@ -28,13 +28,25 @@ const drawPMNode = (context, i, scale, w, h, cb, useI) => {
 class LinkedPolygonMoveStage {
     constructor() {
         super()
+        this.linkedPM = new LinkedPM()
+        this.animator = new PMAnimator()
     }
     render() {
         super.render()
+        if (this.linkedPM) {
+            this.linkedPM.draw(this.context, this.size.w, this.size.h)
+        }
     }
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.linkedPM.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.linkedPM.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
     static init() {
