@@ -3,12 +3,12 @@ const drawPMNode = (context, i, scale, w, h, cb, useI) => {
     const gap = Math.min(w, h) / (PM_NODES + 1)
     const deg = (2 * Math.PI) / PM_NODES
     const size = gap / 2
-    const a = size / Math.cos(deg / 2)
+    const a = (size / 2) / Math.tan(deg / 2)
     var location = gap * i + gap / 2 + gap * scale
     if (!useI) {
         location = 0
     }
-    context.lineWidth = Math.min(w, h)
+    context.lineWidth = Math.min(w, h) / 60
     context.lineCap = 'round'
     context.strokeStyle = '#388E3C'
     context.save()
@@ -25,7 +25,7 @@ const drawPMNode = (context, i, scale, w, h, cb, useI) => {
     context.restore()
     context.restore()
 }
-class LinkedPolygonMoveStage {
+class LinkedPolygonMoveStage extends CanvasStage {
     constructor() {
         super()
         this.linkedPM = new LinkedPM()
@@ -105,6 +105,7 @@ class PMNode {
     constructor(i) {
         this.i = i
         this.state = new PMState()
+        this.addNeighbor()
     }
 
     addNeighbor() {
@@ -115,13 +116,13 @@ class PMNode {
     }
 
     draw(context, useI, nextDraw, prevDraw, w, h) {
-        drawPMNode(context, i, this.state.scale, w, h, () => {
+        drawPMNode(context, this.i, this.state.scale, w, h, () => {
             if (prevDraw && this.prev) {
                 this.prev.draw(context, false, false, true, w, h)
             }
         }, useI)
         if (this.next && nextDraw) {
-            this.next.draw(context, false, true, false, w, h)
+            this.next.draw(context, true, true, false, w, h)
         }
     }
 
@@ -138,7 +139,7 @@ class PMNode {
         if (dir == 1) {
             curr = this.next
         }
-        if (curr) {(
+        if (curr) {
             return curr
         }
         cb()
