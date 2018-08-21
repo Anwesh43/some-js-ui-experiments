@@ -120,4 +120,16 @@ class PMNode {
     startUpdating(cb) {
         this.state.startUpdating(cb)
     }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
+    }
 }
