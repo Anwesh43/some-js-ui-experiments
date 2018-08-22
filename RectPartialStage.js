@@ -1,7 +1,8 @@
+const RP_NODES = 5
 class RectPartialStage extends CanvasStage {
     constructor() {
         super()
-        this.lrp = new LinkedRP()
+        this.lrp = new RectPartial()
         this.animator = new RPAnimator()
     }
 
@@ -82,10 +83,11 @@ class RPNode {
     constructor(i) {
         this.i = i
         this.state = new RPState()
+        this.addNeighbor()
     }
 
     addNeighbor() {
-        if (this.i < nodes - 1) {
+        if (this.i < RP_NODES - 1) {
             this.next = new RPNode(this.i + 1)
             this.next.prev = this
         }
@@ -95,18 +97,19 @@ class RPNode {
         context.lineCap = 'round'
         context.lineWidth = Math.min(w, h) / 60
         context.strokeStyle = '#FF9800'
-        const gap = w / (nodes + 1)
+        console.log(h)
+        const gap = w / (RP_NODES + 1)
         var sc1 = Math.min(0.5, this.state.scale) * 2
-        const sc2 = Math.min(0.5, this.state.scale - 0.5) * 2
+        const sc2 = Math.min(0.5, Math.max(0, this.state.scale - 0.5)) * 2
         const size = gap / 4
         sc1 = (1 - sc1) * (this.i % 2) + (1 - (this.i % 2)) * sc1
         context.save()
-        context.translate(gap * i + gap * sc2, h / 2)
+        context.translate(gap * this.i + gap * sc2 + gap / 2, h / 2 - size/2)
         for(var i = 0; i < 2; i++) {
             context.save()
             context.scale(1 - 2 * i, 1)
             context.save()
-            context.translate(size/4 * sc1, -size/2)
+            context.translate(-size/4 * sc1, 0)
             context.beginPath()
             context.moveTo(0, 0)
             context.lineTo(-size/4, 0)
@@ -118,6 +121,9 @@ class RPNode {
         }
 
         context.restore()
+        if (this.next) {
+            this.next.draw(context, w, h)
+        }
     }
 
     update(cb) {
