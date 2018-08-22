@@ -1,15 +1,28 @@
 class RectPartialStage extends CanvasStage {
     constructor() {
         super()
+        this.lrp = new LinkedRP()
+        this.animator = new RPAnimator()
     }
 
     render() {
         super.render()
+        if (this.lrp) {
+            this.lrp.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.lrp.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.lrp.update(() => {
+                        this.animator.stop()
+                        this.render()
+                    })
+                })
+            })
         }
     }
 
@@ -28,7 +41,7 @@ class RPState {
     }
 
     update(cb) {
-        this.scale += this.dir * 0.1
+        this.scale += this.dir * 0.05
         if (Math.abs(this.scale - this.prevScale) > 1) {
             this.scale = this.prevScale + this.dir
             this.dir = 0
