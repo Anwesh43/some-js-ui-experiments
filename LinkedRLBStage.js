@@ -2,15 +2,27 @@ const RLB_NODES = 5
 class LinkedRLBSate extends CanvasStage {
 	constructor() {
 		super()
+		this.lrlb = new LinkedRLB()
+		this.animator = new RLBAnimator()
 	}
 
 	render() {
 		super.render()
+		if (this.lrlb) {
+			this.lrlb.draw(this.context, this.size.w, this.size.h)
+		}
 	}
 
 	handleTap() {
 		this.canvas.onmousedown = (event) => {
-
+			this.lrlb.startUpdating(() => {
+				this.animator.start(() => {
+					this.render()
+					this.lrlb.update(() => {
+						this.animator.stop()
+					})
+				})
+			})
 		}
 	}
 
@@ -120,5 +132,29 @@ class RLBNode {
 		}
 		cb()
 		return this
+	}
+}
+
+class LinkedRLB {
+	constructor() {
+		this.curr = new RLBNode(0)
+		this.dir = 1
+	}
+
+	draw(context, w, h) {
+		this.curr.draw(context, this.curr.i, w, h)
+	}
+
+	update(cb) {
+		this.curr.update(() => {
+			this.curr = this.curr.getNeighbor(this.dir, () => {
+				this.dir *= -1
+			})
+			cb()
+		})
+	}
+
+	startUpdating(cb) {
+		this.curr.startUpdating(cb)
 	}
 }
