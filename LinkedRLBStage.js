@@ -1,16 +1,23 @@
-const RLB_NODES = 5
+const RLB_NODES = 5, RLB_COLOR = "#FF5722"
 class LinkedRLBSate extends CanvasStage {
 	constructor() {
 		super()
 		this.lrlb = new LinkedRLB()
 		this.animator = new RLBAnimator()
+		this.init = false
 	}
 
 	render() {
 		super.render()
+		this.initStyle()
 		if (this.lrlb) {
 			this.lrlb.draw(this.context, this.size.w, this.size.h)
 		}
+	}
+
+	initStyle() {
+		this.context.fillStyle = RLB_COLOR 
+		this.context.strokeStyle = RLB_COLOR
 	}
 
 	handleTap() {
