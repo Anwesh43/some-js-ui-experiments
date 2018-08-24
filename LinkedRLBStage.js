@@ -1,10 +1,9 @@
 const RLB_NODES = 5, RLB_COLOR = "#FF5722"
-class LinkedRLBSate extends CanvasStage {
+class LinkedRLBStage extends CanvasStage {
 	constructor() {
 		super()
 		this.lrlb = new LinkedRLB()
 		this.animator = new RLBAnimator()
-		this.init = false
 	}
 
 	render() {
@@ -89,6 +88,7 @@ class RLBNode {
 	constructor(i) {
 		this.i = i 
 		this.state = new RLBState()
+		this.addNeighbor()
 	}
 
 	addNeighbor() {
@@ -102,21 +102,21 @@ class RLBNode {
 		if (this.next) {
 			this.next.draw(context, currI, w, h)
 		}
-		const gap = w / nodes
+		const gap = w / (RLB_NODES + 1)
 		context.lineWidth = Math.min(w, h) / 60
 		context.lineCap = 'round' 
 		context.save()
-		context.translate(gap * this.i + gap / 2, h / 2)
+		context.translate(gap/3 + gap * this.i + gap / 2, h / 2)
 		for (var i = 0; i < 2 ; i++) {
 			context.save()
-			context.rotate(Math.PI * (i + (1 -i) * this.state.scale))
+			context.rotate(Math.PI * (i - (1 -i) * this.state.scale))
 			context.beginPath()
 			context.moveTo(0, 0)
 			context.lineTo(-gap/2, 0)
 			context.stroke()
 			if (i == 0 && currI == this.i) {
 				context.beginPath()
-				context.arc(-gap / 2 + gap/10, 0, gap / 10, 0, 2 * Math.PI)
+				context.arc(-gap / 2, 0, gap / 10, 0, 2 * Math.PI)
 				context.fill()
 			}
 			context.restore()
@@ -125,7 +125,7 @@ class RLBNode {
 	}
 
 	startUpdating(cb) {
-		this.state.startUdpating(cb)
+		this.state.startUpdating(cb)
 	}
 
 	update(cb) {
