@@ -45,3 +45,24 @@ class RLBState {
 		}
 	}
 }
+
+class RLBAnimator {
+	constructor() {
+		this.animated = false
+	}
+
+	start(cb) {
+		if (!this.animated) {
+			this.animated = true 
+			window.setInterval(cb, 50)
+		}
+	}
+
+	stop() {
+		if (this.animated) {
+			this.animated = true 
+			window.clearInterval(this.interval)
+		}
+	}
+}
+
