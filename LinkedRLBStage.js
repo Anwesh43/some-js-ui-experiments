@@ -92,6 +92,9 @@ class RLBNode {
 	}
 
 	draw(context, currI, w, h) {
+		if (this.next) {
+			this.next.draw(context, currI, w, h)
+		}
 		const gap = w / nodes
 		context.lineWidth = Math.min(w, h) / 60
 		context.lineCap = 'round' 
@@ -137,12 +140,13 @@ class RLBNode {
 
 class LinkedRLB {
 	constructor() {
-		this.curr = new RLBNode(0)
+		this.root = new RLBNode(0)
+		this.curr = this.root
 		this.dir = 1
 	}
 
 	draw(context, w, h) {
-		this.curr.draw(context, this.curr.i, w, h)
+		this.root.draw(context, this.curr.i, w, h)
 	}
 
 	update(cb) {
