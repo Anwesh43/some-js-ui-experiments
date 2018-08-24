@@ -66,3 +66,59 @@ class RLBAnimator {
 	}
 }
 
+class RLBNode {
+	constructor(i) {
+		this.i = i 
+		this.state = new RLBState()
+	}
+
+	addNeighbor() {
+		if (this.i < RLB_NODES - 1) {
+			this.next = new RLBNode(this.i + 1)
+			this.next.prev = this 
+		}
+	}
+
+	draw(context, currI, w, h) {
+		const gap = w / nodes
+		context.lineWidth = Math.min(w, h) / 60
+		context.lineCap = 'round' 
+		context.save()
+		context.translate(gap * this.i + gap / 2, h / 2)
+		for (var i = 0; i < 2 ; i++) {
+			context.save()
+			context.rotate(Math.PI * (i + (1 -i) * this.state.scale))
+			context.beginPath()
+			context.moveTo(0, 0)
+			context.lineTo(-gap/2, 0)
+			context.stroke()
+			if (i == 0 && currI == this.i) {
+				context.beginPath()
+				context.arc(-gap / 2 + gap/10, 0, gap / 10, 0, 2 * Math.PI)
+				context.fill()
+			}
+			context.restore()
+		}
+		context.restore()
+	}
+
+	startUpdating(cb) {
+		this.state.startUdpating(cb)
+	}
+
+	update(cb) {
+		this.state.update(cb)
+	}
+
+	getNeighbor(dir, cb) {
+		var curr = this.prev 
+		if (dir == 1) {
+			curr = this.next
+		}
+		if (curr) {
+			return curr
+		}
+		cb()
+		return this
+	}
+}
