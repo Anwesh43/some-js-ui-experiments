@@ -29,7 +29,7 @@ class TIState {
 	}
 
 	update(cb) {
-		this.scale += this.dir * 0.1 
+		this.scale += this.dir * 0.05
 		if (Math.abs(this.scale - this.prevScale) > 1) {
 			this.scale = this.prevScale + this.dir 
 			this.dir = 0
@@ -59,5 +59,56 @@ class TIAnimator {
 			this.animated = false
 			clearInterval(this.interval)
 		}
+	}
+} 
+
+class TINode {
+	constructor(i) {
+		this.i = i
+		this.state = new TIState()
+		this.addNeighbor()
+	}
+
+	addNeighbor() {
+		if (this.i < TINC_NODES - 1) {
+			this.next = new TINode(this.i + 1)
+			this.next.prev = this
+		}
+	}
+
+	draw(context, w, h) {
+		context.lineWidth = Math.min(w, h) / 60
+		context.lineCap = 'round'
+		context.strokeStyle = ''
+		const gap = h / (TINC_NODES + 1)
+		const y = h - (gap * this.i + gap/2 + gap/10)
+		const sc2 = Math.min(0.5, Math.max(0, this.state.scale - 0.5)) * 2
+		context.save()
+		context.translate(w/2, y)
+		context.beginPath()
+		context.moveTo(0, gap)
+		context.lineTo(0, gap * (1 - this.state.scale))
+		context.stroke()
+		context.restore()
+	}
+
+	update(cb) {
+		this.state.update(cb)
+	}
+
+	startUpdating(cb) {
+		this.state.startUpdating(cb)
+	}
+
+	getNext(dir, cb) {
+		var curr = this.prev 
+		if (dir == 1) {
+			curr = this.next 
+		}
+		if (curr) {
+			return curr
+		}
+		cb()
+		return this
 	}
 } 
