@@ -112,3 +112,27 @@ class TINode {
 		return this
 	}
 } 
+
+class IncreasingTree {
+	constructor() {
+		this.curr = new TINode(0)
+		this.dir = 1
+	}
+
+	update(cb) {
+		this.curr.update(() => {
+			this.curr = this.curr.getNext(this.dir, () => {
+				this.dir *= -1
+			})
+			cb()
+		})
+	}
+
+	startUpdating(cb) {
+		this.curr.startUpdating(cb)
+	}
+
+	draw(context, w, h) {
+		this.curr.draw(context, w, h)
+	}
+}
