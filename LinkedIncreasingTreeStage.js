@@ -2,6 +2,8 @@ const TINC_NODES = 5
 class LinkedIncreasingTreeStage extends CanvasStage {
 	constructor() {
 		super()
+		this.increasingTree = new IncreasingTree()
+		this.animator = new TIAnimator()
 	}
 
 	render() {
