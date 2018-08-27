@@ -8,11 +8,21 @@ class LinkedIncreasingTreeStage extends CanvasStage {
 
 	render() {
 		super.render()
+		if (this.increasingTree) {
+			this.increasingTree.draw(this.context, this.size.w, this.size.h)
+		}
 	}
 
 	handleTap() {
 		this.canvas.onmousedown = () => {
-
+			this.increasingTree.startUpdating(() => {
+				this.animator.start(() => {
+					this.render()
+					this.increasingTree.update(() => {
+						this.animator.stop()
+					})
+				})
+			})
 		}
 	}
 
