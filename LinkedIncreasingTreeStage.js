@@ -53,6 +53,7 @@ class TIState {
 	startUpdating(cb) {
 		if (this.dir == 0) {
 			this.dir = 1 - 2 * this.prevScale 
+			cb()
 		}
 	}
 }
@@ -91,17 +92,28 @@ class TINode {
 	draw(context, w, h) {
 		context.lineWidth = Math.min(w, h) / 60
 		context.lineCap = 'round'
-		context.strokeStyle = ''
+		context.strokeStyle = '#2E7D32'
 		const gap = h / (TINC_NODES + 1)
-		const y = h - (gap * this.i + gap/2 + gap/10)
+		const y = h - (gap * this.i + gap/2 + gap/4)
 		const sc2 = Math.min(0.5, Math.max(0, this.state.scale - 0.5)) * 2
 		context.save()
 		context.translate(w/2, y)
-		context.beginPath()
-		context.moveTo(0, gap)
-		context.lineTo(0, gap * (1 - this.state.scale))
-		context.stroke()
+		if (this.state.scale != 0) {
+			context.beginPath()
+			context.moveTo(0, gap)
+			context.lineTo(0, gap * (1 - this.state.scale))
+			context.stroke()		
+		}
+		if (sc2 != 0) {
+			context.beginPath()
+			context.moveTo(0, gap/2)
+			context.lineTo(gap * sc2 * (1 - 2 * (this.i % 2)), gap/2)
+			context.stroke()		
+		}
 		context.restore()
+		if (this.prev) {
+			this.prev.draw(context, w, h)
+		}
 	}
 
 	update(cb) {
