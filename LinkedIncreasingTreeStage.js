@@ -45,3 +45,6 @@ class TIState {
 	}
 }
 
+class TISAnimator {
+	
+}
