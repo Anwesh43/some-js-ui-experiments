@@ -2,10 +2,15 @@ const CONCCI_NODES = 5
 class LinkedConcentricCircularMoverStage extends CanvasStage {
 	constructor() {
 		super()
+		this.licci = new LinkedConcCi()
+		this.animator = new ConcCiAnimator()
 	}
 
 	render() {
 		super.render()
+		if (this.licci) {
+			this.licci.draw(this.context, this.size.w, this.size.h)
+		}
 	}
 
 	handleTap() {
