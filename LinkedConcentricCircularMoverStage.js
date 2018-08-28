@@ -125,3 +125,26 @@ class ConcCiNode {
 	}
 }
 
+class LinkedConcCi {
+	constructor() {
+		this.curr = new ConcCiNode(0)
+		this.dir = 1
+	}
+
+	draw(context, w, h) {
+		this.curr.draw(context, w, h)
+	}
+
+	update(cb) {
+		this.curr.update(() => {
+			this.curr = this.curr.getNext(this.dir, () => {
+				this.dir *= -1
+			})
+			cb()
+		})
+	}
+
+	startUpdating(cb) {
+		this.curr.startUpdating(cb)
+	}
+}
