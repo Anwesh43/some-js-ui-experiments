@@ -45,3 +45,25 @@ class ConcCiState {
 		}
 	}
 }
+
+//Creating animator
+class ConcCiAnimator {
+	constructor() {
+		this.animated = false 
+	}
+
+	start() {
+		if (!this.animated) {
+			this.animated = true 
+			this.interval = setInterval(cb, 50)
+		}
+	}
+
+	stop() {
+		if (this.animated) {
+			this.animated = false 
+			clearInterval(this.interval, 50)
+		}
+	}
+}
+
