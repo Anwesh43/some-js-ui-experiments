@@ -15,7 +15,14 @@ class LinkedConcentricCircularMoverStage extends CanvasStage {
 
 	handleTap() {
 		this.canvas.onmousedown = () => {
-
+			this.licci.startUpdating(() => {
+				this.animator.start(() => {
+					this.render()
+					this.licci.update(() => {
+						this.animator.stop()
+					})
+				})
+			})
 		}
 	}
 
@@ -27,7 +34,7 @@ class LinkedConcentricCircularMoverStage extends CanvasStage {
 }
 
 class ConcCiState {
-	constuctor() {
+	constructor() {
 		this.scale = 0
 		this.dir = 0
 		this.prevScale = 0
@@ -57,7 +64,7 @@ class ConcCiAnimator {
 		this.animated = false 
 	}
 
-	start() {
+	start(cb) {
 		if (!this.animated) {
 			this.animated = true 
 			this.interval = setInterval(cb, 50)
@@ -77,6 +84,7 @@ class ConcCiNode {
 		this.i = i 	
 		this.state = new ConcCiState()
 		this.addNeighbor()
+		console.log(this.state)
 	}
 
 	addNeighbor() {
@@ -91,22 +99,25 @@ class ConcCiNode {
 		context.lineCap = 'round'
 		context.strokeStyle = 'white'
 		const gap = h / (CONCCI_NODES+1)
-		var r = (gap / (CONCCI_NODES)) * (CONCCI_NODES - this.i) 
+		var r = (gap / (2 * CONCCI_NODES)) * (CONCCI_NODES - this.i) 
+		console.log(`${gap} ${r} ${this.state.scale}`)
+		const y = (gap * this.i) + gap 
 		context.save()
-		context.translate(w/2, (gap * this.i) + gap + gap * this.state.scale)
+		context.translate(0, gap * this.state.scale)
 		context.beginPath()
-		context.arc(0, 0, r, 0, 2 * Math.PI)
+		context.arc(w/2, y, r, 0, 2 * Math.PI)
 		context.stroke()
 		if (this.prev && drawPrev) {
 			context.save()
-			context.translate(0, -gap)
+			context.translate(0, 0)
 			this.prev.draw(context, w, h, false, true)
 			context.restore()	
 		}
+		context.restore()
+
 		if (this.next && drawNext) {
 			this.next.draw(context, w, h, true, false)
 		}
-		context.restore()
 	}
 
 	update(cb) {
@@ -137,7 +148,7 @@ class LinkedConcCi {
 	}
 
 	draw(context, w, h) {
-		this.curr.draw(context, w, h)
+		this.curr.draw(context, w, h, true, true)
 	}
 
 	update(cb) {
