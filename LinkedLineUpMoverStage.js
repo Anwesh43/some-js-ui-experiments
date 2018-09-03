@@ -2,15 +2,27 @@ const LUM_NODES = 5
 class LinkedLineUpMoverStage extends CanvasStage {
 	constructor() {
 		super()
+		this.llum = new LinkedLineUpMover()
+		this.animator = new LUMAnimator()
 	}
 
 	render() {
 		super.render()
+		if (this.llum) {
+			this.llum.draw(this.context, this.size.w, this.size.h)
+		}
 	}
 
 	handleTap() {
 		this.canvas.onmousedown = () => {
-
+			this.llum.startUpdating(() => {
+				this.animator.start(() => {
+					this.render()
+					this.llum.update(() => {
+						this.animator.stop()
+					})
+				})
+			})
 		}
 	}
 
@@ -91,8 +103,9 @@ class LUMNode {
 		context.moveTo(0, 0)
 		context.lineTo(gap * this.i, 0)
 		context.stroke()
+		context.save()
 		context.beginPath()
-		context.moveTo(gap / 2, 0)
+		context.moveTo(gap / 2, -(h/2) * sc)
 		context.lineTo(gap / 2, -gap * sc)
 		context.restore()
 		if (this.next) {
