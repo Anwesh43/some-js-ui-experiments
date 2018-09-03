@@ -65,3 +65,55 @@ class LUMAnimator {
 		}
 	}
 }
+
+class LUMNode {
+	constructor(i) {
+		this.i = i
+		this.addNeighbor()
+	}
+
+	addNeighbor() {
+		if (this.i < LUM_NODES - 1) {
+			this.next = new LUMNode(this.i + 1)
+			this.next.prev = this	
+		}
+	}
+
+	draw(context, w, h) {
+		const gap = w / LUM_NODES 
+		const sc = Math.min(0.5, Math.max(this.state.scale - 0.5, 0)) * 2
+		context.lineWidth = Math.min(w, h) / 60
+		context.lineCap = 'round'
+		context.strokeStyle = '#303F9F'
+		context.save()
+		context.translate(gap * this.i, h/2)
+		context.beginPath()
+		context.moveTo(0, 0)
+		context.lineTo(gap * this.i, 0)
+		context.stroke()
+		context.beginPath()
+		context.moveTo(gap / 2, 0)
+		context.lineTo(gap / 2, -gap * sc)
+		context.restore()
+	}
+
+	update(cb) {
+		this.state.update(cb)
+	}
+
+	startUpdating(cb) {
+		this.state.startUpdating(cb)
+	}
+
+	getNext(dir, cb) {
+		var curr = this.prev 
+		if (dir == 1) {
+			curr = this.next 
+		}
+		if (curr) {
+			return curr 
+		}
+		cb()
+		return this
+	}
+}
