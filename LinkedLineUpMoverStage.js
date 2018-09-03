@@ -95,6 +95,9 @@ class LUMNode {
 		context.moveTo(gap / 2, 0)
 		context.lineTo(gap / 2, -gap * sc)
 		context.restore()
+		if (this.next) {
+			this.next.draw(context, w, )
+		}
 	}
 
 	update(cb) {
@@ -115,5 +118,30 @@ class LUMNode {
 		}
 		cb()
 		return this
+	}
+}
+
+class LinkedLineUpMover {
+	constructor() {
+		this.root = new LUMNode(0)
+		this.curr = this.root
+		this.dir = 1
+	}
+
+	draw(context, w, h) {
+		this.curr.draw(context, w, h)
+	}
+
+	update(cb) {
+		this.curr.update(() => {
+			this.curr = this.curr.getNext(this.dir, () => {
+				this.dir *= -1
+			})
+			cb()
+		})
+	}
+
+	startUpdating(cb) {
+		this.curr.startUpdating(cb)
 	}
 }
