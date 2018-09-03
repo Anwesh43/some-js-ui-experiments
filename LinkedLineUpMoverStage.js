@@ -81,6 +81,7 @@ class LUMAnimator {
 class LUMNode {
 	constructor(i) {
 		this.i = i
+		this.state = new LUMState()
 		this.addNeighbor()
 	}
 
@@ -99,17 +100,22 @@ class LUMNode {
 		context.strokeStyle = '#303F9F'
 		context.save()
 		context.translate(gap * this.i, h/2)
+		if (this.state.scale < 1) {
+			context.beginPath()
+			context.moveTo(gap * this.state.scale, 0)
+			context.lineTo(gap, 0)
+			context.stroke()
+		}
+		context.save()
+		context.translate(gap/2, -h/2 * sc)
 		context.beginPath()
 		context.moveTo(0, 0)
-		context.lineTo(gap * this.i, 0)
+		context.lineTo(0, -gap/3)
 		context.stroke()
-		context.save()
-		context.beginPath()
-		context.moveTo(gap / 2, -(h/2) * sc)
-		context.lineTo(gap / 2, -gap * sc)
+		context.restore()
 		context.restore()
 		if (this.next) {
-			this.next.draw(context, w, )
+			this.next.draw(context, w, h)
 		}
 	}
 
@@ -142,7 +148,7 @@ class LinkedLineUpMover {
 	}
 
 	draw(context, w, h) {
-		this.curr.draw(context, w, h)
+		this.root.draw(context, w, h)
 	}
 
 	update(cb) {
