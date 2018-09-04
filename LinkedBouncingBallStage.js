@@ -20,6 +20,7 @@ class LinkedBouncingBallStage extends CanvasStage {
                     this.render()
                     this.linkedBouncingBall.update(() => {
                         this.animator.stop()
+                        this.render()
                     })
                 })
             })
@@ -41,7 +42,7 @@ class B2State {
     }
 
     update(cb) {
-        this.scale += 0.05 * this.prevScale
+        this.scale += 0.05 * this.dir
         if (Math.abs(this.scale - this.prevScale) > 1) {
             this.scale = this.prevScale + this.dir
             this.dir = 0
@@ -94,21 +95,24 @@ class B2Node {
 
     draw(context, w, h) {
         context.fillStyle = '#d32f2f'
-        const hGap = (h * 0.9) / (nodes + 1)
+        const hGap = (h * 0.9) / (B2_NODES + 1)
         const r = hGap / 3
-        const origY = (0.95 * h - r * (this.i))
+        const origY = (0.95 * h - r - hGap * (this.i + 1))
         const diffY = h - origY
         const sc1 = Math.min(0.5, this.state.scale) * 2
         const sc2 = Math.min(0.5, Math.max(this.state.scale - 0.5, 0)) * 2
         context.save()
-        context.translate(w - r, y)
+        context.translate(0, origY)
         context.save()
-        context.translate((w - r) * (1 - this.state.scale), diff * sc1 - diff * sc2)
+        context.translate(r + (w - 2 * r) * (1 - this.state.scale), diffY * sc1 - diffY * sc2)
         context.beginPath()
         context.arc(0, 0, r, 0, 2 * Math.PI)
         context.fill()
         context.restore()
         context.restore()
+        if (this.next) {
+            this.next.draw(context, w, h)
+        }
     }
 
     update(cb) {
@@ -134,12 +138,13 @@ class B2Node {
 
 class LinkedBouncingBall {
     constructor() {
-        this.curr = new B2Node(0)
+        this.root = new B2Node(0)
+        this.curr = this.root
         this.dir = 1
     }
 
     draw(context, w, h) {
-        this.curr.draw(context, w, h)
+        this.root.draw(context, w, h)
     }
 
     update(cb) {
