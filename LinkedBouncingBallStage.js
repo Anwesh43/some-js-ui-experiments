@@ -1,3 +1,4 @@
+const B2_NODES = 5
 class LinkedBouncingBallStage extends CanvasStage {
     constructor() {
         super()
@@ -62,5 +63,59 @@ class B2Animator {
             this.animated = false
             clearInterval(this.interval)
         }
+    }
+}
+
+class B2Node {
+    constructor(i) {
+        this.i = i
+        this.state = new B2State()
+        this.addNeighbor()
+    }
+
+    addNeighbor() {
+        if (this.i < B2_NODES - 1) {
+            this.next = new B2Node(this.i + 1)
+            this.next.prev = this
+        }
+    }
+
+    draw(context, w, h) {
+        context.fillStyle = '#d32f2f'
+        const hGap = (h * 0.9) / (nodes + 1)
+        const r = hGap / 3
+        const origY = (0.95 * h - r * (this.i))
+        const diffY = h - origY
+        const sc1 = Math.min(0.5, this.state.scale) * 2
+        const sc2 = Math.min(0.5, Math.max(this.state.scale - 0.5, 0)) * 2
+        context.save()
+        context.translate(w - r, y)
+        context.save()
+        context.translate((w - r) * (1 - this.state.scale), diff * sc1 - diff * sc2)
+        context.beginPath()
+        context.arc(0, 0, r, 0, 2 * Math.PI)
+        context.fill()
+        context.restore()
+        context.restore()
+    }
+
+    update(cb) {
+        this.state.update(cb)
+    }
+
+    startUpdating(cb) {
+        this.state.startUpdating(cb)
+    }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
     }
 }
