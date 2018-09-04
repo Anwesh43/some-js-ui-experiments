@@ -2,15 +2,27 @@ const B2_NODES = 5
 class LinkedBouncingBallStage extends CanvasStage {
     constructor() {
         super()
+        this.linkedBouncingBall = new LinkedBouncingBall()
+        this.animator = new B2Animator()
     }
 
     render() {
         super.render()
+        if (this.linkedBouncingBall) {
+            this.linkedBouncingBall.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.linkedBouncingBall.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.linkedBouncingBall.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 
