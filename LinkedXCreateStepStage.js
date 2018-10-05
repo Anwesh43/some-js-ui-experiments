@@ -2,15 +2,27 @@ const XCS_NODE = 5, XCS_STEP  = 2
 class LinkedXCreateStepStage extends CanvasStage {
     constructor() {
         super()
+        this.xcs = new XCreateStep()
+        this.animator = new XCSAnimator()
     }
 
     render() {
         super.render()
+        if (this.xcs) {
+            this.xcs.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.xcs.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.xcs.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 
