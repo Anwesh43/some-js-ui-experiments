@@ -67,16 +67,14 @@ class XCSAnimator {
     start(cb) {
         if (!this.animated) {
             this.animated = true
-            this.interval = setInterval(() => {
-                cb()
-            }, 50)
+            this.interval = setInterval(cb, 50)
         }
     }
 
     stop() {
         if (this.animated) {
             this.animated = false
-            clearInteral(this.interval)
+            clearInterval(this.interval)
         }
     }
 }
@@ -85,6 +83,7 @@ class XCSNode {
     constructor(i) {
         this.i = i
         this.state = new XCSState()
+        this.addNeighbor()
     }
 
     addNeighbor() {
@@ -95,6 +94,9 @@ class XCSNode {
     }
 
     draw(context, w, h) {
+        context.strokeStyle = '#4CAF50'
+        context.lineCap = 'round'
+        context.lineWidth = Math.min(w, h) / 60
         const gap = w / (XCS_NODE + 1)
         const size = gap / 3
         context.save()
@@ -103,12 +105,13 @@ class XCSNode {
             const sf = 1 - 2 * j
             const sc = Math.min(0.5, Math.max(this.state.scale - j * 0.5, 0)) * 2
             context.save()
-            context.scale(sf, sf)
-            context.rotate(Math.PI/4)
-            context.beginPath()
-            context.moveTo(0, -size)
-            context.lineTo(0, size)
-            context.stroke()
+            context.rotate(Math.PI/4 * sf)
+            if (sc > 0) {
+                context.beginPath()
+                context.moveTo(0, -size)
+                context.lineTo(0, -size + 2 * size * sc)
+                context.stroke()
+            }
             context.restore()
         }
         context.restore()
