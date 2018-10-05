@@ -68,3 +68,57 @@ class XCSAnimator {
         }
     }
 }
+
+class XCSNode {
+    constructor(i) {
+        this.i = i
+        this.state = new XCSState()
+    }
+
+    addNeighbor() {
+        if (this.i < XCS_NODE - 1) {
+            this.next = new XCSNode(this.i + 1)
+            this.next.prev = this
+        }
+    }
+
+    draw(context, w, h) {
+        const gap = w / (XCS_NODE + 1)
+        const size = gap / 3
+        context.save()
+        context.translate(gap * this.i + gap, h/2)
+        for (var j = 0; j < 2; j++) {
+            const sf = 1 - 2 * j
+            const sc = Math.min(0.5, Math.max(this.state.scale - j * 0.5, 0)) * 2
+            context.save()
+            context.scale(sf, sf)
+            context.rotate(Math.PI/4)
+            context.beginPath()
+            context.moveTo(0, -size)
+            context.lineTo(0, size)
+            context.stroke()
+            context.restore()
+        }
+        context.restore()
+    }
+
+    update(cb) {
+        this.state.update(cb)
+    }
+
+    startUpdating(cb) {
+        this.state.startUpdating(cb)
+    }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
+    }
+}
