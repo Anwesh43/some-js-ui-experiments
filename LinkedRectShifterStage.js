@@ -66,3 +66,56 @@ class RSAnimator {
         }
     }
 }
+
+class RSNode {
+    constructor() {
+        this.state = new RSState()
+        this.addNeighbor()
+    }
+
+    addNeighbor() {
+        if (this.i < RS_NODES - 1) {
+            this.next = new RSNode(this.i + 1)
+            this.next.prev = this
+        }
+    }
+
+    draw(context, w, h) {
+        const gap = h / (nodes + 1)
+        const scGap = 1.0 / RS_STEPS
+        const sf = 1 - 2 * (this.i % 2)
+        const size = (gap) / 3
+        const gapSize = size / RS_STEPS
+        context.save()
+        context.translate(w/2, this.i * gap + gap)
+        context.scale(sf, 1)
+        for (var j = 0; j < RS_STEPS; j++) {
+            const sc = Math.min(scGap, Math.max(0, this.state.scale - scGap * j)) * RS_STEPS
+            context.save()
+            context.translate((w/2 - size) * sc, gapSize * j)
+            context.fillRect(-size, 0, 2 * size, gapSize)
+            context.restore()
+        }
+        context.restore()
+    }
+
+    update(cb) {
+        this.state.update(cb)
+    }
+
+    startUpdating(cb) {
+        this.state.startUpdating(cb)
+    }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
+    }
+}
