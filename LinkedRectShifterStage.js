@@ -1,3 +1,5 @@
+const RS_NODES = 5
+const RS_STEPS = 3
 class LinkiedRectShifterStage extends CanvasStage {
     constructor() {
         super()
