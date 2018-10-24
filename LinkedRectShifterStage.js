@@ -1,6 +1,6 @@
 const RS_NODES = 5
-const RS_STEPS = 3
-class LinkiedRectShifterStage extends CanvasStage {
+const RS_STEPS = 10
+class LinkedRectShifterStage extends CanvasStage {
     constructor() {
         super()
         this.lrs = new LinkedRectShifter()
@@ -28,7 +28,7 @@ class LinkiedRectShifterStage extends CanvasStage {
     }
 
     static init() {
-        const stage = new LinkiedRectShifterStage()
+        const stage = new LinkedRectShifterStage()
         stage.render()
         stage.handleTap()
     }
@@ -67,7 +67,7 @@ class RSAnimator {
     start(cb) {
         if (!this.animated) {
             this.animated = true
-            this.interval = setInterval(cb, 50)
+            this.interval = setInterval(cb, 25)
         }
     }
 
@@ -80,7 +80,8 @@ class RSAnimator {
 }
 
 class RSNode {
-    constructor() {
+    constructor(i) {
+        this.i = i
         this.state = new RSState()
         this.addNeighbor()
     }
@@ -93,12 +94,13 @@ class RSNode {
     }
 
     draw(context, w, h) {
-        const gap = h / (nodes + 1)
+        const gap = h / (RS_NODES + 1)
         const scGap = 1.0 / RS_STEPS
         const sf = 1 - 2 * (this.i % 2)
         const size = (gap) / 3
         const gapSize = size / RS_STEPS
         context.fillStyle = '#673AB7'
+        context.strokeStyle = '#673AB7'
         context.save()
         context.translate(w/2, this.i * gap + gap)
         context.scale(sf, 1)
@@ -107,9 +109,13 @@ class RSNode {
             context.save()
             context.translate((w/2 - size) * sc, gapSize * j)
             context.fillRect(-size, 0, 2 * size, gapSize)
+            context.strokeRect(-size, 0, 2 * size, gapSize)
             context.restore()
         }
         context.restore()
+        if (this.next) {
+            this.next.draw(context, w, h)
+        }
     }
 
     update(cb) {
