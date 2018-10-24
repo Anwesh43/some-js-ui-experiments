@@ -3,15 +3,27 @@ const RS_STEPS = 3
 class LinkiedRectShifterStage extends CanvasStage {
     constructor() {
         super()
+        this.lrs = new LinkedRectShifter()
+        this.animator = new RSAnimator()
     }
 
     render() {
         super.render()
+        if (this.lrs) {
+            this.lrs.draw(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.lrs.startUpdating(() => {
+                this.animator.start(() => {
+                    this.render()
+                    this.lrs.update(() => {
+                        this.animator.stop()
+                    })
+                })
+            })
         }
     }
 
