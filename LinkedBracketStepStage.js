@@ -23,15 +23,21 @@ const LBSS_drawLines = [(context, size, sc) => {
 class LinkedBrackedStepStage extends CanvasStage {
     constructor() {
         super()
+        this.renderer = new LBSSRenderer()
     }
 
     render() {
         super.render()
+        if (this.renderer) {
+            this.renderer.render(this.context, this.sisze.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.renderer.handleTap(() => {
+                this.render()
+            })
         }
     }
 }
