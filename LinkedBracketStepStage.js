@@ -165,3 +165,26 @@ class LinkedBracketStep {
         this.curr.startUpdating(cb)
     }
 }
+
+class LBSSRenderer {
+    constructor() {
+        this.lbs = new LinkedBracketStep()
+        this.animator = new LBSSAnimator()
+    }
+
+    render(context, w, h) {
+        this.lbs.draw(context, w,  h)
+    }
+
+    handleTap(cb) {
+        this.lbss.startUpdating(() => {
+            this.animator.start(() => {
+                cb()
+                this.lbss.update(() => {
+                    this.animator.stop()
+                    cb()
+                })
+            })
+        })
+    }
+}
