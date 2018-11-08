@@ -78,3 +78,30 @@ class LCJSAnimator {
         }
     }
 }
+
+const drawLCJSNode = (context, i, scale, w, h) => {
+    const gap = w / nodes
+    const size = gap / 4
+    const gapSize = (2 * size) / LSJS_LINES
+    const sc1 = LBSS_divideScale(this.state.scale, 2, 0)
+    const sc2 = LBSS_divideScale(this.state.scale, 2, 1)
+    context.lineCap = 'round'
+    context.lineWidth = Math.min(w, h) / 60
+    context.strokeStyle = '#01579B'
+    context.save()
+    context.translate(gap + this.i * gap, h/2)
+    for(var i = 0; i < LSJS_LINES; i++) {
+        const sSize = gapSize * (i + 1)
+        const currSize = sSize + (dSize - sSize) * sc2
+        const sc = LBSS_divideScale(sc1, LSJS_LINES, i)
+        context.save()
+        context.rotate(i * (2 * Math.PI) / lines)
+        context.translate(0, currSize)
+        context.beginPath()
+        context.moveTo(-size, 0)
+        context.lineTo(size - 2 * size * sc, 0)
+        context.stroke()
+        context.restore()
+    }
+    context.restore()
+}
