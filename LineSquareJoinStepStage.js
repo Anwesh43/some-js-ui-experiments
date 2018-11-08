@@ -147,3 +147,26 @@ class LSJSNode {
         return this
     }
 }
+
+class LineSquareJoinStep {
+    constructor() {
+        this.state = new LSJSState()
+        this.curr = new LSJSNode(0)
+    }
+
+    draw(context, w, h) {
+        this.curr.draw(context)
+    }
+
+    update(cb) {
+        this.curr.update(() => {
+            this.curr = this.curr.getNext(this.dir, () => {
+                this.dir *= -1
+            })
+        })
+    }
+
+    startUpdating(cb) {
+        this.curr.startUpdating(cb)
+    }
+}
