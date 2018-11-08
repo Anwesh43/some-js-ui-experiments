@@ -34,7 +34,7 @@ class LineSquareJoinStepStage extends CanvasStage {
     }
 }
 
-class LCJSState {
+class LSJSState {
     constructor() {
         this.scale = 0
         this.dir = 0
@@ -59,7 +59,7 @@ class LCJSState {
     }
 }
 
-class LCJSAnimator {
+class LSJSAnimator {
     constructor() {
         this.animated = false
     }
@@ -79,7 +79,7 @@ class LCJSAnimator {
     }
 }
 
-const drawLCJSNode = (context, i, scale, w, h) => {
+const drawLSJSNode = (context, i, scale, w, h) => {
     const gap = w / nodes
     const size = gap / 4
     const gapSize = (2 * size) / LSJS_LINES
@@ -104,4 +104,46 @@ const drawLCJSNode = (context, i, scale, w, h) => {
         context.restore()
     }
     context.restore()
+}
+
+class LSJSNode {
+    constructor(i) {
+        this.i = i
+        this.state = new LSJSState()
+        this.addNeighbor()
+    }
+
+    addNeighbor() {
+        if (this.i < LSJS_NODES - 1) {
+            this.next = new LSJSNode(this.i + 1)
+            this.next.prev = this
+        }
+    }
+
+    draw(context, w, h) {
+        drawLSJSNode(context, this.i, this.state.scale, w, h)
+        if (this.prev) {
+            this.prev.draw(context, w, h)
+        }
+    }
+
+    update(cb) {
+        this.state.update(cb)
+    }
+
+    startUpdating(cb) {
+        this.state.stat
+    }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
+    }
 }
