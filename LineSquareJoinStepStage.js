@@ -15,15 +15,19 @@ const LCJS_updateScale = (scale, dir) =>  {
 class LineSquareJoinStepStage extends CanvasStage {
     constructor() {
         super()
+        this.renderer = new LSJSRenderer()
     }
 
     render() {
         super.render()
+        this.renderer.render(this.context, this.size.w, this.size.h)
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.renderer.handleTap(() => {
+                this.render()
+            })
         }
     }
 
@@ -171,7 +175,7 @@ class LineSquareJoinStep {
     }
 }
 
-class Renderer {
+class LSJSRenderer {
     constructor() {
         this.lsjs = new LineSquareJoinStep()
         this.animator = new LSJSAnimator()
