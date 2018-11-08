@@ -170,3 +170,26 @@ class LineSquareJoinStep {
         this.curr.startUpdating(cb)
     }
 }
+
+class Renderer {
+    constructor() {
+        this.lsjs = new LineSquareJoinStep()
+        this.animator = new LSJSAnimator()
+    }
+
+    render(context, w, h) {
+        this.lsjs.draw(context, w, h)
+    }
+
+    handleTap(cb : Function) {
+        this.lsjs.startUpdating(() => {
+            this.animator.start(() => {
+                cb()
+                this.lsjs.update(() => {
+                    this.animator.stop()
+                    cb()
+                })
+            })
+        })
+    }
+}
