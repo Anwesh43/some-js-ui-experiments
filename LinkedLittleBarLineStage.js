@@ -111,3 +111,45 @@ class LLBLAnimator {
         }
     }
 }
+
+class LLBLNode {
+    constructor(i) {
+        this.i = i
+        this.addNeighbor()
+        this.state = new LLBLState()
+    }
+
+    addNeighbor() {
+        if (this.i < LLBL_NODES - 1) {
+            this.next = new LLBLNode(this.i + 1)
+            this.next.prev = this
+        }
+    }
+
+    draw(context, w, h) {
+        drawLLBLNode(context, this.i, this.state.scale, w, h)
+        if (this.next) {
+            this.next.draw(context, w, h)
+        }
+    }
+
+    update(cb) {
+        this.state.update(cb)
+    }
+
+    startUpdating(cb) {
+        this.state.startUpdating(cb)
+    }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
+    }
+}
