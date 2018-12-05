@@ -66,3 +66,28 @@ class LinkedLittleBarLineStage extends CanvasStage {
         stage.handleTap()
     }
 }
+
+class LLBLState {
+    constructor() {
+        this.scale = 0
+        this.dir = 0
+        this.prevScale = 0
+    }
+
+    update(cb) {
+        this.scale = LLBL_updateScale(this.scale, this.dir, LLBL_BARS, 1)
+        if (Math.abs(this.scale - this.prevScale) > 1) {
+            this.scale = this.prevScale + this.dir
+            this.dir = 0
+            this.prevScale = this.scale
+            cb()
+        }
+    }
+
+    startUpdating(cb) {
+        if (this.dir == 0) {
+            this.dir = 1 - 2 * this.prevScale
+            cb()
+        }
+    }
+}
