@@ -178,3 +178,26 @@ class LinkedLittleBarLine {
         this.curr.startUpdating(cb)
     }
 }
+
+class LLBLRenderer {
+    constructor() {
+        this.llbl = new LinkedLittleBarLine()
+        this.animator = new LLBLAnimator()
+    }
+
+    render(context, w, h) {
+        this.llbl.draw(context, w, h)
+    }
+
+    handleTap(cb) {
+        this.llbl.startUpdating(() => {
+            this.animator.start(() => {
+                cb()
+                this.llbl.update(() => {
+                    this.animator.stop()
+                    cb()
+                })
+            })
+        })
+    }
+}
