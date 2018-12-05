@@ -52,11 +52,16 @@ class LinkedLittleBarLineStage extends CanvasStage {
 
     render() {
         super.render()
+        if (!this.renderer) {
+            this.renderer.render(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.renderer.handleTap(() => {
+                this.render()
+            })
         }
     }
 
