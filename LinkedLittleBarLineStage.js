@@ -2,8 +2,9 @@ const LLBL_NODES = 5
 const LLBL_BARS = 4
 const LLBL_scDiv = 0.51
 const LLBL_scGap = 0.05
-const LLBL_sizeFactor = 2.1
-
+const LLBL_sizeFactor = 3
+const LLBL_DELAY = 25
+const LLBL_strokeFactor = 90
 const LLBL_divideScale = (scale, i, n) => Math.min(1/n, Math.max(0, scale - i/n)) * n
 const LLBL_scaleFactor = (scale) => Math.floor(scale / LLBL_scDiv)
 const LLBL_mirrorValue = (scale, a, b) => {
@@ -13,10 +14,14 @@ const LLBL_mirrorValue = (scale, a, b) => {
 const LLBL_updateScale = (scale, dir, a, b) => dir * LLBL_scGap * LLBL_mirrorValue(scale, a, b)
 
 const drawLLBLNode = (context, i, scale, w, h) => {
-    const gap = w / LLBL_NODES
+    const gap = w / (LLBL_NODES + 1)
     const size = gap / LLBL_sizeFactor
     const sc1 = LLBL_divideScale(scale, 0, 2)
     const sc2 = LLBL_divideScale(scale, 1, 2)
+    //console.log(`scale for 1 is ${sc1}`)
+    context.strokeStyle = '#d32f2f'
+    context.lineCap = 'round'
+    context.lineWidth = Math.min(w, h) / LLBL_strokeFactor
     context.save()
     context.translate((i + 1) * gap, h/2)
     context.rotate(Math.PI/2 * sc2)
@@ -32,7 +37,7 @@ const drawLLBLNode = (context, i, scale, w, h) => {
             context.translate(0, size * (1 - 2 * p) * sc)
             context.beginPath()
             context.moveTo(0, 0)
-            context.lineTo(0, -size/4)
+            context.lineTo(-size/4, 0)
             context.stroke()
             context.restore()
             context.beginPath()
@@ -53,8 +58,9 @@ class LinkedLittleBarLineStage extends CanvasStage {
     render() {
         super.render()
         if (!this.renderer) {
-            this.renderer.render(this.context, this.size.w, this.size.h)
+            this.renderer = new LLBLRenderer()
         }
+        this.renderer.render(this.context, this.size.w, this.size.h)
     }
 
     handleTap() {
@@ -80,7 +86,8 @@ class LLBLState {
     }
 
     update(cb) {
-        this.scale = LLBL_updateScale(this.scale, this.dir, LLBL_BARS, 1)
+        this.scale += LLBL_updateScale(this.scale, this.dir, LLBL_BARS, 1)
+        console.log(this.scale)
         if (Math.abs(this.scale - this.prevScale) > 1) {
             this.scale = this.prevScale + this.dir
             this.dir = 0
@@ -105,7 +112,7 @@ class LLBLAnimator {
     start(cb) {
         if (!this.animated) {
             this.animated = true
-            this.interval = setInterval(cb, 50)
+            this.interval = setInterval(cb, LLBL_DELAY)
         }
     }
 
