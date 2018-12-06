@@ -182,3 +182,26 @@ class LinkedBeadCricleStep {
         this.curr.startUpdating(cb)
     }
 }
+
+class BCSRenderer {
+    constructor() {
+        this.lbcs = new LinkedBeadCricleStep()
+        this.animator = new BCSAnimator()
+    }
+
+    render(context, w, h) {
+        this.lbcs.draw(context, w, h)
+    }
+
+    handleTap(cb) {
+        this.lbcs.startUpdating(() => {
+            this.animator.start(() => {
+                cb()
+                this.lbcs.update(() => {
+                    this.animator.stop()
+                    cb()
+                })
+            })
+        })
+    }
+}
