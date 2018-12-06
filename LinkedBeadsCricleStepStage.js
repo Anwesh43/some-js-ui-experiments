@@ -6,6 +6,7 @@ const BCS_color = "#1A237E"
 const BCS_strokeFactor = 90
 const BCS_sizeFactor = 2.5
 const BCS_rFactor = 8
+const BCS_delay = 25
 
 const BCS_divideScale = (scale, i, n) => Math.min(1/n, Math.max(0, scale - i / n)) * n
 
@@ -18,14 +19,14 @@ const BCS_mirrorValue = (scale, a, b) => {
 
 const BCS_updateScale = (scale, dir, a, b) => dir * BCS_scGap * BCS_mirrorValue(scale, a, b)
 
-const drawBCSNode => (context, i, scale, w, h) => {
+const drawBCSNode = (context, i, scale, w, h) => {
     const gap = w / (BCS_NODES + 1)
     const size = gap / BCS_sizeFactor
     const sc1 = BCS_divideScale(scale, 0, 2)
     const sc2 = BCS_divideScale(scale, 1, 2)
     const r = size / 8
-    context.strokeStyle = color
-    context.fillStyle = color
+    context.strokeStyle = BCS_color
+    context.fillStyle = BCS_color
     context.lineWidth = Math.min(w, h) / BCS_strokeFactor
     context.lineCap = 'round'
     context.save()
@@ -57,7 +58,9 @@ class LinkedBeadsCricleStepStage extends CanvasStage {
 
     render() {
         super.render()
-        this.renderer.render(this.context, this.size.w, this.size.h)
+        if (this.renderer) {
+            this.renderer.render(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
@@ -69,7 +72,7 @@ class LinkedBeadsCricleStepStage extends CanvasStage {
     }
 
     static init() {
-        const stage = new LinkedBeadsCircleStepStage()
+        const stage = new LinkedBeadsCricleStepStage()
         stage.render()
         stage.handleTap()
     }
@@ -108,7 +111,7 @@ class BCSAnimator {
     start(cb) {
         if (!this.animated) {
             this.animated = true
-            this.interval = setInterval(cb, 50)
+            this.interval = setInterval(cb, BCS_delay)
         }
     }
 
