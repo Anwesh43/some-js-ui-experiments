@@ -52,15 +52,19 @@ const drawBCSNode => (context, i, scale, w, h) => {
 class LinkedBeadsCricleStepStage extends CanvasStage {
     constructor() {
         super()
+        this.renderer = new BCSRenderer()
     }
 
     render() {
         super.render()
+        this.renderer.render(this.context, this.size.w, this.size.h)
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.renderer.handleTap(() => {
+                this.render()
+            })
         }
     }
 
