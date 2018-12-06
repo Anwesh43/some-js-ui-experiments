@@ -115,3 +115,45 @@ class BCSAnimator {
         }
     }
 }
+
+class BCSNode {
+    constructor(i) {
+        this.i = i
+        this.state = new BCSState()
+        this.addNeighbor()
+    }
+
+    addNeighbor() {
+        if (this.i < BCS_NODES - 1) {
+            this.next = new BCSNode(this.i + 1)
+            this.next.prev = this
+        }
+    }
+
+    draw(context, w, h) {
+        drawBCSNode(context, this.i, this.state.scale, w, h)
+        if (this.next) {
+            this.next.draw(context, w, h)
+        }
+    }
+
+    update(cb) {
+        this.state.update(cb)
+    }
+
+    startUpdating(cb) {
+        this.state.startUpdating(cb)
+    }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this 
+    }
+}
