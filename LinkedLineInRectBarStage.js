@@ -154,3 +154,28 @@ class LIRBNode {
         return this
     }
 }
+
+class LinkedLineInRectBar {
+    constructor() {
+        this.root = new LIRBNode(0)
+        this.curr = this.root
+        this.dir = 1
+    }
+
+    draw(context, w, h) {
+        this.root.draw(context, w, h)
+    }
+
+    update(cb) {
+        this.curr.update(() => {
+            this.curr = this.curr.getNext(this.dir, () => {
+                this.dir *= -1
+            })
+            cb()
+        })
+    }
+
+    startUpdating(cb) {
+        this.curr.startUpdating(cb)
+    }
+}
