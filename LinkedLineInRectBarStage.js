@@ -12,7 +12,7 @@ const LIRB_mirrorValue = (scale, a, b) => {
     const k = LIRB_scaleFactor(scale)
     return ((1 - k) / a) + (k / b)
 }
-const LIRB_updateScale = (scale, dir, a, b) => LIRB_scaleFactor(scale, a, b) * dir * LIRB_scGap
+const LIRB_updateScale = (scale, dir, a, b) => LIRB_mirrorValue(scale, a, b) * dir * LIRB_scGap
 
 const drawLIRBNode = (context, i, scale, w, h) => {
     const gap = w / LIRB_NODES
@@ -24,23 +24,25 @@ const drawLIRBNode = (context, i, scale, w, h) => {
     const sc1 = LIRB_divideScale(scale, 0, 2)
     const sc2 = LIRB_divideScale(scale, 1, 2)
     context.save()
-    context.translate(gap * (this.i + 1), h/2)
+    context.translate(gap * (i + 1), h/2)
     for (var j = 0; j < 2; j++) {
         const sck = LIRB_divideScale(sc2, j, 2)
         context.save()
-        context.rotate(Math.PI/2 * sc1 * j)
-        context.fillRect(-size, -size/4, size, size/2)
+        context.rotate(-Math.PI/2 * sc1 * j)
+        context.fillRect(-size, -size/2, size, size/2)
         const ox = -size + size * j
         const xGap = size / (LIRB_LINES + 1)
         const sf = 1 - 2 * j
-        for (var k = 0; k < lines; k++) {
+        for (var k = 0; k < LIRB_LINES; k++) {
             const scj = LIRB_divideScale(sck, k, LIRB_LINES)
             context.save()
-            context.translate(ox + xGap * k * sf, -size/4)
-            context.beginPath()
-            context.moveTo(0, 0)
-            context.lineTo(0, size/2 * scj)
-            context.stroke()
+            context.translate(ox + xGap * (k+1) * sf, -size/2 + size/20)
+            if (scj > 0) {
+                context.beginPath()
+                context.moveTo(0, 0)
+                context.lineTo(0, (size/2 - size/10) * scj)
+                context.stroke()
+            }
             context.restore()
         }
         context.restore()
@@ -63,7 +65,9 @@ class LinkedLineInRectBarStage extends CanvasStage {
 
     handleTap() {
         this.canvas.onmousedown = () => {
-            this.renderer.handleTap()
+            this.renderer.handleTap(() => {
+                this.render()
+            })
         }
     }
 
@@ -122,6 +126,8 @@ class LIRBAnimator {
 class LIRBNode {
     constructor(i) {
         this.i = i
+        this.state = new LIRBState()
+        this.addNeighbor()
     }
 
     addNeighbor() {
@@ -190,7 +196,7 @@ class LIRBRenderer {
         this.animator = new LIRBAnimator()
     }
 
-    draw(context, w, h) {
+    render(context, w, h) {
         this.llir.draw(context, w, h)
     }
 
