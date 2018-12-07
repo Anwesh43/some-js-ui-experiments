@@ -179,3 +179,26 @@ class LinkedLineInRectBar {
         this.curr.startUpdating(cb)
     }
 }
+
+class LIRBRenderer {
+    constructor() {
+        this.llir = new LinkedLineInRectBar()
+        this.animator = new LIRBAnimator()
+    }
+
+    draw(context, w, h) {
+        this.llir.draw(context, w, h)
+    }
+
+    handleTap(cb) {
+        this.llir.startUpdating(() => {
+            this.animator.start(() => {
+                cb()
+                this.llir.update(() => {
+                    this.animator.stop()
+                    cb()
+                })
+            })
+        })
+    }
+}
