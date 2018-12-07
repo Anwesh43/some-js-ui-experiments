@@ -51,15 +51,19 @@ const drawLIRBNode = (context, i, scale, w, h) => {
 class LinkedLineInRectBarStage extends CanvasStage {
     constructor() {
         super()
+        this.renderer = new LIRBRenderer()
     }
 
     render() {
         super.render()
+        if (this.renderer) {
+            this.renderer.render(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.renderer.handleTap()
         }
     }
 
