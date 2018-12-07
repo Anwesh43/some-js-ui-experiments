@@ -69,3 +69,28 @@ class LinkedLineInRectBarStage extends CanvasStage {
         stage.handleTap()
     }
 }
+
+class LIRBState {
+    constructor() {
+        this.scale = 0
+        this.dir = 0
+        this.prevScale = 0
+    }
+
+    update(cb) {
+        this.scale += LIRB_updateScale(this.scale, this.dir, 1, LIRB_LINES * 2)
+        if (Math.abs(this.scale - this.prevScale) > 1) {
+            this.scale = this.prevScale + this.dir
+            this.dir = 0
+            this.prevScale = this.scale
+            cb(this.prevScale)
+        }
+    }
+
+    startUpdating(cb) {
+        if (this.dir == 0) {
+            this.dir = 1 - 2 * this.prevScale
+            cb()
+        }
+    }
+}
