@@ -17,6 +17,35 @@ const LES_mirrorValue = (scale, a, b) => {
 
 const LES_updateScale = (scale, dir, a, b) => LES_mirrorValue(scale, a, b) * dir * LES_scGap
 
+const drawLESNode = (context, i, scale, w, h) => {
+    const gap = w / (LES_NODES + 1)
+    const sc1 = LES_divideScale(scale, 0, 2)
+    const sc2 = LES_divideScale(scale, 1, 2)
+    const size = gap / LES_SIZE_FACTOR
+    context.save()
+    context.translate(i * (gap + 1), h/2)
+    for (var j = 0; j < LES_LINES; j++) {
+        const sf = 1 - 2 * (j%2)
+        context.save()
+        context.translate(0, size * Math.floor(j/2))
+        context.moveTo(0, 0)
+        context.lineTo(0, size/2 * sf)
+        context.stroke()
+        context.restore()
+    }
+    for (var j = 0; j < LES_LINES; j++) {
+        const sf = 1 - 2 * j
+        const sc = LES_divideScale(sc1, j, LES_LINES)
+        context.save()
+        context.translate(0, size * Math.floor(j/2))
+        context.rotate(Math.PI/2 * sc)
+        context.moveTo(0, 0)
+        context.lineTo(0, size * sf)
+        context.stroke()
+        context.restore()
+    }
+    context.restore()
+}
 class LinkedLineExpandingStepStage extends CanvasStage {
     constructor() {
         super()
