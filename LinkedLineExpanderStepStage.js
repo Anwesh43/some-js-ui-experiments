@@ -7,7 +7,7 @@ const LES_STROKE_FACTOR = 80
 const LES_scGap = 0.05
 const LES_scDiv = 0.51
 
-const LES_divideScale = (scale, i, n) => Math.min(1/n, Math.max(0, i / n)) * n
+const LES_divideScale = (scale, i, n) => Math.min(1/n, Math.max(0, scale - i / n)) * n
 
 const LES_scaleFactor = (scale) =>  Math.floor(scale / LES_scDiv)
 
@@ -27,12 +27,13 @@ const drawLESNode = (context, i, scale, w, h) => {
     context.lineCap = 'round'
     context.lineWidth = Math.min(w, h) / LES_STROKE_FACTOR
     context.save()
-    context.translate(i * (gap + 1), h/2)
+    context.translate(gap * (i + 1), h/2)
     for (var j = 0; j < LES_LINES; j++) {
         const sf = 1 - 2 * (j%2)
         const sc = LES_divideScale(sc2, j, 2)
         context.save()
         context.translate(0, size * Math.floor(j/2))
+        context.beginPath()
         context.moveTo(0, 0)
         context.lineTo(0, size/2 * sf * (1 - sc))
         context.stroke()
@@ -44,6 +45,7 @@ const drawLESNode = (context, i, scale, w, h) => {
         context.save()
         context.translate(0, size * Math.floor(j/2))
         context.rotate(Math.PI/2 * sc)
+        context.beginPath()
         context.moveTo(0, 0)
         context.lineTo(0, size * sf)
         context.stroke()
@@ -124,6 +126,7 @@ class LESNode {
     constructor(i) {
         this.i = i
         this.state = new LESState()
+        this.addNeighbor()
     }
 
     addNeighbor() {
@@ -165,6 +168,7 @@ class LineExpanderStep {
     constructor() {
         this.root = new LESNode(0)
         this.curr = this.root
+        this.dir = 1
     }
 
     draw(context, w, h) {
