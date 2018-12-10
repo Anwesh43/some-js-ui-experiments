@@ -2,7 +2,8 @@ const LES_NODES = 5
 const LES_LINES = 2
 const LES_LINE_WIDTH = 60
 const LES_COLOR = "#0D47A1"
-const LES_SIZE_FACTOR = 90
+const LES_SIZE_FACTOR = 3
+const LES_STROKE_FACTOR = 80
 const LES_scGap = 0.05
 const LES_scDiv = 0.51
 
@@ -22,14 +23,18 @@ const drawLESNode = (context, i, scale, w, h) => {
     const sc1 = LES_divideScale(scale, 0, 2)
     const sc2 = LES_divideScale(scale, 1, 2)
     const size = gap / LES_SIZE_FACTOR
+    context.strokeStyle = LES_COLOR
+    context.lineCap = 'round'
+    context.lineWidth = Math.min(w, h) / LES_STROKE_FACTOR
     context.save()
     context.translate(i * (gap + 1), h/2)
     for (var j = 0; j < LES_LINES; j++) {
         const sf = 1 - 2 * (j%2)
+        const sc = LES_divideScale(sc2, j, 2)
         context.save()
         context.translate(0, size * Math.floor(j/2))
         context.moveTo(0, 0)
-        context.lineTo(0, size/2 * sf)
+        context.lineTo(0, size/2 * sf * (1 - sc))
         context.stroke()
         context.restore()
     }
@@ -46,20 +51,25 @@ const drawLESNode = (context, i, scale, w, h) => {
     }
     context.restore()
 }
-class LinkedLineExpandingStepStage extends CanvasStage {
+class LinkedLineExpanderStepStage extends CanvasStage {
     constructor() {
         super()
         this.renderer = new LESRenderer()
     }
     render() {
-        this.renderer.render(this.context, this.size.w, this.size.h)
+        super.render()
+        if (this.renderer) {
+            this.renderer.render(this.context, this.size.w, this.size.h)
+        }
     }
     handleTap() {
-        this.renderer.handleTap()
+        this.renderer.handleTap(() => {
+            this.render()
+        })
     }
 
     static init() {
-        const stage = new LinkedLineExpandingStepStage()
+        const stage = new LinkedLineExpanderStepStage()
         stage.render()
         stage.handleTap()
     }
@@ -158,7 +168,7 @@ class LineExpanderStep {
     }
 
     draw(context, w, h) {
-        this.curr.draw(context, w, h)
+        this.root.draw(context, w, h)
     }
 
     update(cb) {
@@ -181,7 +191,7 @@ class LESRenderer {
         this.animator = new LESAnimator()
     }
 
-    draw(context, w, h) {
+    render(context, w, h) {
         this.les.draw(context, w, h)
     }
 
