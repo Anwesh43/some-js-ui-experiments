@@ -6,6 +6,7 @@ const LES_SIZE_FACTOR = 3
 const LES_STROKE_FACTOR = 80
 const LES_scGap = 0.05
 const LES_scDiv = 0.51
+const delay = 25
 
 const LES_divideScale = (scale, i, n) => Math.min(1/n, Math.max(0, scale - i / n)) * n
 
@@ -30,20 +31,23 @@ const drawLESNode = (context, i, scale, w, h) => {
     context.translate(gap * (i + 1), h/2)
     for (var j = 0; j < LES_LINES; j++) {
         const sf = 1 - 2 * (j%2)
-        const sc = LES_divideScale(sc2, j, 2)
+        const sc = LES_divideScale(sc2, j, LES_LINES)
         context.save()
-        context.translate(0, size * Math.floor(j/2))
-        context.beginPath()
-        context.moveTo(0, 0)
-        context.lineTo(0, size/2 * sf * (1 - sc))
-        context.stroke()
+        context.translate(0,  size * Math.floor(j/2))
+        if (sc < 1) {
+            context.beginPath()
+            context.moveTo(0, 0)
+            context.lineTo(0, size/2 * sf * (1 - sc))
+            context.stroke()
+        }
         context.restore()
     }
     for (var j = 0; j < LES_LINES; j++) {
         const sf = 1 - 2 * j
         const sc = LES_divideScale(sc1, j, LES_LINES)
+        const sc02 = LES_divideScale(sc2, LES_LINES - 1 - j, LES_LINES)
         context.save()
-        context.translate(0, size * Math.floor(j/2))
+        context.translate(0, (-size/2 + size * Math.floor((j + 1)/2)) * (1 - sc02))
         context.rotate(Math.PI/2 * sc)
         context.beginPath()
         context.moveTo(0, 0)
@@ -65,9 +69,11 @@ class LinkedLineExpanderStepStage extends CanvasStage {
         }
     }
     handleTap() {
-        this.renderer.handleTap(() => {
-            this.render()
-        })
+        this.canvas.onmousedown = () => {
+            this.renderer.handleTap(() => {
+                this.render()
+            })
+        }
     }
 
     static init() {
@@ -86,16 +92,18 @@ class LESState {
 
     update(cb) {
         this.scale += LES_updateScale(this.scale, this.dir, LES_LINES, LES_LINES)
-        if (Math.abs(this.scale > this.prevScale) > 1) {
+        if (Math.abs(this.scale - this.prevScale) > 1) {
             this.scale = this.prevScale + this.dir
             this.dir = 0
             this.prevScale = this.scale
             cb()
+            console.log("stopping to update")
         }
     }
 
     startUpdating(cb) {
         if (this.dir == 0) {
+            console.log("starting state")
             this.dir = 1 - 2 * this.prevScale
             cb()
         }
@@ -108,9 +116,11 @@ class LESAnimator {
     }
 
     start(cb) {
+        console.log("start anim 1")
         if (!this.animated) {
             this.animated = true
-            this.interval = setInterval(cb, 50)
+            this.interval = setInterval(cb, delay)
+            console.log("starting anim 2")
         }
     }
 
@@ -118,6 +128,7 @@ class LESAnimator {
         if (this.animated) {
             this.animated = false
             clearInterval(this.interval)
+            console.log("stopping here")
         }
     }
 }
@@ -180,6 +191,7 @@ class LineExpanderStep {
             this.curr = this.curr.getNext(this.dir, () => {
                 this.dir *= -1
             })
+            console.log(this.curr)
             cb()
         })
     }
@@ -204,9 +216,8 @@ class LESRenderer {
             this.animator.start(() => {
                 cb()
                 this.les.update(() => {
-                    this.animator.stop(() => {
-                        cb()
-                    })
+                    this.animator.stop()
+                    cb()
                 })
             })
         })
