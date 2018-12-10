@@ -63,3 +63,28 @@ class LinkedLineExpandingStepStage extends CanvasStage {
         stage.handleTap()
     }
 }
+
+class LESState {
+    constructor() {
+        this.scale = 0
+        this.prevScale = 0
+        this.dir = 0
+    }
+
+    update(cb) {
+        this.scale += LES_updateScale(this.scale, this.dir, LES_LINES, LES_LINES)
+        if (Math.abs(this.scale > this.prevScale) > 1) {
+            this.scale = this.prevScale + this.dir
+            this.dir = 0
+            this.prevScale = this.scale
+            cb()
+        }
+    }
+
+    startUpdating(cb) {
+        if (this.dir == 0) {
+            this.dir = 1 - 2 * this.prevScale
+            cb()
+        }
+    }
+}
