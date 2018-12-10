@@ -173,3 +173,27 @@ class LineExpanderStep {
         this.curr.startUpdating(cb)
     }
 }
+
+class LESRenderer {
+    constructor() {
+        this.les = new LineExpanderStep()
+        this.animator = new LESAnimator()
+    }
+
+    draw(context, w, h) {
+        this.les.draw(context, w, h)
+    }
+
+    handleTap(cb) {
+        this.les.startUpdating(() => {
+            this.animator.start(() => {
+                cb()
+                this.les.update(() => {
+                    this.animator.stop(() => {
+                        cb()
+                    })
+                })
+            })
+        })
+    }
+}
