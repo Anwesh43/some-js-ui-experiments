@@ -108,3 +108,44 @@ class LESAnimator {
         }
     }
 }
+
+class LESNode {
+    constructor(i) {
+        this.i = i
+        this.state = new LESState()
+    }
+
+    addNeighbor() {
+        if (this.i < LES_NODES - 1) {
+            this.next = new LESNode(this.i + 1)
+            this.next.prev = this
+        }
+    }
+
+    draw(context, w, h) {
+        drawLESNode(context, this.i, this.state.scale, w, h)
+        if (this.next) {
+            this.next.draw(context, w, h)
+        }
+    }
+
+    update(cb) {
+        this.state.update(cb)
+    }
+
+    startUpdating(cb) {
+        this.state.startUpdating(cb)
+    }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (dir == 1) {
+            curr = this.next
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
+    }
+}
