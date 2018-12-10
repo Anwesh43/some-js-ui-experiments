@@ -49,12 +49,13 @@ const drawLESNode = (context, i, scale, w, h) => {
 class LinkedLineExpandingStepStage extends CanvasStage {
     constructor() {
         super()
+        this.renderer = new LESRenderer()
     }
     render() {
-
+        this.renderer.render(this.context, this.size.w, this.size.h)
     }
     handleTap() {
-
+        this.renderer.handleTap()
     }
 
     static init() {
