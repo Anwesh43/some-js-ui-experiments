@@ -105,3 +105,26 @@ class BUMNShape {
         this.state.startUpdating(cb)
     }
 }
+
+class BUMNRenderer {
+    constructor() {
+        this.animator = new BUMNAnimator()
+        this.shape = new BUMNShape()
+    }
+
+    render(context, w, h) {
+        this.shape.draw(context, w, h)
+    }
+
+    handleTap(cb) {
+        this.shape.startUpdating(() => {
+            this.animator.start(() => {
+                cb()
+                this.shape.update(() => {
+                    this.animator.stop()
+                    cb()
+                })
+            })
+        })
+    }
+}
