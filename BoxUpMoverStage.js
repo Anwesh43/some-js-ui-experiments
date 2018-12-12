@@ -1,5 +1,7 @@
 const BUMN_divideScale = (scale, i, n) => Math.min(1/n, Math.max(0, scale - i / n)) * n
 
+const BUMN_PARTS = 10
+
 class BoxUpMoverStage extends CanvasStage {
     constructor() {
         super()
@@ -8,12 +10,15 @@ class BoxUpMoverStage extends CanvasStage {
 
     render() {
         super.render()
-        this.renderer.render(this.context, this.size.w, this.size.h)
+        if (this.renderer)
+            this.renderer.render(this.context, this.size.w, this.size.h)
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-            this.renderer.handleTap()
+            this.renderer.handleTap(() => {
+                this.render()
+            })
         }
     }
 
@@ -32,7 +37,7 @@ class BUMNState {
     }
 
     update(cb) {
-        this.scale += 0.01 * this.dir
+        this.scale += (0.1 / BUMN_PARTS) * this.dir
         if (Math.abs(this.scale - this.prevScale) > 1) {
             this.scale = this.prevScale + this.dir
             this.dir = 0
@@ -54,10 +59,10 @@ class BUMNAnimator {
         this.animated = false
     }
 
-    start() {
+    start(cb) {
         if (!this.animated) {
             this.animated = true
-            this.interval = setInverval(cb, 50)
+            this.interval = setInterval(cb, 50)
         }
     }
 
@@ -72,20 +77,30 @@ class BUMNAnimator {
 class BUMNShape {
     constructor() {
         this.state = new BUMNState()
-        this.k = 0
+        this.deg = 0
     }
 
     draw(context, w, h) {
+        const sp = 1 / BUMN_PARTS
         const scale = this.state.scale
-        const hSize = Math.max(w, h) /  5
-        const wSize = Math.min(w, h) / 5
-        var sc = BUMN_divideScale(scale, this.k, 10)
-        const sf = this.k % 2
+        const hSize = Math.max(w, h) /  10
+        const wSize = Math.min(w, h) / 10
+        const color = '#2980b9'
+        context.fillStyle = color
+        context.strokeStyle = color
+        context.lineWidth = Math.min(w, h) / 60
+        context.lineCap = 'round'
+        const k = Math.floor(scale/sp)
+        var sc = BUMN_divideScale(scale, k, BUMN_PARTS)
+        //console.log(Math.floor(scale/sp))
+        const sf = k % 2
         sc = sf * (1 - sc) + (1 - sf) * sc
+        console.log(sc)
         const oy = h / 2
         const dy = hSize/2
         context.save()
         context.translate(w/2, oy + (dy - oy) * scale)
+        context.rotate(this.deg)
         context.fillRect(-wSize/2, -hSize/2, wSize, hSize)
         for(var i = 0; i < 2; i++) {
             context.save()
@@ -93,14 +108,18 @@ class BUMNShape {
             context.rotate(Math.PI/6 * sc * (1 - 2 * i))
             context.beginPath()
             context.moveTo(0, 0)
-            context.lineTo(0, hSize/3)
+            context.lineTo(0, hSize/4)
+            context.stroke()
             context.restore()
         }
         context.restore()
     }
 
     update(cb) {
-        this.state.update(cb)
+        this.state.update(() => {
+            this.deg = this.deg == 0? Math.PI : 0
+            cb()
+        })
     }
 
     startUpdating(cb) {
