@@ -3,15 +3,17 @@ const BUMN_divideScale = (scale, i, n) => Math.min(1/n, Math.max(0, scale - i / 
 class BoxUpMoverStage extends CanvasStage {
     constructor() {
         super()
+        this.renderer = new BUMNRenderer()
     }
 
     render() {
         super.render()
+        this.renderer.render(this.context, this.size.w, this.size.h)
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.renderer.handleTap()
         }
     }
 
