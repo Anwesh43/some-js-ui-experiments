@@ -188,3 +188,26 @@ class BallBoxOpen {
         this.curr.startUpdating(cb)
     }
 }
+
+class BBORenderer {
+    constructor() {
+        this.bbo = new BallBoxOpen()
+        this.animator = new BBOAnimator()
+    }
+
+    render(context, w, h) {
+        this.bbo.draw(context, w, h)
+    }
+
+    handleTap(cb) {
+        this.bbo.startUpdating(() => {
+            this.animator.start(() => {
+                cb()
+                this.bbo.update(() => {
+                    this.animator.stop()
+                    cb()
+                })
+            })
+        })
+    }
+}
