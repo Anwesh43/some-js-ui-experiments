@@ -164,3 +164,27 @@ class BBONode {
         return this
     }
 }
+
+class BallBoxOpen {
+    constructor() {
+        this.root = new BBONode(0)
+        this.curr = this.root
+        this.dir = 1
+    }
+
+    draw(context, w, h) {
+        this.root.draw(context, w, h)
+    }
+
+    update(cb) {
+        this.curr.update(() => {
+            this.curr = this.curr.getNext(this.dir, () => {
+                this.dir *= -1
+            })
+        })
+    }
+
+    startUpdating(cb) {
+        this.curr.startUpdating(cb)
+    }
+}
