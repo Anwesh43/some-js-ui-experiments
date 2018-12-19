@@ -133,10 +133,10 @@ class CAENode {
         }
     }
 
-    draw(context) {
-        drawCAENode(context, this.i, this.state.scale)
+    draw(context, w, h) {
+        drawCAENode(context, this.i, this.state.scale, w, h)
         if (this.next) {
-            this.next.draw(context)
+            this.next.draw(context, w, h)
         }
     }
 
@@ -159,5 +159,30 @@ class CAENode {
         }
         cb()
         return this
+    }
+}
+
+class CircleArcExpander {
+    constructor() {
+        this.root = new CAENode(0)
+        this.curr = this.root
+        this.dir = 1
+    }
+
+    draw(context, w, h) {
+        this.root.draw(context, w, h)
+    }
+
+    update(cb) {
+        this.curr.update(() => {
+            this.curr = this.curr.getNext(this.dir, () => {
+                this.dir *= -1
+            })
+            cb()
+        })
+    }
+
+    startUpdating(cb) {
+        this.curr.startUpdating(cb)
     }
 }
