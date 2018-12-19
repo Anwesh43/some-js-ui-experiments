@@ -119,3 +119,45 @@ class CAEAnimator {
         }
     }
 }
+
+class CAENode {
+    constructor(i) {
+        this.i = i
+        this.addNeighbor()
+    }
+
+    addNeighbor() {
+        if (this.i < CAE_nodes - 1) {
+            this.next = new CAENode(this.i + 1)
+            this.next.prev = this
+        }
+    }
+
+    draw(context) {
+        drawCAENode(context, this.i, this.state.scale)
+        if (this.next) {
+            this.next.draw(context)
+        }
+    }
+
+
+    update(cb) {
+        this.state.update(cb)
+    }
+
+    startUpdating(cb) {
+        this.state.startUpdating(cb)
+    }
+
+    getNext(dir, cb) {
+        var curr = this.prev
+        if (dir == 1) {
+            curr = this.prev
+        }
+        if (curr) {
+            return curr
+        }
+        cb()
+        return this
+    }
+}
