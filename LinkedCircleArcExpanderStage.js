@@ -186,3 +186,26 @@ class CircleArcExpander {
         this.curr.startUpdating(cb)
     }
 }
+
+class CAERenderer {
+    constructor() {
+        this.cae = new CircleArcExpander()
+        this.animator = new CAEAnimator()
+    }
+
+    render(context, w, h) {
+        this.cae.draw(context, w, h)
+    }
+
+    handleTap(cb) {
+        this.cae.startUpdating(() => {
+            this.animator.start(() => {
+                cb()
+                this.cae.update(() => {
+                    this.animator.stop()
+                    cb()
+                })
+            })
+        })
+    }
+}
