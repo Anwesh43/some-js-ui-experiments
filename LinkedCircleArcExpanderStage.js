@@ -56,15 +56,19 @@ const drawCAENode = (context, i, scale, w, h) => {
 class LinkedCircleArcExpanderStage extends CanvasStage {
     constructor() {
         super()
+        this.renderer = new CAERenderer()
     }
 
     render() {
         super.render()
+        this.renderer.render(this.context, this.size.w, this.size.h)
     }
 
     handleTap() {
         this.canvas.onmousedown = () => {
-
+            this.renderer.handleTap(() => {
+                this.render()
+            })
         }
     }
 
