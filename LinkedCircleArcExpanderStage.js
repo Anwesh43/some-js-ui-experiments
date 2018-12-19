@@ -28,10 +28,10 @@ const drawCAENode = (context, i, scale, w, h) => {
     context.translate(gap * (i + 1), h/2)
     context.rotate(Math.PI/2 * sc2)
     for (var j = 0; j < CAE_arcs; j++) {
-        const sc = CAR_divideScale(scale, j, CAE_arcs)
+        const sc = CAE_divideScale(sc1, j, CAE_arcs)
         context.save()
         context.rotate(Math.PI/2 * j)
-        for (k = 0; k < 2; k++) {
+        for (var k = 0; k < 2; k++) {
             context.save()
             context.scale(1, 1 - 2 * k)
             context.beginPath()
@@ -61,7 +61,9 @@ class LinkedCircleArcExpanderStage extends CanvasStage {
 
     render() {
         super.render()
-        this.renderer.render(this.context, this.size.w, this.size.h)
+        if (this.renderer) {
+            this.renderer.render(this.context, this.size.w, this.size.h)
+        }
     }
 
     handleTap() {
@@ -127,6 +129,7 @@ class CAEAnimator {
 class CAENode {
     constructor(i) {
         this.i = i
+        this.state = new CAEState()
         this.addNeighbor()
     }
 
@@ -156,7 +159,7 @@ class CAENode {
     getNext(dir, cb) {
         var curr = this.prev
         if (dir == 1) {
-            curr = this.prev
+            curr = this.next
         }
         if (curr) {
             return curr
